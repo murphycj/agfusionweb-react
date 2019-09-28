@@ -1,0 +1,6 @@
+.input label {
+  text-align: right;
+  clear: both;
+  float:left;
+  margin-right:15px;
+}
