@@ -1,15 +1,28 @@
 {
   "name": "agfusionweb",
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
+    "antd": "^3.23.4",
+    "aws-sdk": "^2.533.0",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.2.0",
+    "fs": "0.0.1-security",
+    "html-webpack-plugin": "^3.2.0",
+    "mysql": "^2.17.1",
+    "net": "^1.0.2",
+    "node-sass": "^4.12.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "tls": "0.0.1",
+    "webpack-dev-server": "^3.8.1"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "webpack-dev-server --open --mode development",
+    "build": "webpack --mode production ./src/index.js --output ./build/main.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "aws s3 sync build/ s3://agfusionweb"
@@ -28,5 +41,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
+    "@babel/runtime": "^7.6.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
   }
 }
