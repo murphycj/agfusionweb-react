@@ -25,4 +25,11 @@ export class Transcript {
     }
   }
 
+  isIn(position) {
+    if (position >= this.start && position <= this.end) {
+      return true;
+    }
+    return false;
+  }
+
 }
