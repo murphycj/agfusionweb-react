@@ -75,7 +75,7 @@ class Data extends React.Component {
         var gene1DataFinal = []
 
         for (var i = 0; i < gene1Data.length; i++) {
-          if (gene1Data[i].isIn(values.gene1_breakpoint)) {
+          if (gene1Data[i].contains(values.gene1_breakpoint)) {
             gene1DataFinal.push(gene1Data[i]);
           }
         }
@@ -125,7 +125,7 @@ class Data extends React.Component {
         var gene2DataFinal = []
 
         for (var i = 0; i < gene2Data.length; i++) {
-          if (gene2Data[i].isIn(values.gene2_breakpoint)) {
+          if (gene2Data[i].contains(values.gene2_breakpoint)) {
             gene2DataFinal.push(gene2Data[i]);
           }
         }
@@ -163,7 +163,7 @@ class Data extends React.Component {
     for (var i = 0; i < ensemblIds.length; i++) {
       var geneData_i = await this.state.ddb.getGene(ensemblIds[i]);
       if (geneData_i !== undefined) {
-        geneData.push(new Gene(geneData_i));
+        geneData.push(new Gene(ensemblIds[i], geneData_i));
       }
     }
 

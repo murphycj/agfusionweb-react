@@ -1,8 +1,8 @@
 import { Transcript } from './Transcript';
 
 export class Gene {
-  constructor(data) {
-
+  constructor(id, data) {
+    this.id = id;
     this.biotype = data.biotype.S;
     this.contig = data.contig.S;
     this.start = parseInt(data.start.N);
@@ -13,11 +13,11 @@ export class Gene {
     this.transcripts = [];
 
     for (var transcript in data.transcripts.M) {
-      this.transcripts.push(new Transcript(data.transcripts.M[transcript].M));
+      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M));
     }
   }
 
-  isIn(position) {
+  contains(position) {
     if (position >= this.start && position <= this.end) {
       return true;
     }

@@ -1,6 +1,7 @@
 
 export class Transcript {
-  constructor(data) {
+  constructor(id, data) {
+    this.id = id;
     this.biotype = data.biotype.S;
     this.complete = data.complete.BOOL;
     this.has_start_codon = data.has_start_codon.BOOL;
@@ -25,7 +26,7 @@ export class Transcript {
     }
   }
 
-  isIn(position) {
+  contains(position) {
     if (position >= this.start && position <= this.end) {
       return true;
     }

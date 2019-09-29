@@ -7,6 +7,7 @@ const { Header, Footer, Sider, Content } = Layout;
 
 import DataForm from './components/DataForm.jsx';
 import { DynamoDB } from './library/DynamoDB';
+import { Fusion } from './library/Fusion';
 
 class App extends React.Component {
 
@@ -24,6 +25,19 @@ class App extends React.Component {
   onSubmit(fusionData) {
 
     console.log(fusionData);
+    var fusions = [];
+    for (var i = 0; i < fusionData.gene1Data.length; i++) {
+      for (var j = 0; j < fusionData.gene2Data.length; j++) {
+        fusions.push(new Fusion(
+          fusionData.gene1Data[i],
+          fusionData.gene2Data[j],
+          fusionData.gene1Junction,
+          fusionData.gene2Junction
+        ))
+      }
+    }
+
+    console.log(fusions[0]);
   }
 
   render() {
