@@ -1,10 +1,12 @@
 import pyensembl
 import sqlite3
 import boto3
+import pickle
 
 dynamodb = boto3.resource('dynamodb')
 table_agfusion_gene_synonyms = dynamodb.Table('agfusion_gene_synonyms')
 table_agfusion_genes = dynamodb.Table('agfusion_genes')
+table_agfusion_sequences = dynamodb.Table('agfusion_sequences')
 
 def add_synonym(data, id, ensg):
 
@@ -64,6 +66,14 @@ def process_gene_data(species, release, pyens_db, c):
             }
 
             for transcript in gene.transcripts:
+
+                five_prime_utr_len = 0
+                three_prime_utr_len = 0
+                if transcript.contains_start_codon:
+                    five_prime_utr_len = len(transcript.five_prime_utr_sequence)
+                if transcript.contains_stop_codon:
+                    three_prime_utr_len = len(transcript.three_prime_utr_sequence)
+
                 data['transcripts'][transcript.id] = {
                     'name': transcript.name,
                     'start': transcript.start,
@@ -73,7 +83,10 @@ def process_gene_data(species, release, pyens_db, c):
                     'exons': [[i[0], i[1]] for i in transcript.exon_intervals],
                     'has_start_codon': transcript.contains_start_codon,
                     'has_stop_codon': transcript.contains_stop_codon,
-                    'is_protein_coding': transcript.is_protein_coding
+                    'five_prime_utr_len': five_prime_utr_len,
+                    'three_prime_utr_len': three_prime_utr_len,
+                    'is_protein_coding': transcript.is_protein_coding,
+                    'protein_id': transcript.protein_id
                 }
 
                 if transcript.is_protein_coding:
@@ -81,6 +94,55 @@ def process_gene_data(species, release, pyens_db, c):
                         [[i[0], i[1]] for i in transcript.coding_sequence_position_ranges]
 
             batch.put_item(Item=data)
+
+
+def write(db, species, release):
+
+    with table_agfusion_sequences.batch_writer() as batch:
+        for gene_id, seq in db.items():
+            batch.put_item(
+                Item={
+                    'id': gene_id,
+                    'species_release': species + '_' + str(release),
+                    'sequence': seq
+                }
+            )
+
+
+def upload_fasta(species, genome, release):
+
+    # cdna
+
+    db = pickle.load(open(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.cdna.all.fa.gz.pickle'.format(
+            genome,
+            release,
+            species.capitalize(),
+            genome
+        )))
+    write(db, species, release)
+    # import pdb; pdb.set_trace()
+
+    db = pickle.load(open(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.ncrna.fa.gz.pickle'.format(
+            genome,
+            release,
+            species.capitalize(),
+            genome
+        )))
+    write(db, species, release)
+
+    # pep
+
+    db = pickle.load(open(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.pep.all.fa.gz.pickle'.format(
+            genome,
+            release,
+            species.capitalize(),
+            genome
+        )))
+    write(db, species, release)
+
 
 
 
@@ -91,7 +153,8 @@ def process_data(species, release, agfusion):
     c = db.cursor()
 
     # process_gene_synonym(species, release, pyens_db, c)
-    process_gene_data(species, release, pyens_db, c)
+    # process_gene_data(species, release, pyens_db, c)
+    upload_fasta('homo_sapiens', 'GRCh38', 94)
 
 
 def put_to_dynamodb():
