@@ -28,9 +28,9 @@ class Data extends React.Component {
   runExample() {
     this.props.form.setFields({
       gene1: {value: 'FGFR2'},
-      gene1_breakpoint: {value: 121598458},
-      gene2: {value: 'DNM3'},
-      gene2_breakpoint: {value: 171841498},
+      gene1_breakpoint: {value: 121487991},
+      gene2: {value: 'CCDC6'},
+      gene2_breakpoint: {value: 59807078},
     });
     this.onSubmit(new Event('submit'));
   }
