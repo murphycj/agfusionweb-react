@@ -1,11 +1,11 @@
 import { FusionTranscript } from './FusionTranscript';
 
 export class Fusion {
-  constructor(gene1, gene2, gene1_junction, gene2_junction) {
+  constructor(gene1, gene2, gene1Junction, gene2Junction) {
     this.gene1 = gene1;
     this.gene2 = gene2;
-    this.gene1_junction = gene1_junction;
-    this.gene2_junction = gene2_junction;
+    this.gene1Junction = gene1Junction;
+    this.gene2Junction = gene2Junction;
 
     this.name = this.gene1.name + '_' + this.gene2.name;
     this.transcripts = {};
@@ -16,14 +16,16 @@ export class Fusion {
         var transcript = new FusionTranscript(
           this.gene1.transcripts[i],
           this.gene2.transcripts[j],
-          gene1_junction,
-          gene2_junction);
+          gene1Junction,
+          gene2Junction);
 
-        if (!this.gene1.transcripts[i].contains(gene1_junction) || !this.gene2.transcripts[j].contains(gene2_junction)) {
+        if (!this.gene1.transcripts[i].contains(gene1Junction) || !this.gene2.transcripts[j].contains(gene2Junction)) {
           transcript.effect = 'OGB';
+        } else {
+
+          this.transcripts[transcript.name] = transcript;
         }
 
-        this.transcripts[transcript.name] = transcript;
       }
     }
   }

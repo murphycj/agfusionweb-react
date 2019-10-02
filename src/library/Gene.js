@@ -7,13 +7,13 @@ export class Gene {
     this.contig = data.contig.S;
     this.start = parseInt(data.start.N);
     this.end = parseInt(data.end.N);
-    this.is_protein_coding = data.is_protein_coding.BOOL;
-    this.name = data.name.S;
+    this.isProteinCoding = data.is_protein_coding.BOOL || false;
+    this.name = data.name.S || this.id;
     this.strand = data.strand.S;
     this.transcripts = [];
 
     for (var transcript in data.transcripts.M) {
-      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M));
+      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M, this.strand));
     }
   }
 
