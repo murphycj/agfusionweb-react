@@ -7,6 +7,7 @@ dynamodb = boto3.resource('dynamodb')
 table_agfusion_gene_synonyms = dynamodb.Table('agfusion_gene_synonyms')
 table_agfusion_genes = dynamodb.Table('agfusion_genes')
 table_agfusion_sequences = dynamodb.Table('agfusion_sequences')
+table_agfusion_pd = dynamodb.Table('agfusion_protein_domain')
 
 def add_synonym(data, id, ensg):
 
@@ -144,7 +145,31 @@ def upload_fasta(species, genome, release):
     write(db, species, release)
 
 
+def upload_protein(species, release, c):
+    protein_db = [
+        'pfam', 'smart', 'superfamily', 'tigrfam', 'pfscan', 'tmhmm', 'seg', 'ncoils', 'prints',
+        'pirsf', 'signalp']
 
+    data = {}
+    for pdb in protein_db:
+        query = c.execute('select * from {}_{}_{}'.format(species, release, pdb)).fetchall()
+
+        for q in query:
+            ensp = q[1]
+            if ensp not in data:
+                data[ensp] = {j:[] for j in protein_db}
+
+            data[ensp][pdb].append(list(q[2:]))
+
+    with table_agfusion_pd.batch_writer() as batch:
+        for ensp, pdata in data.items():
+            batch.put_item(
+                Item={
+                    'id': ensp,
+                    'species_release': species + '_' + str(release),
+                    'domains': data[ensp]
+                }
+            )
 
 
 def process_data(species, release, agfusion):
@@ -154,7 +179,8 @@ def process_data(species, release, agfusion):
 
     # process_gene_synonym(species, release, pyens_db, c)
     # process_gene_data(species, release, pyens_db, c)
-    upload_fasta('homo_sapiens', 'GRCh38', 94)
+    # upload_fasta('homo_sapiens', 'GRCh38', 94)
+    upload_protein(species, release, c)
 
 
 def put_to_dynamodb():
