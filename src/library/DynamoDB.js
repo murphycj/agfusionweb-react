@@ -1,5 +1,7 @@
 var AWS = require('aws-sdk');
-// Set the region
+
+// Set the region and aws keys (that have read-only access to dynamodb)
+
 AWS.config.update({
   region: 'us-east-1',
   accessKeyId: 'AKIAUPO5FHV4W3M3JINV',
