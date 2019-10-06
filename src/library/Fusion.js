@@ -7,7 +7,10 @@ export class Fusion {
     this.gene1Junction = gene1Junction;
     this.gene2Junction = gene2Junction;
 
-    this.name = this.gene1.name + '_' + this.gene2.name;
+    this.name = this.gene1.name && this.gene2.name ?
+      this.gene1.name + '_' + this.gene2.name :
+      this.gene1.id + '_' + this.gene2.id;
+
     this.transcripts = {};
 
     for (var i = 0; i < this.gene1.transcripts.length; i++) {

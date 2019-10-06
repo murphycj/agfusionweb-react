@@ -1,5 +1,7 @@
 
-import { CODING_COMBINATIONS } from './utils';
+import { CODING_COMBINATIONS, PDBS, PROTEINWEIGHT } from './utils';
+
+const MIN_DOMAIN_LENGTH = 5;
 
 export class FusionTranscript {
   constructor(transcript1, transcript2, gene1Junction, gene2Junction) {
@@ -7,8 +9,12 @@ export class FusionTranscript {
     this.transcript2 = transcript2;
     this.gene1Junction = gene1Junction;
     this.gene2Junction = gene2Junction;
+    this.canonical = this.transcript1.canonical && this.transcript2.canonical;
 
-    this.name = this.transcript1.id + '_' + this.transcript2.id;
+    this.name = this.transcript1.name && this.transcript2.name ?
+      this.transcript1.name + ' : ' + this.transcript2.name :
+      this.transcript1.id + ' : ' + this.transcript2.id;
+
     this.effect = '';
     this.gene1JunctionLoc = 'exon';
     this.gene2JunctionLoc = 'exon';
@@ -44,6 +50,9 @@ export class FusionTranscript {
     this.molecularWeight = 0;
     this.proteinJunctionGene1 = 0;
     this.proteinJunctionGene2 = 0;
+    this.proteinDomains = {};
+
+    this.hasError = false;
 
     // predict the fusion
 
@@ -493,25 +502,6 @@ export class FusionTranscript {
     this.cdsGene2Len = this.transcript2.cdsLength - this.cdsJunctionGene2;
 
     // self.cds_3prime = self.transcript2.coding_sequence[self.transcript_cds_junction_3prime::]
-
-    // create a sequence record
-
-    // if self.cds_5prime is not None and self.cds_3prime is not None:
-    //     seq = self.cds_5prime + self.cds_3prime
-
-    // self.cds = SeqRecord.SeqRecord(
-    //     Seq.Seq(seq,generic_dna),
-    //     id=self.name,
-    //     name=self.name,
-    //     description="length: {}, genes: {}/{}, strands: {}/{}".format(
-    //         len(self.cds_5prime + self.cds_3prime),
-    //         self.transcript1.gene.name,
-    //         self.transcript2.gene.name,
-    //         self.transcript1.gene.strand,
-    //         self.transcript2.gene.strand
-    //     )
-    // )
-
   }
 
   fetchProtein() {
@@ -558,147 +548,80 @@ export class FusionTranscript {
   annotate() {
     // Annotate the gene fusion's protein using the protein annotaiton
     // from its two genes
+    //
+    // domain format: [id, start, end, description, name]
+    //
 
-    fusion_domains = []
-    gene5prime_domains = []
-    gene3prime_domains = []
+    var domains = [];
+    var domain = null;
 
-    tmp_domains = []
+    for (var j = 0; j < PDBS.length; j++) {
+      var pdb = PDBS[j];
 
-    // fetch the translation ids
+      this.proteinDomains[pdb] = [];
 
-    sqlite3_command = "SELECT * FROM " + self.db.build + "_transcript WHERE transcript_stable_id==\"" + self.transcript1.id + "\""
-    self.db.logger.debug('SQLite - ' + sqlite3_command)
-    self.db.sqlite3_cursor.execute(
-        sqlite3_command
-    )
-    gene5prime_translation_id = self.db.sqlite3_cursor.fetchall()[0][3]
+      // gene1 domains
 
-    sqlite3_command = "SELECT * FROM " + self.db.build + "_transcript WHERE transcript_stable_id==\"" + self.transcript2.id + "\""
-    self.db.logger.debug('SQLite - ' + sqlite3_command)
-    self.db.sqlite3_cursor.execute(
-        sqlite3_command
-    )
-    gene3prime_translation_id = self.db.sqlite3_cursor.fetchall()[0][3]
+      for (var i = 0; i < this.transcript1.proteinDomains[pdb].length; i++) {
 
-    for protein_database in self.protein_databases:
+        domain = this.transcript1.proteinDomains[pdb][i];
 
-        // fetch protein annotation
+        if (this.proteinJunctionGene1 < domain[1]) {
+          continue;
+        } else if (this.proteinJunctionGene1 >= domain[2]) {
 
-        sqlite3_command = "SELECT * FROM " + self.db.build + "_" + protein_database + " WHERE translation_id==\"" + gene5prime_translation_id + "\""
-        self.db.logger.debug('SQLite - ' + sqlite3_command)
-        self.db.sqlite3_cursor.execute(
-            sqlite3_command
-        )
-        tmp_domains += [list(x) for x in self.db.sqlite3_cursor.fetchall()]
+          this.proteinDomains[pdb].push([
+            domain[0], //id
+            domain[4], //name
+            domain[3], //desc
+            domain[1], // start
+            domain[2] // end
+          ]);
 
-    for d in tmp_domains:
+        } else if ((this.proteinJunctionGene1 - domain[1]) >= MIN_DOMAIN_LENGTH) {
 
-        pfeature_ID = d[2]
-        pfeature_name = d[6]
-        pfeature_description = d[5]
-        pfeature_start = int(d[3])
-        pfeature_end = int(d[4])
+          this.proteinDomains[pdb].push([
+            domain[0], //id
+            domain[4], //name
+            domain[3], //desc
+            domain[1], // start
+            this.proteinJunctionGene1 // end
+          ]);
+        }
+      }
 
-        gene5prime_domains.append([
-            pfeature_ID,
-            pfeature_name,
-            pfeature_description,
-            pfeature_start,
-            pfeature_end
-        ])
+      // only find the 3' gene partner's domains if the fusion is in-frame
 
-        try:
-            if self.transcript_protein_junction_5prime < pfeature_start:
-                continue
-            elif self.transcript_protein_junction_5prime >= pfeature_end:
+      if (this.effect != 'out-of-frame') {
 
-                fusion_domains.append([
-                    pfeature_ID,
-                    pfeature_name,
-                    pfeature_description,
-                    pfeature_start,
-                    pfeature_end
-                ])
+        for (var i = 0; i < this.transcript2.proteinDomains[pdb].length; i++) {
 
-            elif (self.transcript_protein_junction_5prime - pfeature_start) >= MIN_DOMAIN_LENGTH:
+          domain = this.transcript2.proteinDomains[pdb][i];
 
-                pfeature_end = self.transcript_protein_junction_5prime
+          if (this.proteinJunctionGene2 > domain[2]) {
+              continue
+          } else if (this.proteinJunctionGene2 <= domain[1]) {
 
-                fusion_domains.append([
-                    pfeature_ID,
-                    pfeature_name,
-                    pfeature_description,
-                    pfeature_start,
-                    pfeature_end
-                ])
-        except:
-            import pdb; pdb.set_trace()
+            this.proteinDomains[pdb].push([
+              domain[0], //id
+              domain[4], //name
+              domain[3], //desc
+              (domain[1] - this.proteinJunctionGene2) + this.proteinJunctionGene1, //start
+              (domain[2] - this.proteinJunctionGene2) + this.proteinJunctionGene1 //end
+            ]);
 
-    // only find the 3' gene partner's domains if the fusion is in-frame
+          } else {
 
-    if self.effect != 'out-of-frame':
-
-        tmp_domains = []
-
-        for database in self.protein_databases:
-
-            sqlite3_command = "SELECT * FROM " + self.db.build + "_" + database + " WHERE translation_id==\"" + gene3prime_translation_id + "\""
-            self.db.logger.debug('SQLite - ' + sqlite3_command)
-            self.db.sqlite3_cursor.execute(
-                sqlite3_command
-            )
-            tmp_domains += [list(x) for x in self.db.sqlite3_cursor.fetchall()]
-
-        for d in tmp_domains:
-
-            pfeature_ID = d[2]
-            pfeature_name = d[6]
-            pfeature_description = d[5]
-            pfeature_start = int(d[3])
-            pfeature_end = int(d[4])
-
-            gene3prime_domains.append([
-                pfeature_ID,
-                pfeature_name,
-                pfeature_description,
-                pfeature_start,
-                pfeature_end
-            ])
-
-            if self.transcript_protein_junction_3prime > pfeature_end:
-                continue
-            elif self.transcript_protein_junction_3prime <= pfeature_start:
-
-                pfeature_start = (pfeature_start-self.transcript_protein_junction_3prime) + self.transcript_protein_junction_5prime
-                pfeature_end = (pfeature_end-self.transcript_protein_junction_3prime) + self.transcript_protein_junction_5prime
-
-                fusion_domains.append([
-                    pfeature_ID,
-                    pfeature_name,
-                    pfeature_description,
-                    pfeature_start,
-                    pfeature_end
-                ])
-
-            else:
-
-                pfeature_start = self.transcript_protein_junction_5prime
-                pfeature_end = (pfeature_end-self.transcript_protein_junction_3prime) + self.transcript_protein_junction_5prime
-
-                fusion_domains.append([
-                    pfeature_ID,
-                    pfeature_name,
-                    pfeature_description,
-                    pfeature_start,
-                    pfeature_end
-                ])
-
-            if pfeature_end < pfeature_start:
-                import pdb; pdb.set_trace()
-
-    self.domains['fusion'] = fusion_domains
-    self.domains[self.transcript1.id] = gene5prime_domains
-    self.domains[self.transcript2.id] = gene3prime_domains
+            this.proteinDomains[pdb].push([
+              domain[0], //id
+              domain[4], //name
+              domain[3], //desc
+              this.proteinJunctionGene1,
+              (domain[2] - this.proteinJunctionGene2) + this.proteinJunctionGene1
+            ]);
+          }
+        }
+      }
+    }
   }
 }

@@ -158,4 +158,31 @@ CODING_COMBINATIONS['intron (after cds)']['intron (cds)'] = {'protein_coding_pot
 CODING_COMBINATIONS['intron (after cds)']['intron (before cds)'] = {'protein_coding_potential':true,'truncated':false};
 CODING_COMBINATIONS['intron (after cds)']['intron (after cds)'] = {'protein_coding_potential':true,'truncated':false};
 
-export { CODING_COMBINATIONS };
+const PDBS = ['pfam', 'smart', 'superfamily', 'tigrfam', 'pfscan', 'tmhmm', 'seg', 'ncoils', 'prints', 'pirsf', 'signalp'];
+
+const PROTEINWEIGHT = {
+    "A": 89.0932,
+    "C": 121.1582,
+    "D": 133.1027,
+    "E": 147.1293,
+    "F": 165.1891,
+    "G": 75.0666,
+    "H": 155.1546,
+    "I": 131.1729,
+    "K": 146.1876,
+    "L": 131.1729,
+    "M": 149.2113,
+    "N": 132.1179,
+    "O": 255.3134,
+    "P": 115.1305,
+    "Q": 146.1445,
+    "R": 174.201,
+    "S": 105.0926,
+    "T": 119.1192,
+    "U": 168.0532,
+    "V": 117.1463,
+    "W": 204.2252,
+    "Y": 181.1885
+  };
+
+export { CODING_COMBINATIONS, PDBS };

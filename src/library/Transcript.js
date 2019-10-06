@@ -1,9 +1,11 @@
+import { PDBS } from './utils';
 
 export class Transcript {
   constructor(id, data, strand) {
     this.id = id;
     this.biotype = data.biotype.S || '';
     this.complete = data.complete.BOOL || false;
+    this.canonical = data.canonical.BOOL || false;
     this.hasStartCodon = data.has_start_codon.BOOL || false;
     this.hasStopCodon = data.has_stop_codon.BOOL || false;
     this.fivePrimeUtrLen = parseInt(data.five_prime_utr_len.N) || 0;
@@ -17,9 +19,39 @@ export class Transcript {
     this.isProteinCoding = data.is_protein_coding.BOOL || false;
     this.name = data.name.S || this.id;
     this.proteinId = data.protein_id.S;
+    this.proteinDomains = {};
+    for (var i = 0; i < PDBS.length; i++) {
+      this.proteinDomains[PDBS[i]] = [];
+    }
+
+    this.hasError = false;
 
     this.parseExons(data);
     this.getLengths();
+    this.parseDomains(data);
+  }
+
+  parseDomains(data) {
+    var domain = null;
+
+    if (!('M' in data.domains)) {
+      return;
+    }
+
+    for (var i = 0; i < PDBS.length; i++) {
+      var pdb = PDBS[i];
+      this.proteinDomains[PDBS[i]] = [];
+
+      if (data.domains.M[pdb].L.length > 0) {
+        this.proteinDomains[pdb] = data.domains.M[pdb].L.map((val) => [
+          val.L[0].S,
+          parseInt(val.L[1].N) || 0,
+          parseInt(val.L[2].N) || 0,
+          val.L[3].S || '',
+          val.L[4].S || ''
+        ]);
+      }
+    }
   }
 
   parseExons(data) {
