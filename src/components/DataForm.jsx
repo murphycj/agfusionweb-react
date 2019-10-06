@@ -13,16 +13,19 @@ class Data extends React.Component {
     super(props);
     this.state = {
       ddb: new DynamoDB(),
+      loading: false
     }
 
     this.onSubmit = this.onSubmit.bind(this);
     this.validateGene = this.validateGene.bind(this);
     this.clearData = this.clearData.bind(this);
     this.runExample = this.runExample.bind(this);
+    this.setLoading = this.setLoading.bind(this);
   }
 
   clearData() {
     this.props.form.resetFields();
+    this.props.onClearCallback();
   }
 
   runExample() {
@@ -35,7 +38,17 @@ class Data extends React.Component {
     this.onSubmit(new Event('submit'));
   }
 
+  setLoading() {
+    var loading = ! this.state.loading;
+
+    this.setState({
+      loading: loading,
+    })
+  }
+
   async onSubmit(e) {
+
+    this.setLoading();
 
     e.preventDefault();
 
@@ -53,6 +66,7 @@ class Data extends React.Component {
               errors: [new Error('Not a valid gene!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -67,6 +81,7 @@ class Data extends React.Component {
               errors: [new Error('Cannot fetch gene data!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -89,6 +104,7 @@ class Data extends React.Component {
               errors: [new Error('Position not within the gene!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -103,6 +119,7 @@ class Data extends React.Component {
               errors: [new Error('Not a valid gene!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -117,6 +134,7 @@ class Data extends React.Component {
               errors: [new Error('Cannot fetch gene data!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -139,6 +157,7 @@ class Data extends React.Component {
               errors: [new Error('Position not within the gene!')],
             },
           });
+          this.setLoading();
           return;
         }
 
@@ -150,8 +169,8 @@ class Data extends React.Component {
           gene1Junction: values.gene1_breakpoint,
           gene2: gene2,
           gene2Data: gene2DataFinal,
-          gene2Junction: values.gene2_breakpoint,
-        });
+          gene2Junction: values.gene2_breakpoint},
+        this.setLoading);
       }
     });
   }
@@ -278,7 +297,7 @@ class Data extends React.Component {
         <br />
         <Row className="row-input">
           <Form.Item>
-            <Button type="primary" className="button" htmlType="submit">Submit</Button>
+            <Button type="primary" className="button" htmlType="submit" loading={this.state.loading}>Submit</Button>
             <Button type="default" className="button" onClick={this.clearData}>Clear</Button>
             <Button type="default" className="button" onClick={this.runExample}>Run example</Button>
           </Form.Item>
@@ -289,23 +308,4 @@ class Data extends React.Component {
 }
 
 const DataForm = Form.create({ name: 'fusion_data' })(Data);
-
 export default DataForm;
-
-
-
-// <div className="input">
-//   <label>Gene fusion name:</label>
-//   <Form.Item validateStatus="error">
-//     {getFieldDecorator('name', {
-//       rules: [{required: true, message: 'Please provide a name!'}],
-//     })(
-//       <Input
-//         onChange={this.handleChangeName}
-//         placeholder="Fusion name"
-//         style={{ width: '50%' }}/>
-//     )}
-//   </Form.Item>
-// </div>
-// <br />
-// <br />

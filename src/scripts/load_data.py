@@ -1,4 +1,5 @@
 import pyensembl
+import sys
 import sqlite3
 import boto3
 import pickle
@@ -7,7 +8,6 @@ dynamodb = boto3.resource('dynamodb')
 table_agfusion_gene_synonyms = dynamodb.Table('agfusion_gene_synonyms')
 table_agfusion_genes = dynamodb.Table('agfusion_genes')
 table_agfusion_sequences = dynamodb.Table('agfusion_sequences')
-table_agfusion_pd = dynamodb.Table('agfusion_protein_domain')
 
 def add_synonym(data, id, ensg):
 
@@ -45,57 +45,6 @@ def process_gene_synonym(species, release, pyens_db, c):
                     'ensembl_gene_id': ';'.join(ensg)
                 }
             )
-
-
-def process_gene_data(species, release, pyens_db, c):
-
-    genes = pyens_db.genes()
-
-    with table_agfusion_genes.batch_writer() as batch:
-        for gene in genes:
-            data = {
-                'id': gene.id,
-                'species_release': species + '_' + str(release),
-                'name': gene.name,
-                'start': gene.start,
-                'end': gene.end,
-                'strand': gene.strand,
-                'contig': gene.contig,
-                'biotype': gene.biotype,
-                'is_protein_coding': gene.is_protein_coding,
-                'transcripts': {}
-            }
-
-            for transcript in gene.transcripts:
-
-                five_prime_utr_len = 0
-                three_prime_utr_len = 0
-                if transcript.contains_start_codon:
-                    five_prime_utr_len = len(transcript.five_prime_utr_sequence)
-                if transcript.contains_stop_codon:
-                    three_prime_utr_len = len(transcript.three_prime_utr_sequence)
-
-                data['transcripts'][transcript.id] = {
-                    'name': transcript.name,
-                    'start': transcript.start,
-                    'end': transcript.end,
-                    'biotype': transcript.biotype,
-                    'complete': transcript.complete,
-                    'exons': [[i[0], i[1]] for i in transcript.exon_intervals],
-                    'has_start_codon': transcript.contains_start_codon,
-                    'has_stop_codon': transcript.contains_stop_codon,
-                    'five_prime_utr_len': five_prime_utr_len,
-                    'three_prime_utr_len': three_prime_utr_len,
-                    'is_protein_coding': transcript.is_protein_coding,
-                    'protein_id': transcript.protein_id
-                }
-
-                if transcript.is_protein_coding:
-                    data['transcripts'][transcript.id]['coding'] = \
-                        [[i[0], i[1]] for i in transcript.coding_sequence_position_ranges]
-
-            batch.put_item(Item=data)
-
 
 def write(db, species, release):
 
@@ -144,33 +93,83 @@ def upload_fasta(species, genome, release):
         )))
     write(db, species, release)
 
+def process_gene_data(species, release, pyens_db, c):
 
-def upload_protein(species, release, c):
     protein_db = [
         'pfam', 'smart', 'superfamily', 'tigrfam', 'pfscan', 'tmhmm', 'seg', 'ncoils', 'prints',
         'pirsf', 'signalp']
 
-    data = {}
+    domains = {}
     for pdb in protein_db:
         query = c.execute('select * from {}_{}_{}'.format(species, release, pdb)).fetchall()
 
         for q in query:
             ensp = q[1]
-            if ensp not in data:
-                data[ensp] = {j:[] for j in protein_db}
+            if ensp not in domains:
+                domains[ensp] = {j:[] for j in protein_db}
 
-            data[ensp][pdb].append(list(q[2:]))
+            domains[ensp][pdb].append(list(q[2:]))
 
-    with table_agfusion_pd.batch_writer() as batch:
-        for ensp, pdata in data.items():
-            batch.put_item(
-                Item={
-                    'id': ensp,
-                    'species_release': species + '_' + str(release),
-                    'domains': data[ensp]
+    genes = pyens_db.genes()
+
+    canonical = c.execute(
+        'select g.stable_id, t.transcript_stable_id from {}_{} g left join {}_{}_transcript t on g.canonical_transcript_id = t.transcript_id;'.format(
+            species,
+            release,
+            species,
+            release
+        )).fetchall()
+    canonical = dict(canonical)
+
+    with table_agfusion_genes.batch_writer() as batch:
+        for gene in genes:
+            data = {
+                'id': gene.id,
+                'species_release': species + '_' + str(release),
+                'name': gene.name,
+                'start': gene.start,
+                'end': gene.end,
+                'strand': gene.strand,
+                'contig': gene.contig,
+                'biotype': gene.biotype,
+                'is_protein_coding': gene.is_protein_coding,
+                'transcripts': {}
+            }
+
+            for transcript in gene.transcripts:
+
+                five_prime_utr_len = 0
+                three_prime_utr_len = 0
+                if transcript.contains_start_codon:
+                    five_prime_utr_len = len(transcript.five_prime_utr_sequence)
+                if transcript.contains_stop_codon:
+                    three_prime_utr_len = len(transcript.three_prime_utr_sequence)
+
+                data['transcripts'][transcript.id] = {
+                    'name': transcript.name,
+                    'start': transcript.start,
+                    'end': transcript.end,
+                    'biotype': transcript.biotype,
+                    'complete': transcript.complete,
+                    'exons': [[i[0], i[1]] for i in transcript.exon_intervals],
+                    'has_start_codon': transcript.contains_start_codon,
+                    'has_stop_codon': transcript.contains_stop_codon,
+                    'five_prime_utr_len': five_prime_utr_len,
+                    'three_prime_utr_len': three_prime_utr_len,
+                    'is_protein_coding': transcript.is_protein_coding,
+                    'protein_id': transcript.protein_id,
+                    'domains': {j: [] for j in protein_db},
+                    'canonical': True if transcript.id == canonical.get(gene.id, '') else False
                 }
-            )
 
+                if transcript.is_protein_coding:
+                    data['transcripts'][transcript.id]['coding'] = \
+                        [[i[0], i[1]] for i in transcript.coding_sequence_position_ranges]
+
+                if transcript.protein_id in domains:
+                    data['transcripts'][transcript.id]['domains'] = domains[transcript.protein_id]
+
+            batch.put_item(Item=data)
 
 def process_data(species, release, agfusion):
     pyens_db = pyensembl.EnsemblRelease(release, species)
@@ -178,9 +177,8 @@ def process_data(species, release, agfusion):
     c = db.cursor()
 
     # process_gene_synonym(species, release, pyens_db, c)
-    # process_gene_data(species, release, pyens_db, c)
+    process_gene_data(species, release, pyens_db, c)
     # upload_fasta('homo_sapiens', 'GRCh38', 94)
-    upload_protein(species, release, c)
 
 
 def put_to_dynamodb():
