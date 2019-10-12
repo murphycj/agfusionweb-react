@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover } from 'antd';
+import Plot from './Plot.jsx';
 
 class FusionTable extends React.Component {
 
@@ -7,9 +8,11 @@ class FusionTable extends React.Component {
     super(props);
     this.state = {
       onlyCanonical: true,
+      selectedFusion: null
     }
 
     this.onChangeCanonical = this.onChangeCanonical.bind(this);
+    this.onSelectRow = this.onSelectRow.bind(this);
   }
 
   onChangeCanonical() {
@@ -17,6 +20,13 @@ class FusionTable extends React.Component {
     this.setState({
       onlyCanonical: onlyCanonical,
     });
+  }
+
+  onSelectRow(fusion) {
+    console.log(fusion)
+    this.setState({
+      selectedFusion: fusion,
+    })
   }
 
   render() {
@@ -100,6 +110,10 @@ class FusionTable extends React.Component {
       this.props.fusions ?
         <Fragment>
           <Row>
+            <Plot selectedFusion={this.state.selectedFusion} />
+          </Row>
+          <hr/>
+          <Row>
             <Col span={6}>
               Genes:
               <Tag>{this.props.fusions[0].gene1.name}</Tag>
@@ -118,7 +132,12 @@ class FusionTable extends React.Component {
             <Table
               rowKey="name"
               dataSource={fusions}
-              columns={columns} />
+              columns={columns}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: event => this.onSelectRow(record)
+                };
+              }} />
           </Row>
         </Fragment>
         : null
