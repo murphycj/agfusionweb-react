@@ -1,0 +1,13 @@
+.Plot {
+  background-color: white;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.PlotNone {
+  background-color: #F3F3F3;
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}

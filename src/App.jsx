@@ -63,6 +63,7 @@ class App extends React.Component {
         <Content style={{ padding: '0 50px', marginTop: 64 }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 380 }}>
             <DataForm onSubmitCallback={this.onSubmit} onClearCallback={this.onClear} />
+            <hr/>
             <FusionTable fusions={this.state.fusions} />
           </div>
         </Content>
