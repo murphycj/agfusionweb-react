@@ -10,21 +10,31 @@ export class Transcript {
     this.hasStopCodon = data.has_stop_codon.BOOL || false;
     this.fivePrimeUtrLen = parseInt(data.five_prime_utr_len.N) || 0;
     this.threePrimeUtrLen = parseInt(data.three_prime_utr_len.N) || 0;
-
     this.start = parseInt(data.start.N);
     this.end = parseInt(data.end.N);
     this.strand = strand;
     this.length = this.end - this.start;
-    this.cdsLength = null;
-    this.cdnaLength = null;
-    this.proteinLength = null;
-    this.cds = null;
-    this.exons = null;
-
-    this.isProteinCoding = data.is_protein_coding.BOOL || false;
     this.name = data.name.S || this.id;
+
+    //cdna
+    this.exons = null;
+    this.exonSeqs = [];
+    this.cdnaSeq = null;
+    this.cdnaLength = null;
+
+    //cds
+    this.cds = null;
+    this.cdsSeq = null;
+    this.cdsSeqs = [];
+    this.cdsLength = null;
+
+    //protein
+    this.proteinLength = null;
+    this.proteinSeq = null;
+    this.isProteinCoding = data.is_protein_coding.BOOL || false;
     this.proteinId = data.protein_id.S;
     this.proteinDomains = {};
+    this.proteinSeq = null;
     for (var i = 0; i < PDBS.length; i++) {
       this.proteinDomains[PDBS[i]] = [];
     }
@@ -34,6 +44,57 @@ export class Transcript {
     this.parseExons(data);
     this.getLengths();
     this.parseDomains(data);
+  }
+
+  rangeOverlap(x1, x2, y1, y2) {
+    return x1 <= y2 && y1 <= x2;
+  }
+
+  getExonSeqs() {
+    var runningSum = 0;
+    for (var i = 0; i < this.exons.length; i++) {
+      var exon = this.exons[i];
+      var exonLength = exon[1] - exon[0] + 1;
+
+      if (this.cdnaSeq.length < (runningSum + exonLength)) {
+        consele.log(this.id);
+        console.log(runningSum + exonLength + ' is longer than the cdna');
+      }
+
+      this.exonSeqs.push(this.cdnaSeq.slice(runningSum, runningSum + exonLength));
+
+      runningSum += exonLength;
+    }
+  }
+
+  getCdsSeqs() {
+    if (this.isProteinCoding) {
+
+      for (var i = 0; i < this.cds.length; i++) {
+        var cds = this.cds[i];
+
+        for (var j = 0; j < this.exons.length; j++) {
+
+          var exon = this.exons[j];
+
+          if (!this.rangeOverlap(cds[0], cds[1], exon[0], exon[1])) {
+            continue;
+          }
+
+          var start = this.strand == '+' ? (cds[0] - exon[0]) : (exon[1] - cds[1]);
+          var end = (this.strand == '+' ? (cds[1] - exon[0]) : (exon[1] - cds[0])) + 1;
+
+          this.cdsSeqs.push(this.exonSeqs[j].slice(start, end));
+        }
+      }
+
+      this.cdsSeq = this.cdsSeqs.join('');
+    }
+  }
+
+  parseSeqs() {
+    this.getExonSeqs();
+    this.getCdsSeqs();
   }
 
   parseDomains(data) {
