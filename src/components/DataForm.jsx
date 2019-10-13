@@ -91,6 +91,7 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene1Data.length; i++) {
           if (gene1Data[i].contains(values.gene1_breakpoint)) {
+            gene1Data[i] = await this.getSequenceData(gene1Data[i]);
             gene1DataFinal.push(gene1Data[i]);
           }
         }
@@ -144,6 +145,7 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene2Data.length; i++) {
           if (gene2Data[i].contains(values.gene2_breakpoint)) {
+            gene2Data[i] = await this.getSequenceData(gene2Data[i]);
             gene2DataFinal.push(gene2Data[i]);
           }
         }
@@ -173,6 +175,48 @@ class Data extends React.Component {
         this.setLoading);
       }
     });
+  }
+
+  async getSequenceData(gene) {
+    var seqIds = [];
+
+    // get the transcript and protein sequnce ids
+
+    for (var i = 0; i < gene.transcripts.length; i++) {
+      seqIds.push(gene.transcripts[i].id);
+
+      if (gene.transcripts[i].proteinId !== undefined) {
+        seqIds.push(gene.transcripts[i].proteinId);
+      }
+    }
+
+    // fetch the sequences
+
+    var seqs = await this.state.ddb.getSequences(seqIds);
+    var seqsProcessed = {};
+
+    for (var i = 0; i < seqs.length; i++) {
+      var seqId = seqs[i].id.S;
+      var seq = seqs[i].sequence.S || '';
+      seqsProcessed[seqId] = seq;
+    }
+
+    // add the sequences to the transcripts
+
+    for (var i = 0; i < gene.transcripts.length; i++) {
+
+      if (gene.transcripts[i].id in seqsProcessed) {
+        gene.transcripts[i].cdnaSeq = seqsProcessed[gene.transcripts[i].id];
+        gene.transcripts[i].parseSeqs();
+      }
+
+      if (gene.transcripts[i].proteinId in seqsProcessed) {
+        gene.transcripts[i].proteinSeq = seqsProcessed[gene.transcripts[i].proteinId];
+      }
+
+    }
+
+    return gene;
   }
 
   async getGeneData(gene) {
