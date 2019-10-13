@@ -1,5 +1,5 @@
 
-import { CODING_COMBINATIONS, PDBS, PROTEINWEIGHT } from './utils';
+import { CODING_COMBINATIONS, PDBS, molecularWeight, translate  } from './utils';
 
 const MIN_DOMAIN_LENGTH = 5;
 
@@ -68,7 +68,7 @@ export class FusionTranscript {
     // protein stuff
 
     this.protein = '';
-    this.molecularWeight = 0;
+    this.molecularWeight = null;
     this.proteinJunctionGene1 = 0;
     this.proteinJunctionGene2 = 0;
     this.proteinDomains = {};
@@ -562,7 +562,8 @@ export class FusionTranscript {
 
     // predict molecular weight
 
-    // self.molecular_weight = SeqUtils.molecular_weight(protein_seq)/1000.
+    this.molecularWeight = molecularWeight(protein_seq);
+
 
   }
 
