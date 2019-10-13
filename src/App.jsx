@@ -61,7 +61,7 @@ class App extends React.Component {
           <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions</div>
         </Header>
         <Content style={{ padding: '0 50px', marginTop: 64 }}>
-          <div style={{ background: '#fff', padding: 24, minHeight: 380 }}>
+          <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
             <DataForm onSubmitCallback={this.onSubmit} onClearCallback={this.onClear} />
             <hr/>
             <FusionTable fusions={this.state.fusions} />
