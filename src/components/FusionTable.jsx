@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover } from 'antd';
+
 import Plot from './Plot.jsx';
+import './FusionTable.css';
 
 class FusionTable extends React.Component {
 
@@ -113,7 +115,7 @@ class FusionTable extends React.Component {
             <Plot selectedFusion={this.state.selectedFusion} />
           </Row>
           <hr/>
-          <Row>
+          <Row className="Controls">
             <Col span={6}>
               Genes:
               <Tag>{this.props.fusions[0].gene1.name}</Tag>
@@ -121,11 +123,13 @@ class FusionTable extends React.Component {
             </Col>
             <Col span={6}>
               Show only canonical
-              <Tooltip title="By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence.">
+              <Tooltip className="Tooltip" title="By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence.">
                 <Icon type="question-circle" />
               </Tooltip>: <Switch checked={this.state.onlyCanonical} onChange={this.onChangeCanonical}/>
             </Col>
-            <Col span={12}>
+            <Col span={6}>
+            </Col>
+            <Col span={6}>
             </Col>
           </Row>
           <Row>
