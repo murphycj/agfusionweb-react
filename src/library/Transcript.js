@@ -109,13 +109,14 @@ export class Transcript {
       this.proteinDomains[PDBS[i]] = [];
 
       if (data.domains.M[pdb].L.length > 0) {
-        this.proteinDomains[pdb] = data.domains.M[pdb].L.map((val) => [
-          val.L[0].S,
-          parseInt(val.L[1].N) || 0,
-          parseInt(val.L[2].N) || 0,
-          val.L[3].S || '',
-          val.L[4].S || ''
-        ]);
+        this.proteinDomains[pdb] = data.domains.M[pdb].L.map((val) => {
+          return {
+            id: val.L[0].S,
+            start: parseInt(val.L[1].N) || 0,
+            end: parseInt(val.L[2].N) || 0,
+            name: val.L[3].S || '',
+            desc: val.L[4].S || ''};
+        });
       }
     }
   }

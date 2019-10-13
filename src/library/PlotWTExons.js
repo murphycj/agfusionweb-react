@@ -3,7 +3,7 @@ import { PlotExons } from './PlotExons';
 export class PlotWTExons extends PlotExons {
   constructor(transcript, ...args) {
     super(...args);
-    this.transcript = transcript
+    this.transcript = transcript;
     this.draw();
   }
 
@@ -12,7 +12,8 @@ export class PlotWTExons extends PlotExons {
 
     length = (this.transcript.end - this.transcript.start) / this.normalize * 0.9;
 
-    this.linesBody.push({
+    this.body.push({
+      type: 'line',
       x0: this.offset,
       x1: this.offset + length,
       y0: 0.5,
@@ -20,20 +21,22 @@ export class PlotWTExons extends PlotExons {
       color: 'black'
     });
 
-    this.texts.push({
-      x: 0.5,
-      y: 0.9,
-      text: name
-    });
-
-    this.texts.push({
-      x: 0.5,
-      y: 0.83,
-      text: uid
-    });
+    // this.texts.push({
+    //   x: 0.5,
+    //   y: 0.9,
+    //   text: name
+    // });
+    //
+    // this.texts.push({
+    //   x: 0.5,
+    //   y: 0.83,
+    //   text: uid
+    // });
   }
 
   drawExons() {
+
+    var index = 0;
 
     for (var i = 0; i < this.transcript.exons.length; i++) {
 
@@ -55,15 +58,18 @@ export class PlotWTExons extends PlotExons {
 
       var exonStart = (start / this.normalize) * 0.9 + this.offset
       var exonEnd = (end / this.normalize) * 0.9 + this.offset
-      var exonCenter = (exonEnd - exonStart) / 2 + exonStart
+      // var exonCenter = (exonEnd - exonStart) / 2 + exonStart
 
       this.rects.push({
         x: exonStart,
         y: 0.45,
         width: exonEnd - exonStart,
         height: 0.1,
-        color: 'black'
+        color: 'black',
+        index: index
       });
+
+      index++;
     }
   }
 

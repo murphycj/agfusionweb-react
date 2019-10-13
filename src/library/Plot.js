@@ -3,18 +3,15 @@ const HORIZONTAL_LEVELS = [1,2,3,4];
 
 
 export class Plot {
-  constructor(filename='', height=0, width=0, dpi=0, fontSize=12, scale=0) {
+  constructor(fontSize=12, scale=0) {
 
-    this.filename = filename;
     this.scale = scale;
-    this.width = width;
-    this.height = height;
-    this.dpi = dpi;
     this.fontSize = fontSize;
     this.texts = [];
     this.lines = [];
-    this.linesBody = [];
+    this.body = [];
     this.rects = [];
+    this.labels = [];
   }
 
   scaleSequence(seqLength) {

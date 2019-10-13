@@ -43,7 +43,7 @@ export class FusionTranscript {
 
     // cDNA stuff
 
-    this.cdna = '';
+    this.cdnaSeq = '';
     this.cdnaGene1Seq = '';
     this.cdnaGene2Seq = '';
     this.cdnaGene1Len = 0;
@@ -55,7 +55,7 @@ export class FusionTranscript {
 
     // CDS stuff
 
-    this.cds = '';
+    this.cdsSeq = '';
     this.cdsGene1Seq = '';
     this.cdsGene2Seq = '';
     this.cdsGene1Len = 0;
@@ -67,7 +67,8 @@ export class FusionTranscript {
 
     // protein stuff
 
-    this.protein = '';
+    this.proteinSeq = '';
+    this.proteinSeqLen = null;
     this.molecularWeight = null;
     this.proteinJunctionGene1 = 0;
     this.proteinJunctionGene2 = 0;
@@ -454,12 +455,14 @@ export class FusionTranscript {
       }
     }
 
-    // get the lengths of the cDNA segments
+    // get the cdna and their lengths
+
+    this.cdnaGene1Seq = this.transcript1.cdnaSeq.slice(0, this.cdnaJunctionGene1);
+    this.cdnaGene2Seq = this.transcript2.cdnaSeq.slice(this.cdnaJunctionGene2);
+    this.cdnaSeq = this.cdnaGene1Seq + this.cdnaGene2Seq;
 
     this.cdnaGene1Len = this.cdnaJunctionGene1;
     this.cdnaGene2Len = this.transcript2.cdnaLength - this.cdnaJunctionGene2;
-
-    // this.effect = this.gene1JunctionLoc + '-' + this.gene2JunctionLoc;
   }
 
   fetchCds() {
@@ -491,8 +494,6 @@ export class FusionTranscript {
       }
     }
 
-    // self.cds_5prime = self.transcript1.coding_sequence[0:self.transcript_cds_junction_5prime]
-
     cds = this.transcript2.cds;
 
     if (this.transcript2.strand == "+") {
@@ -517,12 +518,14 @@ export class FusionTranscript {
       }
     }
 
-    // get the lengths of the cDNA segments
+    // get the cds and their lengthslengths of the cDNA segments
+
+    this.cdsGene1Seq = this.transcript1.cdsSeq.slice(0, this.cdsJunctionGene1);
+    this.cdsGene2Seq = this.transcript2.cdsSeq.slice(this.cdsJunctionGene2);
+    this.cdsSeq = this.cdsGene1Seq + this.cdsGene2Seq;
 
     this.cdsGene1Len = this.cdsJunctionGene1;
     this.cdsGene2Len = this.transcript2.cdsLength - this.cdsJunctionGene2;
-
-    // self.cds_3prime = self.transcript2.coding_sequence[self.transcript_cds_junction_3prime::]
   }
 
   fetchProtein() {
@@ -541,28 +544,30 @@ export class FusionTranscript {
 
     // check if CDS's length is multiple of 3, if not then print warning
 
-    // if ((len(self.cds.seq) % 3) !=0) {
-    // }
-
+    if (this.effect == 'in-frame' && (this.cdsSeq.length % 3) != 0) {
+      console.log('fusion is in-frame but cds is not a multiple of 3!');
+    }
 
     // translate CDS into protein and remove everything after the stop codon
 
-    // if (this.effect == 'out-of-frame') {
-    //
-    //   // trim the CDS sequence if fusion is out-of-frame
-    //
-    //   seq = self.cds.seq[0:3*int(len(self.cds.seq)/3)]
-    //
-    //   protein_seq = seq.translate()
-    //   protein_seq = protein_seq[0:protein_seq.find('*')]
-    // } else {
-    //   protein_seq = self.cds.seq.translate()
-    //   protein_seq = protein_seq[0:protein_seq.find('*')]
-    // }
+    if (this.effect == 'out-of-frame') {
+
+      // trim the CDS sequence if fusion is out-of-frame
+
+      var cdsTrimmed = this.cdsSeq.slice(0, 3*parseInt(tt.length/3));
+
+      this.proteinSeq = translate(cdsTrimmed);
+      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf('*'));
+    } else {
+      this.proteinSeq = translate(this.cdsSeq)
+      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf('*'));
+    }
+
+    this.proteinSeqLen = this.proteinSeq.length;
 
     // predict molecular weight
 
-    this.molecularWeight = molecularWeight(protein_seq);
+    this.molecularWeight = molecularWeight(this.proteinSeq);
 
 
   }
@@ -588,27 +593,16 @@ export class FusionTranscript {
 
         domain = this.transcript1.proteinDomains[pdb][i];
 
-        if (this.proteinJunctionGene1 < domain[1]) {
+        if (this.proteinJunctionGene1 < domain.start) {
           continue;
-        } else if (this.proteinJunctionGene1 >= domain[2]) {
+        } else if (this.proteinJunctionGene1 >= domain.end) {
 
-          this.proteinDomains[pdb].push([
-            domain[0], //id
-            domain[4], //name
-            domain[3], //desc
-            domain[1], // start
-            domain[2] // end
-          ]);
+          this.proteinDomains[pdb].push(domain);
 
-        } else if ((this.proteinJunctionGene1 - domain[1]) >= MIN_DOMAIN_LENGTH) {
+        } else if ((this.proteinJunctionGene1 - domain.start) >= MIN_DOMAIN_LENGTH) {
 
-          this.proteinDomains[pdb].push([
-            domain[0], //id
-            domain[4], //name
-            domain[3], //desc
-            domain[1], // start
-            this.proteinJunctionGene1 // end
-          ]);
+          domain.end = this.proteinJunctionGene1;
+          this.proteinDomains[pdb].push(domain);
         }
       }
 
@@ -620,27 +614,20 @@ export class FusionTranscript {
 
           domain = this.transcript2.proteinDomains[pdb][i];
 
-          if (this.proteinJunctionGene2 > domain[2]) {
+          if (this.proteinJunctionGene2 > domain.end) {
               continue
-          } else if (this.proteinJunctionGene2 <= domain[1]) {
+          } else if (this.proteinJunctionGene2 <= domain.start) {
 
-            this.proteinDomains[pdb].push([
-              domain[0], //id
-              domain[4], //name
-              domain[3], //desc
-              (domain[1] - this.proteinJunctionGene2) + this.proteinJunctionGene1, //start
-              (domain[2] - this.proteinJunctionGene2) + this.proteinJunctionGene1 //end
-            ]);
+            domain.start = (domain.start - this.proteinJunctionGene2) + this.proteinJunctionGene1;
+            domain.end = (domain.end - this.proteinJunctionGene2) + this.proteinJunctionGene1;
+
+            this.proteinDomains[pdb].push(domain);
 
           } else {
 
-            this.proteinDomains[pdb].push([
-              domain[0], //id
-              domain[4], //name
-              domain[3], //desc
-              this.proteinJunctionGene1,
-              (domain[2] - this.proteinJunctionGene2) + this.proteinJunctionGene1
-            ]);
+            domain.start = this.proteinJunctionGene1;
+            domain.end = (domain.end - this.proteinJunctionGene2) + this.proteinJunctionGene1;
+            this.proteinDomains[pdb].push(domain);
           }
         }
       }
