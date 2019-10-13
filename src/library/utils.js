@@ -185,4 +185,73 @@ const PROTEINWEIGHT = {
     "Y": 181.1885
   };
 
-export { CODING_COMBINATIONS, PDBS };
+// from https://github.com/biopython/biopython/blob/master/Bio/Data/CodonTable.py
+
+const CODON = {
+  'Standard': {
+    'table': {
+      "TTT": "F", "TTC": "F", "TTA": "L", "TTG": "L",
+      "TCT": "S", "TCC": "S", "TCA": "S", "TCG": "S",
+      "TAT": "Y", "TAC": "Y", "TGT": "C", "TGC": "C",
+      "TGG": "W", "CTT": "L", "CTC": "L", "CTA": "L",
+      "CTG": "L", "CCT": "P", "CCC": "P", "CCA": "P",
+      "CCG": "P", "CAT": "H", "CAC": "H", "CAA": "Q",
+      "CAG": "Q", "CGT": "R", "CGC": "R", "CGA": "R",
+      "CGG": "R", "ATT": "I", "ATC": "I", "ATA": "I",
+      "ATG": "M", "ACT": "T", "ACC": "T", "ACA": "T",
+      "ACG": "T", "AAT": "N", "AAC": "N", "AAA": "K",
+      "AAG": "K", "AGT": "S", "AGC": "S", "AGA": "R",
+      "AGG": "R", "GTT": "V", "GTC": "V", "GTA": "V",
+      "GTG": "V", "GCT": "A", "GCC": "A", "GCA": "A",
+      "GCG": "A", "GAT": "D", "GAC": "D", "GAA": "E",
+      "GAG": "E", "GGT": "G", "GGC": "G", "GGA": "G",
+      "GGG": "G",
+      'TAA': '*', 'TAG': '*', 'TGA': '*'}, //stop
+    'start_codons': ["TTG", "CTG", "ATG"]}};
+
+function translate(seq, type='Standard') {
+  var protein = '';
+  seq = seq.split('');
+
+  var codon = '';
+
+  for (var i = 0; i < seq.length; i++) {
+    codon += seq[i];
+
+    if (codon.length == 3) {
+
+      if (!(codon in CODON[type]['table'])) {
+        console.log(codon + ' not in list of valid codons!')
+        codon = '';
+        continue;
+      }
+
+      protein += CODON[type]['table'][codon];
+
+      codon = '';
+    }
+  }
+
+  return protein;
+}
+
+function molecularWeight(seq) {
+  var weight = 0;
+  seq = seq.split('');
+
+  for (var i = 0; i < seq.length; i++) {
+    var aa = seq[i];
+
+    if (!(aa in PROTEINWEIGHT)) {
+      console.log(aa + ' not in list of valid codons!')
+      continue;
+    }
+
+    weight += PROTEINWEIGHT[aa];
+
+  }
+
+  return weight/1000;
+}
+
+export { CODING_COMBINATIONS, PDBS, translate, molecularWeight };
