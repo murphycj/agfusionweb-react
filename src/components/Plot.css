@@ -11,3 +11,20 @@
   margin-top: 20px;
   margin-bottom: 20px;
 }
+
+.Download-Image {
+  align-items: flex-end;
+  margin: 20px;
+}
+
+.Plot-Select {
+  width: 300;
+}
+
+.Plot-Controls {
+  height: 50px;
+}
+
+.Plot-Control-Buttons {
+  margin: 20px;
+}
