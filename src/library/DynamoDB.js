@@ -14,13 +14,13 @@ export class DynamoDB {
     this.ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
   }
 
-  getGene(gene_id) {
+  getGene(gene_id, speciesRelease='homo_sapiens_94') {
 
     var params = {
       TableName: 'agfusion_genes',
       Key: {
         'id': {S: gene_id},
-        'species_release': {S: 'homo_sapiens_94'}
+        'species_release': {S: speciesRelease}
       }
     };
     var self = this;
@@ -37,36 +37,42 @@ export class DynamoDB {
     })
   }
 
-  getSequence(gene_id) {
+  getSequences(ids, speciesRelease='homo_sapiens_94') {
 
     var params = {
-      TableName: 'agfusion_sequences',
-      Key: {
-        'id': {S: gene_id},
-        'species_release': {S: 'homo_sapiens_94'}
+      RequestItems: {
+        'agfusion_sequences': {
+          Keys: ids.map((val) => {
+            return {
+              'id': {S: val},
+              'species_release': {S: speciesRelease}
+            };
+          })
+        }
       }
     };
+
     var self = this;
 
     return new Promise(function(resolve, reject) {
-      self.ddb.getItem(params, function(err, data) {
+      self.ddb.batchGetItem(params, function(err, data) {
         if (err) {
           console.log("Error", err);
           resolve();
         } else {
-          resolve(data.Item)
+          resolve(data.Responses.agfusion_sequences);
         }
       });
     })
   }
 
-  getGeneSynonym(gene_id) {
+  getGeneSynonym(gene_id, speciesRelease='homo_sapiens_94') {
 
     var params = {
       TableName: 'agfusion_gene_synonyms',
       Key: {
         'gene_id': {S: gene_id},
-        'species_release': {S: 'homo_sapiens_94'}
+        'species_release': {S: speciesRelease}
       }
     };
     var self = this;
