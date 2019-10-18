@@ -8,6 +8,7 @@ import { PlotWTExons } from '../library/PlotWTExons';
 import { PlotFusionExons } from '../library/PlotFusionExons';
 import { PlotWTProtein } from '../library/PlotWTProtein';
 import { PlotFusionProtein } from '../library/PlotFusionProtein';
+import { COLORS } from '../library/utils';
 
 class Plot extends React.Component {
 
@@ -18,90 +19,31 @@ class Plot extends React.Component {
       plotTypeProtein: 'fusionProtein',
       plotTypeExon: '',
       pdbs: ['pfam'],
+      domainColors: {},
+      colorIndex: 0,
     }
 
-    this.downloadImage = this.downloadImage.bind(this);
+    this._downloadImage = this._downloadImage.bind(this);
     this.hover = this.hover.bind(this);
-    this.handleRadioChange = this.handleRadioChange.bind(this);
+    this._handleRadioChange = this._handleRadioChange.bind(this);
+    this._getPlotData = this._getPlotData.bind(this);
+    this._handleRadioChange = this._handleRadioChange.bind(this);
   }
 
-  handleRadioChange(e) {
-
-    this.setState({ plotType: e.target.value });
+  componentWillMount() {
+    this._getPlotData();
   }
 
   hover() {
     console.log('boo')
   }
 
-  downloadImage() {
-    console.log(this.state.imageRef);
-    var dataURL = this.state.imageRef.current.toDataURL({ pixelRatio: 3 });
-
-    var link = document.createElement('a');
-    link.download = 'stage.png';
-    link.href = dataURL;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    link.remove();
-
-  }
-
   render() {
 
-    var isProteinCoding = false;
-    const { plotTypeProtein } = this.state;
-    const { plotTypeExon } = this.state;
-    var plotData = null;
-
-    if (this.props.selectedFusion) {
-      if (plotTypeProtein == 'fusionProtein') {
-
-        if (this.props.selectedFusion.hasProteinCodingPotential) {
-          var plotData = new PlotFusionProtein(this.props.selectedFusion);
-          plotData.rects = plotData.rects.filter((val) => {
-            return this.state.pdbs.includes(val.pdb);
-          });
-        }
-
-      } else if (plotTypeProtein == 'gene1Protein') {
-
-        if (this.props.selectedFusion.transcript1.isProteinCoding) {
-          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript1);
-          plotData.rects = plotData.rects.filter((val) => {
-            return this.state.pdbs.includes(val.pdb);
-          });
-        }
-
-      } else if (plotTypeProtein == 'gene2Protein') {
-
-        if (this.props.selectedFusion.transcript2.isProteinCoding) {
-          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript2);
-          plotData.rects = plotData.rects.filter((val) => {
-            return this.state.pdbs.includes(val.pdb);
-          });
-        }
-
-      } else if (plotTypeExon == 'fusionExon') {
-
-        var plotData = new PlotFusionExons(this.props.selectedFusion);
-
-      } else if (plotTypeExon == 'gene1Exon') {
-
-        var plotData = new PlotWTExons(this.props.selectedFusion.transcript1);
-
-      } else if (plotTypeExon == 'gene2Exon') {
-
-        var plotData = new PlotWTExons(this.props.selectedFusion.transcript2);
-
-      }
-      console.log(plotData)
-    }
+    const { plotData } = this.state;
 
     var width = 800;
     var height = 300;
-
 
     return (
       this.props.selectedFusion ?
@@ -109,26 +51,16 @@ class Plot extends React.Component {
           <Row className="Plot-Controls">
             <Col span={18}>
               <Radio.Group
-                  value={plotTypeProtein}
-                  onChange={(e) => {
-                    this.setState({
-                      plotTypeProtein: e.target.value,
-                      plotTypeExon: ''
-                    });
-                  }}
+                  value={this.state.plotTypeProtein}
+                  onChange={this._handleRadioChange}
                   className="Plot-Control-Buttons">
                 <Radio.Button value="fusionProtein">Fusion protein</Radio.Button>
                 <Radio.Button value="gene1Protein">5' gene protein</Radio.Button>
                 <Radio.Button value="gene2Protein">3' gene protein</Radio.Button>
               </Radio.Group>
               <Radio.Group
-                  value={plotTypeExon}
-                  onChange={(e) => {
-                    this.setState({
-                      plotTypeProtein: '',
-                      plotTypeExon: e.target.value
-                    });
-                  }}
+                  value={this.state.plotTypeExon}
+                  onChange={this._handleRadioChange}
                   className="Plot-Controls-Buttons">
                 <Radio.Button value="fusionExon">Fusion exons</Radio.Button>
                 <Radio.Button value="gene1Exon">5' gene exons</Radio.Button>
@@ -136,7 +68,7 @@ class Plot extends React.Component {
               </Radio.Group>
             </Col>
             <Col span={6}>
-              <Button className="Download-Image" onClick={this.downloadImage}><Icon type="download" />PNG</Button>
+              <Button className="Download-Image" onClick={this._downloadImage}><Icon type="download" />PNG</Button>
             </Col>
           </Row>
           {plotData ?
@@ -206,6 +138,101 @@ class Plot extends React.Component {
           </Layer>
         </Stage>
     )
+  }
+
+  _handleRadioChange(e) {
+    if (['fusionProtein', 'gene1Protein', 'gene2Protein'].includes(e.target.value)) {
+      this.setState({
+        plotTypeProtein: e.target.value,
+        plotTypeExon: ''
+      });
+    } else {
+      this.setState({
+        plotTypeProtein: '',
+        plotTypeExon: e.target.value
+      });
+    }
+    this._getPlotData();
+  }
+
+  _getPlotData() {
+
+    const {
+      plotTypeProtein,
+      plotTypeExon,
+      domainColors,
+      colorIndex
+    } = this.state;
+
+    var isProteinCoding = false;
+    var plotData = null;
+
+    if (this.props.selectedFusion) {
+      if (plotTypeProtein == 'fusionProtein') {
+
+        if (this.props.selectedFusion.hasProteinCodingPotential) {
+          var plotData = new PlotFusionProtein(this.props.selectedFusion);
+          plotData = this._filterDomains(plotData);
+        }
+
+      } else if (plotTypeProtein == 'gene1Protein') {
+
+        if (this.props.selectedFusion.transcript1.isProteinCoding) {
+          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript1);
+          plotData = this._filterDomains(plotData);
+        }
+
+      } else if (plotTypeProtein == 'gene2Protein') {
+
+        if (this.props.selectedFusion.transcript2.isProteinCoding) {
+          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript2);
+          plotData = this._filterDomains(plotData);
+        }
+
+      } else if (plotTypeExon == 'fusionExon') {
+
+        var plotData = new PlotFusionExons(this.props.selectedFusion);
+
+      } else if (plotTypeExon == 'gene1Exon') {
+
+        var plotData = new PlotWTExons(this.props.selectedFusion.transcript1);
+
+      } else if (plotTypeExon == 'gene2Exon') {
+
+        var plotData = new PlotWTExons(this.props.selectedFusion.transcript2);
+
+      }
+      console.log(plotData)
+    }
+
+    this.setState({
+      plotData: plotData,
+    });
+  }
+
+  _downloadImage() {
+    const { imageRef } = this.state;
+
+    console.log(imageRef);
+    var dataURL = imageRef.current.toDataURL({ pixelRatio: 3 });
+
+    var link = document.createElement('a');
+    link.download = 'stage.png';
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    link.remove();
+  }
+
+  _filterDomains(plotData) {
+    const { pdbs } = this.state;
+
+    plotData.rects = plotData.rects.filter((val) => {
+      return pdbs.includes(val.pdb);
+    });
+
+    return plotData;
   }
 }
 
