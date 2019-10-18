@@ -21,17 +21,41 @@ class App extends React.Component {
       fusions: null
     }
 
-    this.onSubmit = this.onSubmit.bind(this);
-    this.onClear = this.onClear.bind(this);
+    this._onSubmit = this._onSubmit.bind(this);
+    this._onClear = this._onClear.bind(this);
   }
 
-  onClear() {
+  render() {
+
+    const { fusions } = this.state;
+
+    return (
+      <Layout >
+        <Header>
+          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions</div>
+        </Header>
+        <Content style={{ padding: '0 50px', marginTop: 64 }}>
+          <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
+            <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
+            <hr/>
+            <FusionTable fusions={fusions} />
+          </div>
+        </Content>
+        <Footer className="App-footer">
+          <a href="https://github.com/murphycj/AGFusion">AGFusion on GitHub </a>
+          | {'\u00A9'} 2019 Charlie Murphy
+        </Footer>
+      </Layout>
+    );
+  }
+
+  _onClear() {
     this.setState({
       fusions: null,
     });
   }
 
-  onSubmit(fusionData, setLoadingCallback) {
+  _onSubmit(fusionData, setLoadingCallback) {
 
     console.log(fusionData);
 
@@ -52,27 +76,6 @@ class App extends React.Component {
     });
 
     setLoadingCallback();
-  }
-
-  render() {
-    return (
-      <Layout >
-        <Header>
-          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions</div>
-        </Header>
-        <Content style={{ padding: '0 50px', marginTop: 64 }}>
-          <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
-            <DataForm onSubmitCallback={this.onSubmit} onClearCallback={this.onClear} />
-            <hr/>
-            <FusionTable fusions={this.state.fusions} />
-          </div>
-        </Content>
-        <Footer className="App-footer">
-          <a href="https://github.com/murphycj/AGFusion">AGFusion on GitHub </a>
-          | {'\u00A9'} 2019 Charlie Murphy
-        </Footer>
-      </Layout>
-    );
   }
 }
 
