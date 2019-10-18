@@ -4,6 +4,11 @@ import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover } from 'antd';
 import Plot from './Plot.jsx';
 import './FusionTable.css';
 
+import { PlotWTExons } from '../library/PlotWTExons';
+import { PlotFusionExons } from '../library/PlotFusionExons';
+import { PlotWTProtein } from '../library/PlotWTProtein';
+import { PlotFusionProtein } from '../library/PlotFusionProtein';
+
 const helpText = {
   canonical: "By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence."
 };
@@ -14,8 +19,9 @@ class FusionTable extends React.Component {
     super(props);
     this.state = {
       onlyCanonical: true,
-      selectedFusion: null
-    }
+      selectedFusionTranscript: null,
+      plotData: null
+    };
 
     this._onChangeCanonical = this._onChangeCanonical.bind(this);
     this._onSelectRow = this._onSelectRow.bind(this);
@@ -23,10 +29,15 @@ class FusionTable extends React.Component {
 
   render() {
 
-    if (this.props.fusions) {
-      var fusions = Object.keys(this.props.fusions[0].transcripts).map(val => this.props.fusions[0].transcripts[val]);
-      if (this.state.onlyCanonical) {
-        fusions = fusions.filter(val => val.canonical);
+    const { selectedFusionTranscript, plotData, onlyCanonical } = this.state;
+    const { fusions } = this.props;
+    var fusionIsoforms = null;
+
+
+    if (fusions) {
+      fusionIsoforms = Object.keys(fusions[0].transcripts).map(val => fusions[0].transcripts[val]);
+      if (onlyCanonical) {
+        fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
       }
     }
 
@@ -99,23 +110,23 @@ class FusionTable extends React.Component {
     ];
 
     return (
-      this.props.fusions ?
+      fusions ?
         <Fragment>
           <Row>
-            <Plot selectedFusion={this.state.selectedFusion} />
+            <Plot selectedFusion={selectedFusionTranscript} plotData={plotData}/>
           </Row>
           <hr/>
           <Row className="Controls">
             <Col span={6}>
               Genes:
-              <Tag>{this.props.fusions[0].gene1.name}</Tag>
-              <Tag>{this.props.fusions[0].gene2.name}</Tag>
+              <Tag>{fusions[0].gene1.name}</Tag>
+              <Tag>{fusions[0].gene2.name}</Tag>
             </Col>
             <Col span={6}>
               Show only canonical
               <Tooltip className="Tooltip" title={helpText.canonical}>
                 <Icon type="question-circle" />
-              </Tooltip>: <Switch checked={this.state.onlyCanonical} onChange={this._onChangeCanonical}/>
+              </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
             <Col span={6}>
             </Col>
@@ -125,7 +136,7 @@ class FusionTable extends React.Component {
           <Row>
             <Table
               rowKey="name"
-              dataSource={fusions}
+              dataSource={fusionIsoforms}
               columns={columns}
               onRow={(record, rowIndex) => {
                 return {
@@ -138,12 +149,38 @@ class FusionTable extends React.Component {
     )
   }
 
-  _onSelectRow(fusion) {
-    console.log(fusion)
+  _onSelectRow(fusionTranscript) {
+    console.log(fusionTranscript)
+
+    var plotData = {
+      fusionProtein: null,
+      gene1Protein: null,
+      gene2Protein: null,
+      fusionExon: null,
+      gene1Exon: null,
+      gene2Exon: null
+    };
+
+    if (fusionTranscript.hasProteinCodingPotential) {
+      plotData.fusionProtein = new PlotFusionProtein(fusionTranscript);
+    }
+
+    if (fusionTranscript.transcript1.isProteinCoding) {
+      plotData.gene1Protein = new PlotWTProtein(fusionTranscript.transcript1);
+    }
+
+    if (fusionTranscript.transcript2.isProteinCoding) {
+      plotData.gene2Protein = new PlotWTProtein(fusionTranscript.transcript2);
+    }
+
+    plotData.fusionExon = new PlotFusionExons(fusionTranscript);
+    plotData.gene1Exon = new PlotWTExons(fusionTranscript.transcript1);
+    plotData.gene2Exon = new PlotWTExons(fusionTranscript.transcript2);
+
     this.setState({
-      selectedFusion: fusion,
+      selectedFusionTranscript: fusionTranscript,
+      plotData: plotData
     });
-    this.updatePlot
   }
 
   _onChangeCanonical() {
