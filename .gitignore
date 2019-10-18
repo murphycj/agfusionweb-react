@@ -1,5 +1,6 @@
 node_modules
 .DS_Store
+credentials-2.csv
 
 # Created by https://www.gitignore.io/api/django
 # Edit at https://www.gitignore.io/?templates=django
