@@ -171,35 +171,35 @@ class Plot extends React.Component {
       if (plotTypeProtein == 'fusionProtein') {
 
         if (this.props.selectedFusion.hasProteinCodingPotential) {
-          var plotData = new PlotFusionProtein(this.props.selectedFusion);
+          plotData = new PlotFusionProtein(this.props.selectedFusion);
           plotData = this._filterDomains(plotData);
         }
 
       } else if (plotTypeProtein == 'gene1Protein') {
 
         if (this.props.selectedFusion.transcript1.isProteinCoding) {
-          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript1);
+          plotData = new PlotWTProtein(this.props.selectedFusion.transcript1);
           plotData = this._filterDomains(plotData);
         }
 
       } else if (plotTypeProtein == 'gene2Protein') {
 
         if (this.props.selectedFusion.transcript2.isProteinCoding) {
-          var plotData = new PlotWTProtein(this.props.selectedFusion.transcript2);
+          plotData = new PlotWTProtein(this.props.selectedFusion.transcript2);
           plotData = this._filterDomains(plotData);
         }
 
       } else if (plotTypeExon == 'fusionExon') {
 
-        var plotData = new PlotFusionExons(this.props.selectedFusion);
+        plotData = new PlotFusionExons(this.props.selectedFusion);
 
       } else if (plotTypeExon == 'gene1Exon') {
 
-        var plotData = new PlotWTExons(this.props.selectedFusion.transcript1);
+        plotData = new PlotWTExons(this.props.selectedFusion.transcript1);
 
       } else if (plotTypeExon == 'gene2Exon') {
 
-        var plotData = new PlotWTExons(this.props.selectedFusion.transcript2);
+        plotData = new PlotWTExons(this.props.selectedFusion.transcript2);
 
       }
       console.log(plotData)
