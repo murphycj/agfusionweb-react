@@ -4,6 +4,10 @@ import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover } from 'antd';
 import Plot from './Plot.jsx';
 import './FusionTable.css';
 
+const helpText = {
+  canonical: "By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence."
+};
+
 class FusionTable extends React.Component {
 
   constructor(props) {
@@ -13,22 +17,8 @@ class FusionTable extends React.Component {
       selectedFusion: null
     }
 
-    this.onChangeCanonical = this.onChangeCanonical.bind(this);
-    this.onSelectRow = this.onSelectRow.bind(this);
-  }
-
-  onChangeCanonical() {
-    var onlyCanonical = !this.state.onlyCanonical;
-    this.setState({
-      onlyCanonical: onlyCanonical,
-    });
-  }
-
-  onSelectRow(fusion) {
-    console.log(fusion)
-    this.setState({
-      selectedFusion: fusion,
-    })
+    this._onChangeCanonical = this._onChangeCanonical.bind(this);
+    this._onSelectRow = this._onSelectRow.bind(this);
   }
 
   render() {
@@ -123,9 +113,9 @@ class FusionTable extends React.Component {
             </Col>
             <Col span={6}>
               Show only canonical
-              <Tooltip className="Tooltip" title="By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence.">
+              <Tooltip className="Tooltip" title={helpText.canonical}>
                 <Icon type="question-circle" />
-              </Tooltip>: <Switch checked={this.state.onlyCanonical} onChange={this.onChangeCanonical}/>
+              </Tooltip>: <Switch checked={this.state.onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
             <Col span={6}>
             </Col>
@@ -139,13 +129,28 @@ class FusionTable extends React.Component {
               columns={columns}
               onRow={(record, rowIndex) => {
                 return {
-                  onClick: event => this.onSelectRow(record)
+                  onClick: event => this._onSelectRow(record)
                 };
               }} />
           </Row>
         </Fragment>
         : null
     )
+  }
+
+  _onSelectRow(fusion) {
+    console.log(fusion)
+    this.setState({
+      selectedFusion: fusion,
+    });
+    this.updatePlot
+  }
+
+  _onChangeCanonical() {
+    var onlyCanonical = !this.state.onlyCanonical;
+    this.setState({
+      onlyCanonical: onlyCanonical,
+    });
   }
 }
 
