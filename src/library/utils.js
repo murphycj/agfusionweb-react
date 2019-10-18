@@ -254,4 +254,23 @@ function molecularWeight(seq) {
   return weight/1000;
 }
 
-export { CODING_COMBINATIONS, PDBS, translate, molecularWeight };
+const COLORS = [
+  '#9B1B30',
+  '#77212E',
+  '#F5D6C6',
+  '#FA9A85',
+  '#5A3E36',
+  '#CE5B78',
+  '#935529',
+  '#E08119',
+  '#2A4B7C',
+  '#577284',
+  '#F96714',
+  '#264E36',
+  '#9F9C99',
+  '#2A293E',
+  '#797B3A',
+  '#000000'
+];
+
+export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS };
