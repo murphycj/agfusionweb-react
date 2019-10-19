@@ -31,7 +31,7 @@ class App extends React.Component {
     return (
       <Layout >
         <Header>
-          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions</div>
+          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (Alpha version)</div>
         </Header>
         <Content style={{ padding: '0 50px', marginTop: 64 }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
