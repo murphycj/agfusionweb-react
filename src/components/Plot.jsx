@@ -17,23 +17,23 @@ class Plot extends React.Component {
       pdbs: ['pfam'],
       domainColors: {},
       colorIndex: 0,
-      fusionPlotData: null
+      fusionPlotData: null,
+      rectShowIndex: null,
     }
 
     this._downloadImage = this._downloadImage.bind(this);
-    this.hover = this.hover.bind(this);
     this._handleRadioChange = this._handleRadioChange.bind(this);
     this._getPlotData = this._getPlotData.bind(this);
     this._handleRadioChange = this._handleRadioChange.bind(this);
   }
 
-  hover() {
-    console.log('boo')
-  }
-
   render() {
 
-    const { plotTypeProtein, plotTypeExon, imageRef } = this.state;
+    const {
+      plotTypeProtein,
+      plotTypeExon,
+      imageRef,
+      rectShowIndex } = this.state;
     const plotData = this._getPlotData();
 
     var width = 800;
@@ -69,7 +69,9 @@ class Plot extends React.Component {
             <Stage className="Plot" width={width} height={height} ref={imageRef}>
               <Layer>
                 <Rect x={0} y={0} width={width} height={height} fill="white" />
+
                 {plotData.body.map((body, index) => {
+                  // plots the main body of the protein or exons
                   if (body.type == 'rect') {
                     return <Rect
                               key={index}
@@ -89,17 +91,40 @@ class Plot extends React.Component {
                                 height - body.y1*height]}/>
                   }
                 })}
+
                 {plotData.rects.map(rect => {
+                  // plots the domains/exons
                   return <Rect
                             key={rect.index}
                             fill={rect.color}
-                            onMouseOver = {(e) => {console.log('boo')}}
+                            onMouseOver = {(e) => {
+                              this.setState({rectShowIndex: rect.index});
+                            }}
+                            onMouseOut = {(e) => {
+                              this.setState({rectShowIndex: null});
+                            }}
                             x={rect.x * width}
                             y={height - rect.y * height}
                             width={rect.width * width}
                             height={-rect.height * height}/>
                 })}
+
+                {plotData.rects.map(rect => {
+                  // shows the text of the domain/exon on hover
+                  if (rectShowIndex == rect.index) {
+                    return <Text
+                            key={rectShowIndex}
+                            text={rect.name}
+                            align="center"
+                            x={rect.x * width - 0.01 * width}
+                            y={height - rect.y * height - 0.15 * height}/>
+                  } else {
+                    return null;
+                  }
+                })}
+
                 {plotData.lines.map((line, index) => {
+                  // plots the length markers
                   return <Line
                             key={index}
                             stroke="black"
@@ -109,7 +134,9 @@ class Plot extends React.Component {
                               line.x1 * width,
                               height - line.y1 * height]}/>
                 })}
+
                 {plotData.texts.map((text, index) => {
+                  // plots the various texts
                   return <Text
                             key={index}
                             text={text.text}
