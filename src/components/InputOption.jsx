@@ -13,7 +13,7 @@ class InputOption extends React.Component {
     return (
       <div className="input">
         <label>{this.props.label}:</label>
-        <Select defaultValue={this.props.default} style={{ width: 120 }} >
+        <Select defaultValue={this.props.default} style={{ width: 200 }} >
           {this.props.options}
         </Select>
       </div>

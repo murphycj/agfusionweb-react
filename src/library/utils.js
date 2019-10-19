@@ -273,4 +273,12 @@ const COLORS = [
   '#000000'
 ];
 
-export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS };
+
+const AVAILABLE_ENSEMBL_SPECIES = {
+  homo_sapiens: {
+    ensembl_releases: [94],
+    display: 'Human (hg39/GRCh38)',
+  },
+};
+
+export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS, AVAILABLE_ENSEMBL_SPECIES };
