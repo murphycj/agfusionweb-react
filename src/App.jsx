@@ -15,7 +15,6 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      ensembl: null,
       fusions: null,
       defaultFusion: null,
     }
@@ -51,6 +50,7 @@ class App extends React.Component {
   _onClear() {
     this.setState({
       fusions: null,
+      defaultFusion: null,
     });
   }
 

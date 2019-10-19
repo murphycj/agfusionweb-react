@@ -277,7 +277,7 @@ const COLORS = [
 const AVAILABLE_ENSEMBL_SPECIES = {
   homo_sapiens: {
     ensembl_releases: [94],
-    display: 'Human (hg39/GRCh38)',
+    display: 'Human (GRCh38)',
   },
 };
 
