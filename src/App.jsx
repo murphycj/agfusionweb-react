@@ -40,7 +40,8 @@ class App extends React.Component {
           </div>
         </Content>
         <Footer className="App-footer">
-          <a href="https://github.com/murphycj/AGFusion">AGFusion on GitHub </a>
+          For research use only |
+          <a href="https://github.com/murphycj/AGFusion"> AGFusion on GitHub </a>
           | {'\u00A9'} 2019 Charlie Murphy
         </Footer>
       </Layout>
