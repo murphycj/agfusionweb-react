@@ -554,7 +554,7 @@ export class FusionTranscript {
 
       // trim the CDS sequence if fusion is out-of-frame
 
-      var cdsTrimmed = this.cdsSeq.slice(0, 3*parseInt(tt.length/3));
+      var cdsTrimmed = this.cdsSeq.slice(0, 3 * parseInt(this.cdsSeq.length/3));
 
       this.proteinSeq = translate(cdsTrimmed);
       this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf('*'));
