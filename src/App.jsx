@@ -6,7 +6,6 @@ import { Layout, Row, Col, Spin} from 'antd';
 const { Header, Footer, Content } = Layout;
 
 import DataForm from './components/DataForm.jsx';
-import { DynamoDB } from './library/DynamoDB';
 import { Fusion } from './library/Fusion';
 import FusionTable from './components/FusionTable.jsx';
 
@@ -17,7 +16,6 @@ class App extends React.Component {
 
     this.state = {
       ensembl: null,
-      ddb: new DynamoDB(),
       fusions: null
     }
 
