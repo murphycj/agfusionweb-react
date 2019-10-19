@@ -11,6 +11,10 @@ export class Fusion {
       this.gene1.name + '_' + this.gene2.name :
       this.gene1.id + '_' + this.gene2.id;
 
+    this.id = this.gene1.id + '_' + this.gene2.id;
+
+    this.displayName = `${this.gene1.name || this.gene1.id} : ${this.gene2.name || this.gene2.id}`;
+
     this.transcripts = {};
 
     for (var i = 0; i < this.gene1.transcripts.length; i++) {
