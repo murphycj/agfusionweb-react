@@ -16,7 +16,8 @@ class App extends React.Component {
 
     this.state = {
       ensembl: null,
-      fusions: null
+      fusions: null,
+      defaultFusion: null,
     }
 
     this._onSubmit = this._onSubmit.bind(this);
@@ -25,7 +26,7 @@ class App extends React.Component {
 
   render() {
 
-    const { fusions } = this.state;
+    const { fusions, defaultFusion } = this.state;
 
     return (
       <Layout >
@@ -36,7 +37,7 @@ class App extends React.Component {
           <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
             <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
             <hr/>
-            <FusionTable fusions={fusions} />
+            <FusionTable fusions={fusions} defaultFusion={defaultFusion} />
           </div>
         </Content>
         <Footer className="App-footer">
@@ -57,20 +58,28 @@ class App extends React.Component {
 
     console.log(fusionData);
 
-    var fusions = [];
+    var fusions = {};
+    var defaultFusion = null;
     for (var i = 0; i < fusionData.gene1Data.length; i++) {
       for (var j = 0; j < fusionData.gene2Data.length; j++) {
-        fusions.push(new Fusion(
+        var fusion = new Fusion(
           fusionData.gene1Data[i],
           fusionData.gene2Data[j],
           fusionData.gene1Junction,
           fusionData.gene2Junction
-        ))
+        );
+
+        fusions[fusion.id] = fusion;
+
+        if (j == 0 && i == 0) {
+          defaultFusion = fusion.id;
+        }
       }
     }
 
     this.setState({
       fusions: fusions,
+      defaultFusion: defaultFusion,
     });
 
     setLoadingCallback();

@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover } from 'antd';
+import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select } from 'antd';
+const { Option } = Select;
 
 import Plot from './Plot.jsx';
 import './FusionTable.css';
@@ -19,6 +20,7 @@ class FusionTable extends React.Component {
     super(props);
     this.state = {
       onlyCanonical: true,
+      selectedFusion: null,
       selectedFusionTranscript: null,
       plotData: null
     };
@@ -30,16 +32,19 @@ class FusionTable extends React.Component {
   render() {
 
     const { selectedFusionTranscript, plotData, onlyCanonical } = this.state;
-    const { fusions } = this.props;
+    var { selectedFusion } = this.state;
+    const { fusions, defaultFusion } = this.props;
+    selectedFusion = selectedFusion || defaultFusion;
+
     var fusionIsoforms = null;
 
-
-    if (fusions) {
-      fusionIsoforms = Object.keys(fusions[0].transcripts).map(val => fusions[0].transcripts[val]);
+    if (selectedFusion) {
+      fusionIsoforms = Object.keys(fusions[selectedFusion].transcripts).map(val => fusions[selectedFusion].transcripts[val]);
       if (onlyCanonical) {
         fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
       }
     }
+
 
     const columns = [
       {
@@ -118,9 +123,12 @@ class FusionTable extends React.Component {
           <hr/>
           <Row className="Controls">
             <Col span={6}>
-              Genes:
-              <Tag>{fusions[0].gene1.name}</Tag>
-              <Tag>{fusions[0].gene2.name}</Tag>
+              <span className="HelpText">Selected gene fusion:</span>
+              <Select defaultValue={defaultFusion}>
+                {Object.keys(fusions).map(val => {
+                  return <Option key={val} value={val}>{fusions[val].displayName}</Option>;
+                })}
+              </Select>
             </Col>
             <Col span={6}>
               Show only canonical
@@ -128,10 +136,8 @@ class FusionTable extends React.Component {
                 <Icon type="question-circle" />
               </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
-            <Col span={6}>
-            </Col>
-            <Col span={6}>
-            </Col>
+            <Col span={6} />
+            <Col span={6} />
           </Row>
           <Row>
             <Table
