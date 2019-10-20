@@ -18,6 +18,7 @@ class App extends React.Component {
       fusions: null,
       defaultFusion: null,
     }
+    this.contentRef = React.createRef();
 
     this._onSubmit = this._onSubmit.bind(this);
     this._onClear = this._onClear.bind(this);
@@ -25,7 +26,13 @@ class App extends React.Component {
 
   render() {
 
-    const { fusions, defaultFusion } = this.state;
+    const { fusions, defaultFusion, contentRef } = this.state;
+
+    var width = null;
+    if (this.contentRef && this.contentRef.current) {
+      width = this.contentRef.current.offsetWidth - 48;
+      console.log('App: ' + (this.contentRef.current.offsetWidth - 48))
+    }
 
     return (
       <Layout >
@@ -33,10 +40,12 @@ class App extends React.Component {
           <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (Alpha version)</div>
         </Header>
         <Content style={{ padding: '0 50px', marginTop: 64 }}>
-          <div style={{ background: '#fff', padding: 24, minHeight: 300 }}>
+          <div style={{ background: '#fff', padding: 24, minHeight: 300 }} ref={this.contentRef}>
             <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
             <hr/>
-            <FusionTable fusions={fusions} defaultFusion={defaultFusion} />
+            {fusions ?
+              <FusionTable fusions={fusions} defaultFusion={defaultFusion} width={width}/>
+              : null}
           </div>
         </Content>
         <Footer className="App-footer">

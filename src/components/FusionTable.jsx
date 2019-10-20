@@ -22,29 +22,30 @@ class FusionTable extends React.Component {
       onlyCanonical: true,
       selectedFusion: null,
       selectedFusionTranscript: null,
-      plotData: null
+      plotData: null,
     };
 
     this._onChangeCanonical = this._onChangeCanonical.bind(this);
     this._onSelectRow = this._onSelectRow.bind(this);
   }
 
+  componentDidMount() {
+    const { fusions, defaultFusion } = this.props;
+    console.log(fusions[defaultFusion]);
+    var fusionIsoforms = this._filterFusions(fusions, defaultFusion, true);
+    this._createPlotDate(fusionIsoforms[0]);
+  }
+
   render() {
+
 
     const { selectedFusionTranscript, plotData, onlyCanonical } = this.state;
     var { selectedFusion } = this.state;
-    const { fusions, defaultFusion } = this.props;
+    const { fusions, defaultFusion, width } = this.props;
+
     selectedFusion = selectedFusion || defaultFusion;
 
-    var fusionIsoforms = null;
-
-    if (selectedFusion) {
-      fusionIsoforms = Object.keys(fusions[selectedFusion].transcripts).map(val => fusions[selectedFusion].transcripts[val]);
-      if (onlyCanonical) {
-        fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
-      }
-    }
-
+    var fusionIsoforms = this._filterFusions(fusions, selectedFusion, onlyCanonical);
 
     const columns = [
       {
@@ -118,7 +119,7 @@ class FusionTable extends React.Component {
       fusions ?
         <Fragment>
           <Row>
-            <Plot selectedFusion={selectedFusionTranscript} plotData={plotData}/>
+            <Plot selectedFusion={selectedFusionTranscript} plotData={plotData} width={width}/>
           </Row>
           <hr/>
           <Row className="Controls">
@@ -155,9 +156,20 @@ class FusionTable extends React.Component {
     )
   }
 
-  _onSelectRow(fusionTranscript) {
-    console.log(fusionTranscript)
+  _filterFusions(fusions, selectedFusion, onlyCanonical) {
+    var fusionIsoforms = null;
 
+    if (selectedFusion) {
+      fusionIsoforms = Object.keys(fusions[selectedFusion].transcripts).map(val => fusions[selectedFusion].transcripts[val]);
+      if (onlyCanonical) {
+        fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
+      }
+    }
+
+    return fusionIsoforms;
+  }
+
+  _createPlotDate(fusionTranscript) {
     var plotData = {
       fusionProtein: null,
       gene1Protein: null,
@@ -187,6 +199,10 @@ class FusionTable extends React.Component {
       selectedFusionTranscript: fusionTranscript,
       plotData: plotData
     });
+  }
+
+  _onSelectRow(fusionTranscript) {
+    this._createPlotDate(fusionTranscript)
   }
 
   _onChangeCanonical() {

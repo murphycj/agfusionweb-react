@@ -44,7 +44,10 @@ export class PlotProtein extends Plot {
           height: 0.1,
           color: '#3385ff',
           pdb: PDBS[k],
-          name: domain.name || domain.id,
+          longName: domain.name || domain.desc || domain.id,
+          shortName: domain.desc || domain.id,
+          start: domain.start,
+          end: domain.end,
           index: domainIndex
         });
 
