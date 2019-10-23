@@ -48,6 +48,8 @@ export class PlotProtein extends Plot {
           shortName: domain.desc || domain.id,
           start: domain.start,
           end: domain.end,
+          type: 'protein',
+          show: false,
           index: domainIndex
         });
 

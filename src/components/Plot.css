@@ -3,6 +3,10 @@
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
+  border-color: rgba(0,0,0,0.05);
+  border-style: solid;
+  border-width: 1px;
+  box-shadow: 5px 10px 20px rgba(0,0,0,0.01), 2px 6px 6px rgba(0,0,0,0.05);
 }
 
 .PlotNone {

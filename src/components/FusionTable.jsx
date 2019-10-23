@@ -22,7 +22,7 @@ class FusionTable extends React.Component {
       onlyCanonical: true,
       selectedFusion: null,
       selectedFusionTranscript: null,
-      plotData: null,
+      plotDataAll: null,
     };
 
     this._onChangeCanonical = this._onChangeCanonical.bind(this);
@@ -39,7 +39,7 @@ class FusionTable extends React.Component {
   render() {
 
 
-    const { selectedFusionTranscript, plotData, onlyCanonical } = this.state;
+    const { selectedFusionTranscript, plotDataAll, onlyCanonical } = this.state;
     var { selectedFusion } = this.state;
     const { fusions, defaultFusion, width } = this.props;
 
@@ -118,8 +118,9 @@ class FusionTable extends React.Component {
     return (
       fusions ?
         <Fragment>
+          <hr/>
           <Row>
-            <Plot selectedFusion={selectedFusionTranscript} plotData={plotData} width={width}/>
+            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
           </Row>
           <hr/>
           <Row className="Controls">
@@ -170,7 +171,7 @@ class FusionTable extends React.Component {
   }
 
   _createPlotDate(fusionTranscript) {
-    var plotData = {
+    var plotDataAll = {
       fusionProtein: null,
       gene1Protein: null,
       gene2Protein: null,
@@ -180,24 +181,24 @@ class FusionTable extends React.Component {
     };
 
     if (fusionTranscript.hasProteinCodingPotential) {
-      plotData.fusionProtein = new PlotFusionProtein(fusionTranscript);
+      plotDataAll.fusionProtein = new PlotFusionProtein(fusionTranscript);
     }
 
     if (fusionTranscript.transcript1.isProteinCoding) {
-      plotData.gene1Protein = new PlotWTProtein(fusionTranscript.transcript1);
+      plotDataAll.gene1Protein = new PlotWTProtein(fusionTranscript.transcript1);
     }
 
     if (fusionTranscript.transcript2.isProteinCoding) {
-      plotData.gene2Protein = new PlotWTProtein(fusionTranscript.transcript2);
+      plotDataAll.gene2Protein = new PlotWTProtein(fusionTranscript.transcript2);
     }
 
-    plotData.fusionExon = new PlotFusionExons(fusionTranscript);
-    plotData.gene1Exon = new PlotWTExons(fusionTranscript.transcript1);
-    plotData.gene2Exon = new PlotWTExons(fusionTranscript.transcript2);
+    plotDataAll.fusionExon = new PlotFusionExons(fusionTranscript);
+    plotDataAll.gene1Exon = new PlotWTExons(fusionTranscript.transcript1);
+    plotDataAll.gene2Exon = new PlotWTExons(fusionTranscript.transcript2);
 
     this.setState({
       selectedFusionTranscript: fusionTranscript,
-      plotData: plotData
+      plotDataAll: plotDataAll
     });
   }
 

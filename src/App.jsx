@@ -31,7 +31,6 @@ class App extends React.Component {
     var width = null;
     if (this.contentRef && this.contentRef.current) {
       width = this.contentRef.current.offsetWidth - 48;
-      console.log('App: ' + (this.contentRef.current.offsetWidth - 48))
     }
 
     return (
@@ -42,7 +41,6 @@ class App extends React.Component {
         <Content style={{ padding: '0 50px', marginTop: 64 }}>
           <div style={{ background: '#fff', padding: 24, minHeight: 300 }} ref={this.contentRef}>
             <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
-            <hr/>
             {fusions ?
               <FusionTable fusions={fusions} defaultFusion={defaultFusion} width={width}/>
               : null}

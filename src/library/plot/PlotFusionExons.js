@@ -54,6 +54,8 @@ export class PlotFusionExons extends PlotExons {
         width: exonEnd-exonStart,
         height: 0.1,
         color: "black",
+        type: 'exon',
+        show: true,
         index: i
       });
 
@@ -98,6 +100,8 @@ export class PlotFusionExons extends PlotExons {
         width: exonEnd-exonStart,
         height: 0.1,
         color: "red",
+        type: 'exon',
+        show: true,
         index: index
       });
 

@@ -66,6 +66,7 @@ export class PlotWTExons extends PlotExons {
         width: exonEnd - exonStart,
         height: 0.1,
         color: 'black',
+        show: true,
         index: index
       });
 

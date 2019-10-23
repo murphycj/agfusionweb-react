@@ -1,10 +1,11 @@
 import React, { Fragment } from 'react';
 import Konva from 'konva';
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
-import { Button, Icon, Radio, Row, Col, Card } from 'antd';
+import { Button, Icon, Radio, Row, Col, Card, Select } from 'antd';
+const { Option } = Select;
 import './Plot.css';
 
-import { COLORS } from '../library/utils';
+import { COLORS, PDBS } from '../library/utils';
 
 class Plot extends React.Component {
 
@@ -12,8 +13,6 @@ class Plot extends React.Component {
     super(props);
     this.state = {
       imageRef: React.createRef(),
-      layerRef: React.createRef(),
-      canvasContainer: React.createRef(),
       plotTypeProtein: 'fusionProtein',
       plotTypeExon: '',
       pdbs: ['pfam'],
@@ -27,6 +26,8 @@ class Plot extends React.Component {
     this._handleRadioChange = this._handleRadioChange.bind(this);
     this._getPlotData = this._getPlotData.bind(this);
     this._handleRadioChange = this._handleRadioChange.bind(this);
+    this._handleColorChange = this._handleColorChange.bind(this);
+    this._handlePdbChange = this._handlePdbChange.bind(this);
   }
 
   render() {
@@ -35,11 +36,23 @@ class Plot extends React.Component {
       plotTypeProtein,
       plotTypeExon,
       imageRef,
-      layerRef,
+      domainColors,
+      pdbs,
       rectShowIndex } = this.state;
     var { width } = this.props;
     width = (2 / 3) * width;
-    const plotData = this._getPlotData();
+
+    // get plot and domain data
+    const returnData = this._getPlotData(plotTypeProtein, plotTypeExon, pdbs);
+    const plotData = returnData ? returnData[0] : null;
+    const domains = returnData ? returnData[1] : [];
+
+    // get domain names
+    var domainsNames = null;
+    if (domains) {
+      domainsNames = [...new Set(domains.map(val => val.shortName))];
+      domainsNames = domainsNames.map(val => <Option key={val}>{val}</Option>);
+    }
 
     var height = 300;
 
@@ -55,7 +68,8 @@ class Plot extends React.Component {
                 <Radio.Group
                     value={plotTypeProtein}
                     onChange={this._handleRadioChange}
-                    className="Plot-Control-Buttons">
+                    className="Plot-Control-Buttons"
+                >
                   <Radio.Button value="fusionProtein">Fusion</Radio.Button>
                   <Radio.Button value="gene1Protein">5' gene</Radio.Button>
                   <Radio.Button value="gene2Protein">3' gene</Radio.Button>
@@ -77,97 +91,143 @@ class Plot extends React.Component {
                 </Radio.Group>
               </Col>
             </Row>
+            { // for controlling domain colors
+              domains ?
+              <Row className="Plot-Settings-Row">
+                <Col span={6} className="Plot-Settings-Labels">
+                  <b>Domain colors: </b>
+                </Col>
+                <Col span={18}>
+                  <Select
+                    mode="tags"
+                    placeholder="Please select"
+                    onChange={this._handleColorChange}
+                    style={{ width: '100%', marginLeft: '5px' }}
+                  >
+                    {domainsNames}
+                  </Select>
+                </Col>
+              </Row>
+            : null
+            }
+            { // for controlling which PDBs
+              domains ?
+              <Row className="Plot-Settings-Row">
+                <Col span={6} className="Plot-Settings-Labels">
+                  <b>Protein databases: </b>
+                </Col>
+                <Col span={18}>
+                  <Select
+                    mode="tags"
+                    placeholder="Please select"
+                    defaultValue={pdbs}
+                    onChange={this._handlePdbChange}
+                    style={{ width: '100%', marginLeft: '5px' }}
+                  >
+                    {PDBS.map(val => <Option key={val}>{val}</Option>)}
+                  </Select>
+                </Col>
+              </Row>
+            : null
+            }
             <Row>
               <Button className="Download-Image" onClick={this._downloadImage}><Icon type="download" />PNG</Button>
             </Row>
           </Card>
         </Col>
         <Col span={16}>
-          <Stage className="Plot" width={width} height={height} ref={imageRef} id={"test"}>
+          <Stage className="Plot" width={width} height={height} id={"test"}>
             {plotData ?
-            <Layer ref={layerRef}>
-              <Rect x={0} y={0} width={width} height={height} fill="white" />
+            <Fragment>
+              <Layer ref={imageRef}>
+                <Rect x={0} y={0} width={width} height={height} fill="white" />
 
-              {plotData.body.map((body, index) => {
-                // plots the main body of the protein or exons
-                if (body.type == 'rect') {
-                  return <Rect
-                            key={index}
-                            stroke={body.stroke}
-                            x={body.x * width}
-                            y={height - body.y * height}
-                            width={body.width * width}
-                            height={-body.height * height}/>
-                } else {
-                  return <Line
-                            key={index}
-                            stroke={body.color}
-                            points={[
-                              body.x0*width,
-                              height - body.y0*height,
-                              body.x1*width,
-                              height - body.y1*height]}/>
-                }
-              })}
+                {plotData.body.map((body, index) => {
+                  // plots the main body of the protein or exons
+                  if (body.type == 'rect') {
+                    return <Rect
+                              key={index}
+                              stroke={body.stroke}
+                              x={body.x * width}
+                              y={height - body.y * height}
+                              width={body.width * width}
+                              height={-body.height * height}/>
+                  } else {
+                    return <Line
+                              key={index}
+                              stroke={body.color}
+                              points={[
+                                body.x0*width,
+                                height - body.y0*height,
+                                body.x1*width,
+                                height - body.y1*height]}/>
+                  }
+                })}
 
-              {plotData.rects.map(rect => {
-                // plots the domains/exons
-                return <Rect
-                          key={rect.index}
-                          fill={rect.color}
-                          onMouseOver = {(e) => {
-                            this.setState({rectShowIndex: rect.index});
-                          }}
-                          onMouseOut = {(e) => {
-                            this.setState({rectShowIndex: null});
-                          }}
-                          x={rect.x * width}
-                          y={height - rect.y * height}
-                          width={rect.width * width}
-                          height={-rect.height * height}/>
-              })}
+                {plotData.rects.map(rect => {
+                  // plots the domains/exons
+                  return (
+                    rect.show ?
+                      <Rect
+                        key={rect.index}
+                        fill={rect.color}
+                        onMouseOver = {(e) => {
+                          this.setState({rectShowIndex: rect.index});
+                        }}
+                        onMouseOut = {(e) => {
+                          this.setState({rectShowIndex: null});
+                        }}
+                        x={rect.x * width}
+                        y={height - rect.y * height}
+                        width={rect.width * width}
+                        height={-rect.height * height}/>
+                      : null
+                    );
+                })}
 
-              {plotData.rects.map(rect => {
-                // shows the text of the domain/exon on hover
+                {plotData.rects.map(rect => {
+                  // shows the text of the domain/exon on hover
 
-                if (rectShowIndex == rect.index) {
+                  if (rectShowIndex == rect.index && rect.type == 'protein') {
+
+                    var rectStart = rect.x * width;
+                    var rectMiddle = (rect.width * width / 2) + rectStart;
+                    var rectLengthHalf = rectMiddle - rectStart;
+
+                    return <Text
+                            key={rectShowIndex}
+                            text={rect.longName + '\n' + `Start: ${rect.start}, End: ${rect.end}`}
+                            align="center"
+                            sceneFunc = {(ctx, shape) => {
+                              ctx.font = '14px Arial';
+                              ctx.fillText(
+                                shape.textArr[0].text,
+                                rectLengthHalf - shape.textWidth/2,
+                                shape.textHeight * 0.5
+                              );
+                              ctx.fillText(
+                                shape.textArr[1].text,
+                                rectLengthHalf - shape.textWidth/2,
+                                shape.textHeight * 2
+                              );
+                            }}
+                            x={rect.x * width - 0.01 * width}
+                            y={height - rect.y * height - 0.2 * height}/>
+                  } else {
+                    return null;
+                  }
+                })}
+
+                {plotData.rects.map(rect => {
+                  // shows the text of the domain/exon
 
                   var rectStart = rect.x * width;
                   var rectMiddle = (rect.width * width / 2) + rectStart;
                   var rectLengthHalf = rectMiddle - rectStart;
 
-                  return <Text
-                          key={rectShowIndex}
-                          text={rect.longName + '\n' + `Start: ${rect.start}, End: ${rect.end}`}
-                          align="center"
-                          sceneFunc = {(ctx, shape) => {
-                            ctx.font = '14px Arial';
-                            ctx.fillText(
-                              shape.textArr[0].text,
-                              rectLengthHalf - shape.textWidth/2,
-                              shape.textHeight * 0.5
-                            );
-                            ctx.fillText(
-                              shape.textArr[1].text,
-                              rectLengthHalf - shape.textWidth/2,
-                              shape.textHeight * 2
-                            );
-                          }}
-                          x={rect.x * width - 0.01 * width}
-                          y={height - rect.y * height - 0.2 * height}/>
-                } else {
-                  return null;
-                }
-              })}
-
-              {plotData.rects.map(rect => {
-                // shows the text of the domain/exon
-
-                var rectStart = rect.x * width;
-                var rectMiddle = (rect.width * width / 2) + rectStart;
-                var rectLengthHalf = rectMiddle - rectStart;
-
-                return <Text
+                  return (
+                    rect.show ?
+                      <Text
                         key={rect.index}
                         text={rect.shortName}
                         align={"center"}
@@ -182,31 +242,37 @@ class Plot extends React.Component {
                         }}
                         x={rect.x * width}
                         y={height - rect.y * height}
-                        height={rect.height * height}/>;
-              })}
+                        height={rect.height * height}/>
+                      : null
+                      );
+                })}
 
-              {plotData.lines.map((line, index) => {
-                // plots the length markers
-                return <Line
-                          key={index}
-                          stroke="black"
-                          points={[
-                            line.x0 * width,
-                            height - line.y0 * height,
-                            line.x1 * width,
-                            height - line.y1 * height]}/>
-              })}
+                {plotData.lines.map((line, index) => {
+                  // plots the length markers
+                  return <Line
+                            key={index}
+                            stroke="black"
+                            points={[
+                              line.x0 * width,
+                              height - line.y0 * height,
+                              line.x1 * width,
+                              height - line.y1 * height]}/>
+                })}
 
-              {plotData.texts.map((text, index) => {
-                // plots the various texts
-                return <Text
-                          key={index}
-                          text={text.text}
-                          align="center"
-                          x={text.x*width}
-                          y={height - text.y*height}/>
-              })}
-            </Layer>
+                {plotData.texts.map((text, index) => {
+                  // plots the various texts
+                  return <Text
+                            key={index}
+                            text={text.text}
+                            align="center"
+                            x={text.x*width}
+                            y={height - text.y*height}/>
+                })}
+              </Layer>
+              <Layer>
+                <Rect x={0} y={0} width={100} height={100} fill="black" />
+              </Layer>
+            </Fragment>
             : <Layer>
                 <Rect x={0} y={0} width={width} height={height} fill="white" />
                 <Text
@@ -224,6 +290,17 @@ class Plot extends React.Component {
     )
   }
 
+  _handleColorChange(e) {
+    console.log(e)
+  }
+
+  _handlePdbChange(e) {
+    console.log(e)
+    this.setState({
+      pdbs: e
+    });
+  }
+
   _handleRadioChange(e) {
     if (['fusionProtein', 'gene1Protein', 'gene2Protein'].includes(e.target.value)) {
       this.setState({
@@ -239,36 +316,35 @@ class Plot extends React.Component {
     this._getPlotData();
   }
 
-  _getPlotData() {
+  _getPlotData(plotTypeProtein, plotTypeExon, pdbs) {
 
-    const {
-      plotTypeProtein,
-      plotTypeExon,
-      domainColors,
-      colorIndex
-    } = this.state;
-    const { plotData } = this.props;
-    var fusionPlot = null;
+    var { plotDataAll } = this.props;
 
-    if (!plotData) {
+    if (!plotDataAll) {
       return null;
     }
 
-    if (plotTypeProtein == 'fusionProtein' && plotData.fusionProtein) {
-      fusionPlot = this._filterDomains(plotData.fusionProtein);
-    } else if (plotTypeProtein == 'gene1Protein' && plotData.gene1Protein) {
-      fusionPlot = this._filterDomains(plotData.gene1Protein);
-    } else if (plotTypeProtein == 'gene2Protein' && plotData.gene2Protein) {
-      fusionPlot = this._filterDomains(plotData.gene2Protein);
+    var plotData = null;
+    var domains = null;
+
+    if (plotTypeProtein == 'fusionProtein' && plotDataAll.fusionProtein) {
+      plotData = this._filterDomains(plotDataAll.fusionProtein, pdbs);
+      domains = plotData.rects;
+    } else if (plotTypeProtein == 'gene1Protein' && plotDataAll.gene1Protein) {
+      plotData = this._filterDomains(plotDataAll.gene1Protein, pdbs);
+      domains = plotData.rects;
+    } else if (plotTypeProtein == 'gene2Protein' && plotDataAll.gene2Protein) {
+      plotData = this._filterDomains(plotDataAll.gene2Protein, pdbs);
+      domains = plotData.rects;
     } else if (plotTypeExon == 'fusionExon') {
-      fusionPlot = plotData.fusionExon;
+      plotData = plotDataAll.fusionExon;
     } else if (plotTypeExon == 'gene1Exon') {
-      fusionPlot = plotData.gene1Exon;
+      plotData = plotDataAll.gene1Exon;
     } else if (plotTypeExon == 'gene2Exon') {
-      fusionPlot = plotData.gene2Exon;
+      plotData = plotDataAll.gene2Exon;
     }
 
-    return fusionPlot;
+    return [plotData, domains];
   }
 
   _downloadImage() {
@@ -286,11 +362,15 @@ class Plot extends React.Component {
     link.remove();
   }
 
-  _filterDomains(plotData) {
-    const { pdbs } = this.state;
+  _filterDomains(plotData, pdbs) {
 
-    plotData.rects = plotData.rects.filter((val) => {
-      return pdbs.includes(val.pdb);
+    plotData.rects = plotData.rects.map((val) => {
+      if (pdbs.includes(val.pdb)) {
+        val.show = true;
+      } else {
+        val.show = false;
+      }
+      return val;
     });
 
     return plotData;
