@@ -22,7 +22,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "webpack-dev-server --open --mode development",
     "build": "webpack --mode production ./src/index.js --output ./build/main.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -47,7 +46,6 @@
     "@babel/plugin-transform-runtime": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
     "@babel/runtime": "^7.6.0",
-    "mocha": "^6.2.2",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
   }
