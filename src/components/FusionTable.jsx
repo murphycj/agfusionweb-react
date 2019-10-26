@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select } from 'antd';
-const { Option } = Select;
 
 import Plot from './Plot.jsx';
 import './FusionTable.css';
@@ -9,6 +8,8 @@ import { PlotWTExons } from '../library/plot/PlotWTExons';
 import { PlotFusionExons } from '../library/plot/PlotFusionExons';
 import { PlotWTProtein } from '../library/plot/PlotWTProtein';
 import { PlotFusionProtein } from '../library/plot/PlotFusionProtein';
+
+const { Option } = Select;
 
 const helpText = {
   canonical: "By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence."

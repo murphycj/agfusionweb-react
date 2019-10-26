@@ -2,10 +2,12 @@ import React, { Fragment } from 'react';
 import Konva from 'konva';
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
 import { Button, Icon, Radio, Row, Col, Card, Select } from 'antd';
-const { Option } = Select;
+
 import './Plot.css';
 
 import { COLORS, PDBS } from '../library/utils';
+
+const { Option } = Select;
 
 class Plot extends React.Component {
 
@@ -38,6 +40,8 @@ class Plot extends React.Component {
       imageRef,
       domainColors,
       pdbs,
+      showImageDownload,
+      hoveringOverImageButton,
       rectShowIndex } = this.state;
     var { width } = this.props;
     width = (2 / 3) * width;
@@ -50,7 +54,9 @@ class Plot extends React.Component {
     // get domain names
     var domainsNames = null;
     if (domains) {
-      domainsNames = [...new Set(domains.map(val => val.shortName))];
+      domainsNames = domains.filter(val => pdbs.includes(val.pdb));
+      console.log(domainsNames)
+      domainsNames = [...new Set(domainsNames.map(val => val.shortName))];
       domainsNames = domainsNames.map(val => <Option key={val}>{val}</Option>);
     }
 
@@ -130,8 +136,13 @@ class Plot extends React.Component {
               </Row>
             : null
             }
-            <Row>
-              <Button className="Download-Image" onClick={this._downloadImage}><Icon type="download" />PNG</Button>
+            <Row className="Plot-Settings-Row">
+              <Col span={6} className="Plot-Settings-Labels">
+                <b>Download: </b>
+              </Col>
+              <Col span={18}>
+                <Button className="Plot-Control-Buttons" onClick={this._downloadImage}><Icon type="download" />PNG</Button>
+              </Col>
             </Row>
           </Card>
         </Col>
@@ -268,9 +279,7 @@ class Plot extends React.Component {
                             x={text.x*width}
                             y={height - text.y*height}/>
                 })}
-              </Layer>
-              <Layer>
-                <Rect x={0} y={0} width={100} height={100} fill="black" />
+
               </Layer>
             </Fragment>
             : <Layer>

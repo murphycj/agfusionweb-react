@@ -22,10 +22,22 @@
   color: #09d3ac;
 }
 
+.App-content {
+  display: flex;
+  min-height: 60vh;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10vh 10vw;
+}
+
 .App-footer {
-  text-align: center;
-  position: sticky;
+  display: flex;
+  justify-content: center;
+  flex: 0 0 50px;
+  margin-top: auto;
+  /* position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  width: 100%; */
 }

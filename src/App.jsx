@@ -3,11 +3,12 @@ import 'antd/dist/antd.css';
 // import logo from './logo.svg';
 import './App.css';
 import { Layout, Row, Col, Spin} from 'antd';
-const { Header, Footer, Content } = Layout;
 
 import DataForm from './components/DataForm.jsx';
 import { Fusion } from './library/Fusion';
 import FusionTable from './components/FusionTable.jsx';
+
+const { Header, Footer, Content } = Layout;
 
 class App extends React.Component {
 
@@ -38,8 +39,8 @@ class App extends React.Component {
         <Header>
           <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (Alpha version)</div>
         </Header>
-        <Content style={{ padding: '0 50px', marginTop: 64 }}>
-          <div style={{ background: '#fff', padding: 24, minHeight: 300 }} ref={this.contentRef}>
+        <Content className="App-content">
+          <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
             <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
             {fusions ?
               <FusionTable fusions={fusions} defaultFusion={defaultFusion} width={width}/>

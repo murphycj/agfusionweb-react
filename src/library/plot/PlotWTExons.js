@@ -10,7 +10,7 @@ export class PlotWTExons extends PlotExons {
   drawMainBody(nam, uid) {
     // main protein frame
 
-    length = (this.transcript.end - this.transcript.start) / this.normalize * 0.9;
+    var length = (this.transcript.end - this.transcript.start) / this.normalize * 0.9;
 
     this.body.push({
       type: 'line',

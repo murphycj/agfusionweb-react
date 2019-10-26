@@ -57,7 +57,7 @@ export class Transcript {
       var exonLength = exon[1] - exon[0] + 1;
 
       if (this.cdnaSeq.length < (runningSum + exonLength)) {
-        consele.log(this.id);
+        console.log(this.id);
         console.log(runningSum + exonLength + ' is longer than the cdna');
       }
 

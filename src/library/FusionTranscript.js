@@ -262,7 +262,7 @@ export class FusionTranscript {
           this.gene1JunctionLoc = 'intron (before cds)';
         } else if (i == (nMax-1) && this.gene1Junction > exons[i][1]) {
           this.gene1JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax-1) && this.gene1Junction > exons[i][1] && this.gene1Junction < exons[n+1][0]) {
+        } else if (i != (nMax-1) && this.gene1Junction > exons[i][1] && this.gene1Junction < exons[i+1][0]) {
           this.gene1JunctionLoc = 'intron';
         }
 
@@ -400,7 +400,7 @@ export class FusionTranscript {
           this.gene2JunctionLoc = 'intron (before cds)';
         } else if (i == (nMax - 1) && this.gene2Junction < exons[i][0]) {
           this.gene2JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax - 1) && this.gene2Junction < exons[i][0] && this.gene2Junction > exons[n+1][1]) {
+        } else if (i != (nMax - 1) && this.gene2Junction < exons[i][0] && this.gene2Junction > exons[i+1][1]) {
           this.gene2JunctionLoc = 'intron';
         }
       }
