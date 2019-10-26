@@ -294,43 +294,13 @@ class Data extends React.Component {
   async _getSequenceData(gene) {
 
     const { ddb } = this.state;
-    var seqIds = [];
 
-    // get the transcript and protein sequnce ids
-
-    for (var i = 0; i < gene.transcripts.length; i++) {
-      seqIds.push(gene.transcripts[i].id);
-
-      if (gene.transcripts[i].proteinId !== undefined) {
-        seqIds.push(gene.transcripts[i].proteinId);
-      }
-    }
 
     // fetch the sequences
 
-    var seqs = await ddb.getSequences(seqIds);
-    var seqsProcessed = {};
+    var seqs = await ddb.getSequences(gene.getSeqIds());
 
-    for (var i = 0; i < seqs.length; i++) {
-      var seqId = seqs[i].id.S;
-      var seq = seqs[i].sequence.S || '';
-      seqsProcessed[seqId] = seq;
-    }
-
-    // add the sequences to the transcripts
-
-    for (var i = 0; i < gene.transcripts.length; i++) {
-
-      if (gene.transcripts[i].id in seqsProcessed) {
-        gene.transcripts[i].cdnaSeq = seqsProcessed[gene.transcripts[i].id];
-        gene.transcripts[i].parseSeqs();
-      }
-
-      if (gene.transcripts[i].proteinId in seqsProcessed) {
-        gene.transcripts[i].proteinSeq = seqsProcessed[gene.transcripts[i].proteinId];
-      }
-
-    }
+    gene.parseSeqs(seqs);
 
     return gene;
   }

@@ -23,4 +23,46 @@ export class Gene {
     }
     return false;
   }
+
+  getSeqIds() {
+    var seqIds = [];
+
+    // get the transcript and protein sequnce ids
+
+    for (var i = 0; i < this.transcripts.length; i++) {
+      seqIds.push(this.transcripts[i].id);
+
+      if (this.transcripts[i].proteinId !== undefined) {
+        seqIds.push(this.transcripts[i].proteinId);
+      }
+    }
+
+    return seqIds;
+  }
+
+  parseSeqs(seqs) {
+
+    var seqsProcessed = {};
+
+    for (var i = 0; i < seqs.length; i++) {
+      var seqId = seqs[i].id.S;
+      var seq = seqs[i].sequence.S || '';
+      seqsProcessed[seqId] = seq;
+    }
+
+    // add the sequences to the transcripts
+
+    for (var i = 0; i < this.transcripts.length; i++) {
+
+      if (this.transcripts[i].id in seqsProcessed) {
+        this.transcripts[i].cdnaSeq = seqsProcessed[this.transcripts[i].id];
+        this.transcripts[i].parseSeqs();
+      }
+
+      if (this.transcripts[i].proteinId in seqsProcessed) {
+        this.transcripts[i].proteinSeq = seqsProcessed[this.transcripts[i].proteinId];
+      }
+
+    }
+  }
 }
