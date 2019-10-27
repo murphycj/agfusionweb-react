@@ -50,11 +50,11 @@ class FusionTable extends React.Component {
 
     const columns = [
       {
-        title: 'Gene isoforms',
+        title: '5\' gene isoform',
         dataIndex: 'displayData',
         key: 'name',
         render: val => {
-          const contentGene1 = (
+          const contentGene = (
             <div>
               <p><b>ID: </b>{val[0].id}</p>
               <p><b>Biotype: </b>{val[0].biotype}</p>
@@ -65,7 +65,22 @@ class FusionTable extends React.Component {
             </div>
           );
 
-          const contentGene2 = (
+          return (
+            <Fragment>
+              <Popover content={contentGene} title={val[0].name}>
+                <Tag key={val[0].name}>{val[0].name}</Tag>
+              </Popover>
+            </Fragment>
+          )
+        },
+        width: '20%'
+      },
+      {
+        title: '3\' gene isoform',
+        dataIndex: 'displayData',
+        key: 'name',
+        render: val => {
+          const contentGene = (
             <div>
               <p><b>ID: </b>{val[1].id}</p>
               <p><b>Biotype: </b>{val[1].biotype}</p>
@@ -78,28 +93,19 @@ class FusionTable extends React.Component {
 
           return (
             <Fragment>
-              <Popover content={contentGene1} title={val[0].name}>
-                <Tag key={val[0].name}>{val[0].name}</Tag>
-              </Popover>
-              <Popover content={contentGene2} title={val[1].name}>
+              <Popover content={contentGene} title={val[1].name}>
                 <Tag key={val[1].name}>{val[1].name}</Tag>
               </Popover>
             </Fragment>
           )
         },
-        width: '25%'
+        width: '20%'
       },
       {
-        title: 'Has protein coding potential',
-        dataIndex: 'hasProteinCodingPotential',
-        key: 'hasProteinCodingPotential',
-        render: val => (val ? 'Yes' : 'No'),
-        width: '15%'
-      },
-      {
-        title: 'Effect',
+        title: 'Protein effect',
         dataIndex: 'effect',
         key: 'effect',
+        render: val => (val ? val : 'NA'),
         width: '15%'
       },
       {
@@ -113,7 +119,14 @@ class FusionTable extends React.Component {
         dataIndex: 'gene2JunctionLoc',
         key: 'gene2JunctionLoc',
         width: '15%'
-      }
+      },
+      {
+        title: 'Has protein coding potential',
+        dataIndex: 'hasProteinCodingPotential',
+        key: 'hasProteinCodingPotential',
+        render: val => (val ? 'Yes' : 'Unknown'),
+        width: '15%'
+      },
     ];
 
     return (
