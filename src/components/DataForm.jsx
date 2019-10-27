@@ -357,10 +357,18 @@ class Data extends React.Component {
   async _validateGene(gene_id, speciesRelease) {
 
     const { ddb } = this.state;
+    var gene = null;
 
-    var gene = await ddb.getGeneSynonym(gene_id, speciesRelease);
+    if (gene_id.match(/^ENS.*G/)) {
+      gene = await ddb.getGene(gene_id, speciesRelease);
+      gene = {ensembl_gene_id: {S: gene_id}};
+    } else {
+      gene = await ddb.getGeneSynonym(gene_id, speciesRelease);
+    }
+
 
     if (gene === undefined) {
+      // if it did not find anything, then look on
       return
     } else {
       return gene;
