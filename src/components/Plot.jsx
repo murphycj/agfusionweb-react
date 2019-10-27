@@ -69,7 +69,6 @@ class Plot extends React.Component {
     var domainsNames = null;
     if (domains) {
       domainsNames = domains.filter(val => pdbs.includes(val.pdb));
-      console.log(domainsNames)
       domainsNames = [...new Set(domainsNames.map(val => val.shortName))];
       domainsNames = domainsNames.map(val => <Option key={val}>{val}</Option>);
     }
@@ -376,7 +375,6 @@ class Plot extends React.Component {
   _downloadImage() {
     const { imageRef } = this.state;
 
-    console.log(imageRef);
     var dataURL = imageRef.current.toDataURL({ pixelRatio: 3 });
 
     var link = document.createElement('a');
