@@ -218,7 +218,7 @@ function translate(seq, type='Standard') {
   for (var i = 0; i < seq.length; i++) {
     codon += seq[i];
 
-    if (codon.length == 3) {
+    if (codon.length === 3) {
 
       if (!(codon in CODON[type]['table'])) {
         console.log(codon + ' not in list of valid codons!')
@@ -275,9 +275,17 @@ const COLORS = [
 
 
 const AVAILABLE_ENSEMBL_SPECIES = {
-  homo_sapiens: {
+  homo_sapiens_hg38: {
     ensembl_releases: [94],
-    display: 'Human (GRCh38)',
+    default_release: 94,
+    species: 'homo_sapiens',
+    display: 'Human (GRCh38/hg38)',
+  },
+  homo_sapiens_hg19: {
+    ensembl_releases: [75],
+    default_release: 75,
+    species: 'homo_sapiens',
+    display: 'Human (GRCh37/hg19)',
   },
 };
 
