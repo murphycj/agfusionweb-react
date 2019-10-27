@@ -82,7 +82,7 @@ export class Transcript {
           }
 
           var start = this.strand == '+' ? (cds[0] - exon[0]) : (exon[1] - cds[1]);
-          var end = (this.strand == '+' ? (cds[1] - exon[0]) : (exon[1] - cds[0])) + 1;
+          var end = (this.strand == '+' ? (cds[1] - exon[0]) : (exon[1] - cds[0])) + 4;
 
           this.cdsSeqs.push(this.exonSeqs[j].slice(start, end));
         }
