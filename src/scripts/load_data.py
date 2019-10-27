@@ -64,32 +64,35 @@ def upload_fasta(species, genome, release):
     # cdna
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.cdna.all.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.cdna.all.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
-            genome
+            genome,
+            release
         )))
     write(db, species, release)
     # import pdb; pdb.set_trace()
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.ncrna.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.ncrna.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
-            genome
+            genome,
+            release
         )))
     write(db, species, release)
 
     # pep
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.pep.all.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.pep.all.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
-            genome
+            genome,
+            release
         )))
     write(db, species, release)
 
@@ -123,6 +126,7 @@ def process_gene_data(species, release, pyens_db, c):
 
     with table_agfusion_genes.batch_writer() as batch:
         for gene in genes:
+
             data = {
                 'id': gene.id,
                 'species_release': species + '_' + str(release),
@@ -169,20 +173,33 @@ def process_gene_data(species, release, pyens_db, c):
                 if transcript.protein_id in domains:
                     data['transcripts'][transcript.id]['domains'] = domains[transcript.protein_id]
 
-            batch.put_item(Item=data)
+                    # make sure nothing is an empty string, convert to none
 
-def process_data(species, release, agfusion):
+                    for pdb in data['transcripts'][transcript.id]['domains'].keys():
+                        for i in range(len(data['transcripts'][transcript.id]['domains'][pdb])):
+                            domain = data['transcripts'][transcript.id]['domains'][pdb][i]
+                            domain = [j if j else None for j in domain]
+                            data['transcripts'][transcript.id]['domains'][pdb][i] = domain
+
+            try:
+                # table_agfusion_genes.put_item(Item=data)
+                batch.put_item(Item=data)
+            except:
+                import pdb; pdb.set_trace()
+
+def process_data(species, release, genome, agfusion):
     pyens_db = pyensembl.EnsemblRelease(release, species)
     db = sqlite3.Connection(agfusion)
     c = db.cursor()
 
     # process_gene_synonym(species, release, pyens_db, c)
-    process_gene_data(species, release, pyens_db, c)
-    # upload_fasta('homo_sapiens', 'GRCh38', 94)
+    # process_gene_data(species, release, pyens_db, c)
+    upload_fasta(species, genome, release)
 
 
 def put_to_dynamodb():
     pass
 
 
-process_data('homo_sapiens', 94, '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.94.db')
+# process_data('homo_sapiens', 94, '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.94.db')
+process_data('homo_sapiens', 75, 'GRCh37', '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.75.db')
