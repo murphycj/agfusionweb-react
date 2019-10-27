@@ -47,7 +47,7 @@ export class PlotExons extends Plot {
     // draw markers for increments of 1000 base pairs
 
     for (var i = 1; i <= basepairLength; i++) {
-      if ((i % 10000) == 0) {
+      if ((i % 10000) === 0) {
         this.lines.push({
           x0: this.offset + (i / this.normalize * 0.9),
           x1: this.offset + (i / this.normalize * 0.9),

@@ -26,13 +26,20 @@ export class PlotFusionExons extends PlotExons {
 
   drawExons() {
     var index = 0;
+    var exon = null;
+    var start = null;
+    var end = null;
+    var exonStart = null;
+    var exonEnd = null;
+    // var exonCenter = null;
+
     for (var i = 0; i < this.transcript.cdnaIntervalsGene1.length; i++) {
 
-      var exon = this.transcript.cdnaIntervalsGene1[i];
-      var start = null;
-      var end = null;
+      exon = this.transcript.cdnaIntervalsGene1[i];
+      start = null;
+      end = null;
 
-      if (this.transcript.transcript1.strand == '+') {
+      if (this.transcript.transcript1.strand === '+') {
         start = exon[0] - this.transcript.transcript1.start;
         end = exon[1] - this.transcript.transcript1.start;
       } else {
@@ -44,9 +51,9 @@ export class PlotFusionExons extends PlotExons {
         end = -(exon[0] - this.transcript.transcript1.end);
       }
 
-      var exonStart = (start / this.normalize) * 0.9 + this.offset;
-      var exonEnd = (end / this.normalize) * 0.9 + this.offset;
-      var exonCenter = (exonEnd - exonStart) / 2. + exonStart;
+      exonStart = (start / this.normalize) * 0.9 + this.offset;
+      exonEnd = (end / this.normalize) * 0.9 + this.offset;
+      // exonCenter = (exonEnd - exonStart) / 2. + exonStart;
 
       this.rects.push({
         x: exonStart,
@@ -64,18 +71,18 @@ export class PlotFusionExons extends PlotExons {
 
     var distanceToAdd = null;
 
-    if (this.transcript.transcript1.strand == '+') {
+    if (this.transcript.transcript1.strand === '+') {
       distanceToAdd = this.transcript.gene1Junction - this.transcript.transcript1.start;
     } else {
       distanceToAdd = this.transcript.transcript1.end - this.transcript.gene1Junction;
     }
 
     for (var i = 0; i < this.transcript.cdnaIntervalsGene2.length; i++) {
-      var exon = this.transcript.cdnaIntervalsGene2[i];
-      var start = null;
-      var end = null;
+      exon = this.transcript.cdnaIntervalsGene2[i];
+      start = null;
+      end = null;
 
-      if (this.transcript.transcript2.strand == '+') {
+      if (this.transcript.transcript2.strand === '+') {
         start = exon[0] - this.transcript.gene2Junction;
         end = exon[1] - this.transcript.gene2Junction;
       } else {
@@ -90,9 +97,9 @@ export class PlotFusionExons extends PlotExons {
       start = start + distanceToAdd;
       end = end + distanceToAdd;
 
-      var exonStart = ((start / this.normalize) * 0.9) + this.offset;
-      var exonEnd = ((end / this.normalize) * 0.9) + this.offset;
-      var exonCenter = ((exonEnd - exonStart) / 2) + exonStart;
+      exonStart = ((start / this.normalize) * 0.9) + this.offset;
+      exonEnd = ((end / this.normalize) * 0.9) + this.offset;
+      // exonCenter = ((exonEnd - exonStart) / 2) + exonStart;
 
       this.rects.push({
         x: exonStart,
@@ -112,16 +119,19 @@ export class PlotFusionExons extends PlotExons {
   drawMainBody(nameSymbols, nameIsoform, length) {
     // main protein frame
 
-    if (this.transcript.transcript1.strand == '+') {
-      var gene1Length = ((this.transcript.gene1Junction - this.transcript.transcript1.start) / this.normalize) * 0.9;
+    var gene1Length = null;
+    var gene2Length = null;
+
+    if (this.transcript.transcript1.strand === '+') {
+      gene1Length = ((this.transcript.gene1Junction - this.transcript.transcript1.start) / this.normalize) * 0.9;
     } else {
-      var gene1Length = ((this.transcript.transcript1.end - this.transcript.gene1Junction) / this.normalize) * 0.9;
+      gene1Length = ((this.transcript.transcript1.end - this.transcript.gene1Junction) / this.normalize) * 0.9;
     }
 
-    if (this.transcript.transcript2.strand == '+') {
-      var gene2Length = ((this.transcript.transcript2.end - this.transcript.gene2Junction) / this.normalize) * 0.9;
+    if (this.transcript.transcript2.strand === '+') {
+      gene2Length = ((this.transcript.transcript2.end - this.transcript.gene2Junction) / this.normalize) * 0.9;
     } else {
-      var gene2Length = ((this.transcript.gene2Junction - this.transcript.transcript2.start) / this.normalize) * 0.9;
+      gene2Length = ((this.transcript.gene2Junction - this.transcript.transcript2.start) / this.normalize) * 0.9;
     }
 
     this.body.push({
@@ -156,16 +166,19 @@ export class PlotFusionExons extends PlotExons {
 
   draw() {
 
-    if (this.transcript.transcript1.strand == '+') {
-      var gene1Length = this.transcript.gene1Junction - this.transcript.transcript1.start;
+    var gene1Length = null;
+    var gene2Length = null;
+
+    if (this.transcript.transcript1.strand === '+') {
+      gene1Length = this.transcript.gene1Junction - this.transcript.transcript1.start;
     } else {
-      var gene1Length = this.transcript.transcript1.end - this.transcript.gene1Junction;
+      gene1Length = this.transcript.transcript1.end - this.transcript.gene1Junction;
     }
 
-    if (this.transcript.transcript2.strand == '+') {
-      var gene2Length = this.transcript.transcript2.end - this.transcript.gene2Junction;
+    if (this.transcript.transcript2.strand === '+') {
+      gene2Length = this.transcript.transcript2.end - this.transcript.gene2Junction;
     } else {
-      var gene2Length = this.transcript.gene2Junction - this.transcript.transcript2.start;
+      gene2Length = this.transcript.gene2Junction - this.transcript.transcript2.start;
     }
 
     this.scaleSequence(gene1Length + gene2Length)

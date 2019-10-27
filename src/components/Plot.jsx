@@ -1,13 +1,27 @@
 import React, { Fragment } from 'react';
-import Konva from 'konva';
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
-import { Button, Icon, Radio, Row, Col, Card, Select } from 'antd';
+import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip } from 'antd';
 
 import './Plot.css';
 
 import { COLORS, PDBS } from '../library/utils';
 
 const { Option } = Select;
+const helpText = {
+  pdb: [
+    "pfam: PFAM (pfam.xfam.org)",
+    "smart: SMART (smart.embl-heidelberg.de)",
+    "superfamily: SUPERFAMILY (supfam.org)",
+    "tigrfam: TIGRFAMS (jcvi.org/tigrfams)",
+    "pfscan: pfscan (web.expasy.org/pftools/)",
+    "tmhmm: transmembrane helices (cbs.dtu.dk/services/TMHMM/)",
+    "seg: low complexity regions",
+    "ncoils: predicted coiled coils",
+    "prints: protein motif fingerprints (130.88.97.239/PRINTS/index.php)",
+    "pirsf: PIRSF (proteininformationresource.org/pirwww/dbinfo/pirsf.shtml)",
+    "signalp: predicts signal peptids (cbs.dtu.dk/services/SignalP/)"
+  ]
+};
 
 class Plot extends React.Component {
 
@@ -120,7 +134,10 @@ class Plot extends React.Component {
               domains ?
               <Row className="Plot-Settings-Row">
                 <Col span={6} className="Plot-Settings-Labels">
-                  <b>Protein databases: </b>
+                  <b>Protein databases</b>
+                  <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <p>{val}</p>)}</Fragment>}>
+                    <Icon type="question-circle" />
+                  </Tooltip>:
                 </Col>
                 <Col span={18}>
                   <Select
@@ -155,7 +172,7 @@ class Plot extends React.Component {
 
                 {plotData.body.map((body, index) => {
                   // plots the main body of the protein or exons
-                  if (body.type == 'rect') {
+                  if (body.type === 'rect') {
                     return <Rect
                               key={index}
                               stroke={body.stroke}
@@ -199,7 +216,7 @@ class Plot extends React.Component {
                 {plotData.rects.map(rect => {
                   // shows the text of the domain/exon on hover
 
-                  if (rectShowIndex == rect.index && rect.type == 'protein') {
+                  if (rectShowIndex === rect.index && rect.type === 'protein') {
 
                     var rectStart = rect.x * width;
                     var rectMiddle = (rect.width * width / 2) + rectStart;
@@ -336,20 +353,20 @@ class Plot extends React.Component {
     var plotData = null;
     var domains = null;
 
-    if (plotTypeProtein == 'fusionProtein' && plotDataAll.fusionProtein) {
+    if (plotTypeProtein === 'fusionProtein' && plotDataAll.fusionProtein) {
       plotData = this._filterDomains(plotDataAll.fusionProtein, pdbs);
       domains = plotData.rects;
-    } else if (plotTypeProtein == 'gene1Protein' && plotDataAll.gene1Protein) {
+    } else if (plotTypeProtein === 'gene1Protein' && plotDataAll.gene1Protein) {
       plotData = this._filterDomains(plotDataAll.gene1Protein, pdbs);
       domains = plotData.rects;
-    } else if (plotTypeProtein == 'gene2Protein' && plotDataAll.gene2Protein) {
+    } else if (plotTypeProtein === 'gene2Protein' && plotDataAll.gene2Protein) {
       plotData = this._filterDomains(plotDataAll.gene2Protein, pdbs);
       domains = plotData.rects;
-    } else if (plotTypeExon == 'fusionExon') {
+    } else if (plotTypeExon === 'fusionExon') {
       plotData = plotDataAll.fusionExon;
-    } else if (plotTypeExon == 'gene1Exon') {
+    } else if (plotTypeExon === 'gene1Exon') {
       plotData = plotDataAll.gene1Exon;
-    } else if (plotTypeExon == 'gene2Exon') {
+    } else if (plotTypeExon === 'gene2Exon') {
       plotData = plotDataAll.gene2Exon;
     }
 

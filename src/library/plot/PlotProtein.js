@@ -1,7 +1,7 @@
 import { Plot } from './Plot';
 
 import { PDBS } from '../utils';
-const HORIZONTAL_LEVELS = [1, 2, 3, 4];
+// const HORIZONTAL_LEVELS = [1, 2, 3, 4];
 
 export class PlotProtein extends Plot {
 
@@ -96,7 +96,7 @@ export class PlotProtein extends Plot {
     // draw markers for increments of 100 amino acids
 
     for (var i = 0; i < (length + 1); i++) {
-      if ((i % 100) == 0) {
+      if ((i % 100) === 0) {
         this.lines.push({
           x0: this.offset + (i / this.normalize * 0.9),
           x1: this.offset + (i / this.normalize * 0.9),

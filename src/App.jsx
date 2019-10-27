@@ -1,8 +1,8 @@
-import React, {Component, Fragment} from 'react';
+import React from 'react';
 import 'antd/dist/antd.css';
 // import logo from './logo.svg';
 import './App.css';
-import { Layout, Row, Col, Spin} from 'antd';
+import { Layout } from 'antd';
 
 import DataForm from './components/DataForm.jsx';
 import { Fusion } from './library/Fusion';
@@ -80,7 +80,7 @@ class App extends React.Component {
 
         fusions[fusion.id] = fusion;
 
-        if (j == 0 && i == 0) {
+        if (j === 0 && i === 0) {
           defaultFusion = fusion.id;
         }
       }

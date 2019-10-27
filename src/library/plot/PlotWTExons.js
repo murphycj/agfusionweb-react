@@ -44,7 +44,7 @@ export class PlotWTExons extends PlotExons {
       var start = null;
       var end = null;
 
-      if (this.transcript.strand == '+') {
+      if (this.transcript.strand === '+') {
         start = exon[0] - this.transcript.start;
         end = exon[1] - this.transcript.start;
       } else {

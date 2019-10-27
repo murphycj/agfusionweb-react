@@ -1,5 +1,5 @@
 
-const HORIZONTAL_LEVELS = [1,2,3,4];
+// const HORIZONTAL_LEVELS = [1,2,3,4];
 
 
 export class Plot {
