@@ -37,7 +37,7 @@ class App extends React.Component {
     return (
       <Layout >
         <Header>
-          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (Alpha version)</div>
+          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (version 0.1)</div>
         </Header>
         <Content className="App-content">
           <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
