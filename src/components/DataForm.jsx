@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
-import {Form, Input, InputNumber, Layout, Row, Col, Card, Select, Button } from 'antd';
+import React from 'react';
+import {Form, Input, InputNumber, Row, Col, Card, Select, Button } from 'antd';
 
 import './DataForm.css';
 
-import InputOption from './InputOption.jsx';
 import { DynamoDB } from '../library/DynamoDB';
 import { Gene } from '../library/Gene';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils';
@@ -15,8 +14,6 @@ class Data extends React.Component {
     this.state = {
       ddb: new DynamoDB(),
       loading: false,
-      selectedSpecies: 'homo_sapiens',
-      selectedRelease: 94,
     }
 
     this._onSubmit = this._onSubmit.bind(this);
@@ -24,22 +21,33 @@ class Data extends React.Component {
     this._clearData = this._clearData.bind(this);
     this._runExample = this._runExample.bind(this);
     this._setLoading = this._setLoading.bind(this);
+    this._handleSpeciesChange = this._handleSpeciesChange.bind(this);
+    this._handleReleaseChange = this._handleReleaseChange.bind(this);
+  }
+
+  componentDidMount() {
+
+    this.props.form.setFieldsValue({
+      species: 'homo_sapiens_hg38',
+      release: 94
+    });
   }
 
   render() {
 
     const { getFieldDecorator } = this.props.form;
-    const { selectedRelease, selectedSpecies, loading } = this.state;
+    const { loading } = this.state;
+    const { species, release } = this.props.form.getFieldsValue;
 
-    var ensembleVersions = {};
+    var ensembleVersionsOptions = {};
 
     Object.keys(AVAILABLE_ENSEMBL_SPECIES).map(val => {
-      ensembleVersions[val] = AVAILABLE_ENSEMBL_SPECIES[val]['ensembl_releases'].map(rel => {
+      ensembleVersionsOptions[val] = AVAILABLE_ENSEMBL_SPECIES[val]['ensembl_releases'].map(rel => {
         return <Select.Option key={rel}>{rel}</Select.Option>;
       });
     })
 
-    const species = Object.keys(AVAILABLE_ENSEMBL_SPECIES).map(val => {
+    const speciesOption = Object.keys(AVAILABLE_ENSEMBL_SPECIES).map(val => {
       return <Select.Option key={val}>{AVAILABLE_ENSEMBL_SPECIES[val]['display']}</Select.Option>;
     });
 
@@ -105,21 +113,25 @@ class Data extends React.Component {
           </Col>
           <Col span={8}>
             <Card className="Card-input" title="Other information" bordered={true}>
+              <label>Species:</label>
               <Form.Item>
-                <InputOption
-                  label="Species"
-                  options={species}
-                  default="homo_sapiens"
-                  />
+                {getFieldDecorator('species', {
+                })(
+                  <Select style={{ width: 200 }} onChange={this._handleSpeciesChange}>
+                    {speciesOption}
+                  </Select>
+                )}
               </Form.Item>
               <br />
               <br />
+              <label>Ensembl release:</label>
               <Form.Item>
-                <InputOption
-                  label="Ensembl version"
-                  options={ensembleVersions[selectedSpecies]}
-                  default="94"
-                  />
+                {getFieldDecorator('release', {
+                })(
+                  <Select style={{ width: 200 }} onChange={this._handleReleaseChange}>
+                    {ensembleVersionsOptions[species]}
+                  </Select>
+                )}
               </Form.Item>
             </Card>
           </Col>
@@ -136,17 +148,33 @@ class Data extends React.Component {
     )
   }
 
+  _handleSpeciesChange(value) {
+    this.props.form.setFieldsValue({
+      species: value,
+      release: AVAILABLE_ENSEMBL_SPECIES[value]['default_release'],
+    });
+  }
+
+  _handleReleaseChange(value) {
+    this.props.form.setFieldsValue({
+      release: value,
+    });
+  }
+
   _clearData() {
     this.props.form.resetFields();
     this.props.onClearCallback();
   }
 
   _runExample() {
+
     this.props.form.setFields({
       gene1: {value: 'FGFR2'},
       gene1_breakpoint: {value: 121487991},
       gene2: {value: 'CCDC6'},
       gene2_breakpoint: {value: 59807078},
+      species: {value: 'homo_sapiens_hg38'},
+      release: {value: 94}
     });
     this._onSubmit(new Event('submit'));
   }
@@ -169,9 +197,13 @@ class Data extends React.Component {
     this.props.form.validateFields( async (err, values) => {
       if (!err) {
 
+        const species = AVAILABLE_ENSEMBL_SPECIES[values.species]['species'];
+        const speciesRelease = `${species}_${values.release}`;
+
+
         // validate gene 1 and get gene data
 
-        var gene1 = await this._validateGene(values.gene1)
+        var gene1 = await this._validateGene(values.gene1, speciesRelease)
 
         if (gene1 === undefined) {
           this.props.form.setFields({
@@ -186,9 +218,9 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene1Data = await this._getGeneData(gene1);
+        var gene1Data = await this._getGeneData(gene1, speciesRelease);
 
-        if (gene1Data.length == 0) {
+        if (gene1Data.length === 0) {
           this.props.form.setFields({
             gene1: {
               value: values.gene1,
@@ -205,14 +237,14 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene1Data.length; i++) {
           if (gene1Data[i].contains(values.gene1_breakpoint)) {
-            gene1Data[i] = await this._getSequenceData(gene1Data[i]);
+            gene1Data[i] = await this._getSequenceData(gene1Data[i], speciesRelease);
             gene1DataFinal.push(gene1Data[i]);
           }
         }
 
         // if no genes left, then raise error
 
-        if (gene1DataFinal.length == 0) {
+        if (gene1DataFinal.length === 0) {
           this.props.form.setFields({
             gene1_breakpoint: {
               value: values.gene1_breakpoint,
@@ -225,7 +257,7 @@ class Data extends React.Component {
 
         // validate gene 2
 
-        var gene2 = await this._validateGene(values.gene2)
+        var gene2 = await this._validateGene(values.gene2, speciesRelease)
 
         if (gene2 === undefined) {
           this.props.form.setFields({
@@ -240,9 +272,9 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene2Data = await this._getGeneData(gene2);
+        var gene2Data = await this._getGeneData(gene2, speciesRelease);
 
-        if (gene2Data.length == 0) {
+        if (gene2Data.length === 0) {
           this.props.form.setFields({
             gene2: {
               value: values.gene2,
@@ -259,14 +291,14 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene2Data.length; i++) {
           if (gene2Data[i].contains(values.gene2_breakpoint)) {
-            gene2Data[i] = await this._getSequenceData(gene2Data[i]);
+            gene2Data[i] = await this._getSequenceData(gene2Data[i], speciesRelease);
             gene2DataFinal.push(gene2Data[i]);
           }
         }
 
         // if no genes left, then raise error
 
-        if (gene2DataFinal.length == 0) {
+        if (gene2DataFinal.length === 0) {
           this.props.form.setFields({
             gene2_breakpoint: {
               value: values.gene2_breakpoint,
@@ -291,21 +323,21 @@ class Data extends React.Component {
     });
   }
 
-  async _getSequenceData(gene) {
+  async _getSequenceData(gene, speciesRelease) {
 
     const { ddb } = this.state;
 
 
     // fetch the sequences
 
-    var seqs = await ddb.getSequences(gene.getSeqIds());
+    var seqs = await ddb.getSequences(gene.getSeqIds(), speciesRelease);
 
     gene.parseSeqs(seqs);
 
     return gene;
   }
 
-  async _getGeneData(gene) {
+  async _getGeneData(gene, speciesRelease) {
 
     const { ddb } = this.state;
 
@@ -313,7 +345,7 @@ class Data extends React.Component {
     var geneData = [];
 
     for (var i = 0; i < ensemblIds.length; i++) {
-      var geneData_i = await ddb.getGene(ensemblIds[i]);
+      var geneData_i = await ddb.getGene(ensemblIds[i], speciesRelease);
       if (geneData_i !== undefined) {
         geneData.push(new Gene(ensemblIds[i], geneData_i));
       }
@@ -322,11 +354,11 @@ class Data extends React.Component {
     return geneData;
   }
 
-  async _validateGene(gene_id) {
+  async _validateGene(gene_id, speciesRelease) {
 
     const { ddb } = this.state;
 
-    var gene = await ddb.getGeneSynonym(gene_id);
+    var gene = await ddb.getGeneSynonym(gene_id, speciesRelease);
 
     if (gene === undefined) {
       return
