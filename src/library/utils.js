@@ -287,6 +287,12 @@ const AVAILABLE_ENSEMBL_SPECIES = {
     species: 'homo_sapiens',
     display: 'Human (GRCh37/hg19)',
   },
+  mus_musculus_mm10: {
+    ensembl_releases: [92],
+    default_release: 92,
+    species: 'mus_musculus',
+    display: 'Mouse (GRCm38/mm10)',
+  },
 };
 
 export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS, AVAILABLE_ENSEMBL_SPECIES };
