@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Row, Col, Card, Select } from 'antd';
+import { Select } from 'antd';
 
 import './InputOption.css';
 
@@ -10,11 +10,14 @@ class InputOption extends React.Component {
   }
 
   render() {
+
+    const { callback, selectedValue, label, options } = this.props;
+
     return (
       <div className="input">
-        <label>{this.props.label}:</label>
-        <Select defaultValue={this.props.default} style={{ width: 200 }} >
-          {this.props.options}
+        <label>{label}:</label>
+        <Select value={selectedValue} style={{ width: 200 }} onChange={callback}>
+          {options}
         </Select>
       </div>
     )
