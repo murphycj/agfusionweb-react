@@ -30,7 +30,7 @@ export class Fusion {
           transcript.effect = 'OGB';
         } else {
 
-          this.transcripts[transcript.name] = transcript;
+          this.transcripts[transcript.id] = transcript;
         }
 
       }

@@ -35,6 +35,8 @@ export class FusionTranscript {
     this.name = this.transcript1.name && this.transcript2.name ?
       this.transcript1.name + ' : ' + this.transcript2.name :
       this.transcript1.id + ' : ' + this.transcript2.id;
+      
+    this.id =  this.transcript1.id + ' : ' + this.transcript2.id;
 
     this.effect = '';
     this.gene1JunctionLoc = 'exon';
