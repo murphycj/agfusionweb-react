@@ -35,7 +35,7 @@ export class FusionTranscript {
     this.name = this.transcript1.name && this.transcript2.name ?
       this.transcript1.name + ' : ' + this.transcript2.name :
       this.transcript1.id + ' : ' + this.transcript2.id;
-      
+
     this.id =  this.transcript1.id + ' : ' + this.transcript2.id;
 
     this.effect = '';
@@ -526,18 +526,18 @@ export class FusionTranscript {
     this.cdsGene2Seq = this.transcript2.cdsSeq.slice(this.cdsJunctionGene2);
     this.cdsSeq = this.cdsGene1Seq + this.cdsGene2Seq;
 
-    this.cdsGene1Len = this.cdsJunctionGene1;
-    this.cdsGene2Len = this.transcript2.cdsLength - this.cdsJunctionGene2;
+    this.cdsGene1Len = this.cdsGene1Seq.length;
+    this.cdsGene2Len = this.cdsGene2Seq.length;
   }
 
   fetchProtein() {
 
     this.proteinJunctionGene1 = parseInt(this.cdsJunctionGene1 / 3);
 
-    if (Number.isInteger(this.cdsJunctionGene1/3) && (Number.isInteger(this.cdsGene2Len/3))) {
+    if (Number.isInteger(this.cdsGene1Len/3) && (Number.isInteger(this.cdsGene2Len/3))) {
       this.effect='in-frame';
       this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
-    } else if (Math.round((this.cdsJunctionGene1/3 % 1) + (this.cdsGene2Len/3 % 1)) == 1.0) {
+    } else if (Number.parseFloat(((this.cdsGene1Len/3 % 1) + (this.cdsGene2Len/3 % 1)).toPrecision(3)) == 1.0) {
       this.effect = 'in-frame (with mutation)';
       this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
     } else {
