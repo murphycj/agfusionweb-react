@@ -64,35 +64,35 @@ def upload_fasta(species, genome, release):
     # cdna
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.cdna.all.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}cdna.all.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
             genome,
-            release
+            str(release) + '.' if release <= 75 else ''
         )))
     write(db, species, release)
     # import pdb; pdb.set_trace()
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.ncrna.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}ncrna.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
             genome,
-            release
+            str(release) + '.' if release <= 75 else ''
         )))
     write(db, species, release)
 
     # pep
 
     db = pickle.load(open(
-        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}.pep.all.fa.gz.pickle'.format(
+        '/Users/charliemurphy/Library/Caches/pyensembl/{}/ensembl{}/{}.{}.{}pep.all.fa.gz.pickle'.format(
             genome,
             release,
             species.capitalize(),
             genome,
-            release
+            str(release) + '.' if release <= 75 else ''
         )))
     write(db, species, release)
 
@@ -192,9 +192,9 @@ def process_data(species, release, genome, agfusion):
     db = sqlite3.Connection(agfusion)
     c = db.cursor()
 
-    # process_gene_synonym(species, release, pyens_db, c)
+    process_gene_synonym(species, release, pyens_db, c)
     # process_gene_data(species, release, pyens_db, c)
-    upload_fasta(species, genome, release)
+    # upload_fasta(species, genome, release)
 
 
 def put_to_dynamodb():
@@ -202,4 +202,5 @@ def put_to_dynamodb():
 
 
 # process_data('homo_sapiens', 94, '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.94.db')
-process_data('homo_sapiens', 75, 'GRCh37', '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.75.db')
+# process_data('homo_sapiens', 75, 'GRCh37', '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.75.db')
+process_data('mus_musculus', 92, 'GRCm38', '/Users/charliemurphy/Downloads/agfusion.mus_musculus.92.db')
