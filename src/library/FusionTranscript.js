@@ -39,8 +39,8 @@ export class FusionTranscript {
     this.id =  this.transcript1.id + ' : ' + this.transcript2.id;
 
     this.effect = '';
-    this.gene1JunctionLoc = 'exon';
-    this.gene2JunctionLoc = 'exon';
+    this.gene1JunctionLoc = null;
+    this.gene2JunctionLoc = null;
     this.hasProteinCodingPotential = false;
 
     // cDNA stuff
@@ -87,127 +87,9 @@ export class FusionTranscript {
 
   predict() {
 
+    this.gene1JunctionLoc = this.transcript1.getFeatureOfPosition(this.gene1Junction);
+    this.gene2JunctionLoc = this.transcript2.getFeatureOfPosition(this.gene2Junction);
     this.fetchCdna();
-
-    var cds = null;
-    var nMax = 0;
-
-    if (this.transcript1.complete && (this.gene1JunctionLoc.search('UTR') == -1)) {
-
-      cds = this.transcript1.cds;
-      nMax = cds.length - 1;
-
-      if (this.gene1JunctionLoc.search('intron') != -1) {
-
-        // if in intron, is it between CDS regions?
-
-        for (var i = 0; i < cds.length; i++) {
-
-          if (this.transcript1.strand == "+") {
-            if (i == 0 && this.gene1Junction < cds[i][0]) {
-              this.gene1JunctionLoc = 'intron (before cds)';
-              break;
-            } else if (i == nMax && this.gene1Junction > cds[i][1]) {
-              this.gene1JunctionLoc = 'intron (after cds)';
-              break;
-            }
-          } else {
-            if (i == 0 && this.gene1Junction > cds[i][1]) {
-              this.gene1JunctionLoc = 'intron (before cds)';
-              break;
-            } else if (i == nMax && this.gene1Junction < cds[i][0]) {
-              this.gene1JunctionLoc = 'intron (after cds)';
-              break;
-            }
-          }
-
-          if ((i!=0) && (i!=nMax) && (this.gene1Junction < cds[i][0] || this.gene1Junction > cds[i+1][1])) {
-            this.gene1JunctionLoc='intron (cds)';
-            break;
-          }
-        }
-      } else {
-        for (var i = 0; i < cds.length; i++) {
-          if (this.gene1Junction >= cds[i][0] && this.gene1Junction <= cds[i][1]) {
-            this.gene1JunctionLoc = 'CDS';
-            break;
-          }
-        }
-
-        if (this.transcript1.strand == "+") {
-          if (this.gene1Junction==cds[0][0]) {
-            this.gene1JunctionLoc = 'CDS (start)';
-          } else if (this.gene1Junction==cds[cds.length-1][1]) {
-            this.gene1JunctionLoc = 'CDS (end)';
-          }
-        } else {
-          if (this.gene1Junction==cds[0][1]) {
-            this.gene1JunctionLoc = 'CDS (start)';
-          } else if (this.gene1Junction==cds[cds.length-1][0]) {
-            this.gene1JunctionLoc = 'CDS (end)';
-          }
-        }
-      }
-    }
-
-    if (this.transcript2.complete && (this.gene2JunctionLoc.search('UTR') == -1)) {
-
-      cds = this.transcript2.cds;
-      nMax = cds.length - 1;
-
-      if (this.gene2JunctionLoc.search('intron') != -1) {
-
-        // if in intron, is it between CDS regions?
-
-        for (var i = 0; i < cds.length; i++) {
-
-          if (this.transcript2.strand=="+") {
-            if (i==0 && this.gene2Junction < cds[i][0]) {
-              this.gene2JunctionLoc='intron (before cds)';
-              break;
-            } else if (i == nMax && this.gene2Junction > cds[i][1]) {
-              this.gene2JunctionLoc='intron (after cds)';
-              break;
-            }
-          } else {
-            if (i == 0 && this.gene2Junction > cds[i][1]) {
-              this.gene2JunctionLoc = 'intron (before cds)';
-              break;
-            } else if (i == nMax && this.gene2Junction < cds[i][0]) {
-              this.gene2JunctionLoc = 'intron (after cds)';
-              break;
-            }
-          }
-
-          if ((i != 0) && (i != nMax) && (this.gene2Junction < cds[i][0] || this.gene2Junction > cds[i+1][1])) {
-            this.gene2JunctionLoc = 'intron (cds)';
-            break;
-          }
-        }
-
-      } else {
-        for (var i = 0; i < cds.length; i++) {
-          if (this.gene2Junction >= cds[i][0] && this.gene2Junction <= cds[i][1]) {
-            this.gene2JunctionLoc='CDS';
-            break;
-          }
-        }
-
-        if (this.transcript2.strand == "+") {
-          if (this.gene2Junction == cds[0][0]) {
-            this.gene2JunctionLoc = 'CDS (start)';
-          } else if (this.gene2Junction == cds[cds.length-1][1]) {
-            this.gene2JunctionLoc = 'CDS (end)';
-          }
-        } else {
-          if (this.gene2Junction == cds[0][1]) {
-            this.gene2JunctionLoc = 'CDS (start)';
-          } else if (this.gene2Junction == cds[cds.length-1][0]) {
-            this.gene2JunctionLoc = 'CDS (end)';
-          }
-        }
-      }
-    }
 
     // get if has coding potential
 
@@ -258,16 +140,6 @@ export class FusionTranscript {
     if (this.transcript1.strand == '+') {
       for (var i = 0; i < exons.length; i++) {
 
-        // is in an intron?
-
-        if (i == 0 && this.gene1Junction < exons[i][0]) {
-          this.gene1JunctionLoc = 'intron (before cds)';
-        } else if (i == (nMax-1) && this.gene1Junction > exons[i][1]) {
-          this.gene1JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax-1) && this.gene1Junction > exons[i][1] && this.gene1Junction < exons[i+1][0]) {
-          this.gene1JunctionLoc = 'intron';
-        }
-
         // get the exon intervals
 
         if (this.gene1Junction >= exons[i][1]) {
@@ -292,16 +164,6 @@ export class FusionTranscript {
     } else {
 
       for (var i = 0; i < exons.length; i++) {
-
-        // is in an intron?
-
-        if (i == 0 && this.gene1Junction > exons[i][1]) {
-          this.gene1JunctionLoc = 'intron (before cds)';
-        } else if (i == (nMax - 1) && this.gene1Junction < exons[i][0]) {
-          this.gene1JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax - 1) && this.gene1Junction < exons[i][0] && this.gene1Junction > exons[i+1][1]) {
-          this.gene1JunctionLoc = 'intron';
-        }
 
         // get sequence
 
@@ -354,15 +216,6 @@ export class FusionTranscript {
       }
 
       for (var i = 0; i < exons.length; i++) {
-        // is in intron?
-
-        if (i == 0 && this.gene2Junction < exons[i][0]) {
-          this.gene2JunctionLoc = 'intron (before cds)';
-        } else if (i == (nMax - 1) && this.gene2Junction > exons[i][1]) {
-          this.gene2JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax - 1) && this.gene2Junction > exons[i][1] && this.gene2Junction < exons[i+1][0]) {
-          this.gene2JunctionLoc = 'intron';
-        }
 
         // get sequence
 
@@ -395,16 +248,6 @@ export class FusionTranscript {
               i+1
           ]);
         }
-
-        // is in intron?
-
-        if (i == 0 && this.gene2Junction > exons[i][1]) {
-          this.gene2JunctionLoc = 'intron (before cds)';
-        } else if (i == (nMax - 1) && this.gene2Junction < exons[i][0]) {
-          this.gene2JunctionLoc = 'intron (after cds)';
-        } else if (i != (nMax - 1) && this.gene2Junction < exons[i][0] && this.gene2Junction > exons[i+1][1]) {
-          this.gene2JunctionLoc = 'intron';
-        }
       }
 
       for (var i = 0; i < exons.length; i++) {
@@ -417,43 +260,6 @@ export class FusionTranscript {
         } else {
           this.cdnaJunctionGene2 += (exons[i][1] - this.gene2Junction);
         }
-      }
-    }
-
-    // find out if the junction on either gene is with in the 5' or 3' UTR,
-    // or if it exactly at the beginning or end of the UTR
-
-    // the 5' gene
-
-    if (this.gene1JunctionLoc.search('intron') == -1) {
-
-      if (this.transcript1.complete && this.cdnaJunctionGene1 < this.transcript1.fivePrimeUtrLen) {
-        this.gene1JunctionLoc = '5UTR';
-      } else if (this.transcript1.complete && this.cdnaJunctionGene1 == this.transcript1.fivePrimeUtrLen) {
-        this.gene1JunctionLoc = '5UTR (end)';
-      }
-
-      if (this.transcript1.complete && (this.transcript1.length - this.cdnaJunctionGene1) < this.transcript1.threePrimeUtrLen) {
-        this.gene1JunctionLoc = '3UTR';
-      } else if (this.transcript1.complete && (this.transcript1.length - this.cdnaJunctionGene1) == this.transcript1.threePrimeUtrLen) {
-        this.gene1JunctionLoc = '3UTR (start)';
-      }
-    }
-
-    // the 3' gene
-
-    if (this.gene2JunctionLoc.search('intron') == -1) {
-
-      if (this.transcript2.complete && this.cdnaJunctionGene2 < this.transcript2.fivePrimeUtrLen) {
-        this.gene2JunctionLoc = '5UTR';
-      } else if (this.transcript2.complete && this.cdnaJunctionGene2 == this.transcript2.fivePrimeUtrLen) {
-        this.gene2JunctionLoc = '5UTR (end)';
-      }
-
-      if (this.transcript2.complete && (this.transcript2.length - this.cdnaJunctionGene2) < this.transcript2.threePrimeUtrLen) {
-          this.gene2JunctionLoc = '3UTR';
-      } else if (this.transcript2.complete && (this.transcript2.length - this.cdnaJunctionGene2) == this.transcript2.threePrimeUtrLen) {
-        this.gene2JunctionLoc = '3UTR (start)';
       }
     }
 

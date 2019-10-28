@@ -8,8 +8,6 @@ export class Transcript {
     this.canonical = data.canonical.BOOL || false;
     this.hasStartCodon = data.has_start_codon.BOOL || false;
     this.hasStopCodon = data.has_stop_codon.BOOL || false;
-    this.fivePrimeUtrLen = parseInt(data.five_prime_utr_len.N) || 0;
-    this.threePrimeUtrLen = parseInt(data.three_prime_utr_len.N) || 0;
     this.start = parseInt(data.start.N);
     this.end = parseInt(data.end.N);
     this.strand = strand;
@@ -44,6 +42,114 @@ export class Transcript {
     this.parseExons(data);
     this.getLengths();
     this.parseDomains(data);
+
+    //utr
+    this.fivePrimeUtrLen = parseInt(data.five_prime_utr_len.N) || 0;
+    this.threePrimeUtrLen = parseInt(data.three_prime_utr_len.N) || 0;
+    if (this.isProteinCoding) {
+      this.getUtrCoordinates();
+    }
+  }
+
+  getUtrCoordinates() {
+    this.fivePrimeUtrStart = this.strand === '+' ? this.exons[0][0] : this.exons[0][1];
+    this.threePrimeUtrEnd = this.strand === '+' ? this.exons[this.exons.length-1][1] : this.exons[this.exons.length-1][0];
+
+    var runningSum = 0;
+    for (var j = 0; j < this.exons.length; j++) {
+      var exonLen = this.exons[j][1] - this.exons[j][0] + 1;
+
+      if ((runningSum + exonLen) >= this.fivePrimeUtrLen) {
+        this.fivePrimeUtrEnd = this.strand === '+' ?
+          (this.exons[j][0] + (this.fivePrimeUtrLen - runningSum) - 1):
+          (this.exons[j][1] - (this.fivePrimeUtrLen - runningSum) + 1);
+        break;
+      }
+
+      runningSum += exonLen;
+    }
+
+    runningSum = 0;
+    for (var j = (this.exons.length - 1); j >= 0; j--) {
+      var exonLen = this.exons[j][1] - this.exons[j][0] + 1;
+
+      if ((runningSum + exonLen) >= this.threePrimeUtrLen) {
+        this.threePrimeUtrStart = this.strand === '+' ?
+          (this.exons[j][1] - (this.threePrimeUtrLen - runningSum) + 1):
+          (this.exons[j][0] + (this.threePrimeUtrLen - runningSum) - 1);
+        break;
+      }
+
+      runningSum += exonLen;
+    }
+  }
+
+  isInExons(position) {
+
+    for (var i = 0; i < this.exons.length; i++) {
+      if ((position >= this.exons[i][0]) && (position <= this.exons[i][1])) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isInCds(position) {
+
+    if (this.isProteinCoding) {
+      for (var i = 0; i < this.cds.length; i++) {
+        if ((position >= this.cds[i][0]) && (position <= this.cds[i][1])) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  isIn5Utr(position) {
+
+    if (!this.complete) {
+      return false;
+    }
+
+    if (this.strand === '+' && (position >= this.fivePrimeUtrStart) && (position <= this.fivePrimeUtrEnd)) {
+      return true;
+    } else if ((position >= this.fivePrimeUtrEnd) && (position <= this.fivePrimeUtrStart)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  isIn3Utr(position) {
+
+    if (!this.complete) {
+      return false;
+    }
+
+    if (this.strand === '+' && (position >= this.threePrimeUtrStart) && (position <= this.threePrimeUtrEnd)) {
+      return true;
+    } else if ((position >= this.threePrimeUtrEnd) && (position <= this.threePrimeUtrStart)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  getFeatureOfPosition(position) {
+    var feature = this.isInExons(position) ? 'exon' : 'intron';
+
+    if (this.isIn5Utr(position)) {
+      feature = '5UTR';
+    } else if (this.isIn3Utr(position)) {
+      feature = '3UTR';
+    } else if (this.isInCds(position)) {
+      feature = 'CDS';
+    }
+
+    return feature;
   }
 
   rangeOverlap(x1, x2, y1, y2) {
