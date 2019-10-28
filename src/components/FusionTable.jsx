@@ -32,7 +32,6 @@ class FusionTable extends React.Component {
 
   componentDidMount() {
     const { fusions, defaultFusion } = this.props;
-    console.log(fusions[defaultFusion]);
     var fusionIsoforms = this._filterFusions(fusions, defaultFusion, true);
     this._createPlotDate(fusionIsoforms[0]);
   }
@@ -48,11 +47,13 @@ class FusionTable extends React.Component {
 
     var fusionIsoforms = this._filterFusions(fusions, selectedFusion, onlyCanonical);
 
+    console.log(fusions[selectedFusion]);
+
     const columns = [
       {
         title: '5\' gene isoform',
         dataIndex: 'displayData',
-        key: 'name',
+        key: 'transcript1.id',
         render: val => {
           const contentGene = (
             <div>
@@ -78,7 +79,7 @@ class FusionTable extends React.Component {
       {
         title: '3\' gene isoform',
         dataIndex: 'displayData',
-        key: 'name',
+        key: 'transcript2.id',
         render: val => {
           const contentGene = (
             <div>
