@@ -4,7 +4,7 @@ import {Form, Input, InputNumber, Row, Col, Card, Select, Button } from 'antd';
 import './DataForm.css';
 
 import { DynamoDB } from '../library/DynamoDB';
-import { Gene } from '../library/Gene';
+import { ProcessQuery } from '../library/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils';
 
 class Data extends React.Component {
@@ -12,12 +12,11 @@ class Data extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ddb: new DynamoDB(),
+      query: new ProcessQuery(),
       loading: false,
     }
 
     this._onSubmit = this._onSubmit.bind(this);
-    this._validateGene = this._validateGene.bind(this);
     this._clearData = this._clearData.bind(this);
     this._runExample = this._runExample.bind(this);
     this._setLoading = this._setLoading.bind(this);
@@ -190,6 +189,8 @@ class Data extends React.Component {
 
   async _onSubmit(e) {
 
+    const { query } = this.state;
+
     this._setLoading();
 
     e.preventDefault();
@@ -203,7 +204,7 @@ class Data extends React.Component {
 
         // validate gene 1 and get gene data
 
-        var gene1 = await this._validateGene(values.gene1, speciesRelease)
+        var gene1 = await query._validateGene(values.gene1, speciesRelease)
 
         if (gene1 === undefined) {
           this.props.form.setFields({
@@ -218,7 +219,7 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene1Data = await this._getGeneData(gene1, speciesRelease);
+        var gene1Data = await query._getGeneData(gene1, speciesRelease);
 
         if (gene1Data.length === 0) {
           this.props.form.setFields({
@@ -237,7 +238,7 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene1Data.length; i++) {
           if (gene1Data[i].contains(values.gene1_breakpoint)) {
-            gene1Data[i] = await this._getSequenceData(gene1Data[i], speciesRelease);
+            gene1Data[i] = await query._getSequenceData(gene1Data[i], speciesRelease);
             gene1DataFinal.push(gene1Data[i]);
           }
         }
@@ -257,7 +258,7 @@ class Data extends React.Component {
 
         // validate gene 2
 
-        var gene2 = await this._validateGene(values.gene2, speciesRelease)
+        var gene2 = await query._validateGene(values.gene2, speciesRelease)
 
         if (gene2 === undefined) {
           this.props.form.setFields({
@@ -272,7 +273,7 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene2Data = await this._getGeneData(gene2, speciesRelease);
+        var gene2Data = await query._getGeneData(gene2, speciesRelease);
 
         if (gene2Data.length === 0) {
           this.props.form.setFields({
@@ -291,7 +292,7 @@ class Data extends React.Component {
 
         for (var i = 0; i < gene2Data.length; i++) {
           if (gene2Data[i].contains(values.gene2_breakpoint)) {
-            gene2Data[i] = await this._getSequenceData(gene2Data[i], speciesRelease);
+            gene2Data[i] = await query._getSequenceData(gene2Data[i], speciesRelease);
             gene2DataFinal.push(gene2Data[i]);
           }
         }
@@ -323,57 +324,6 @@ class Data extends React.Component {
     });
   }
 
-  async _getSequenceData(gene, speciesRelease) {
-
-    const { ddb } = this.state;
-
-
-    // fetch the sequences
-
-    var seqs = await ddb.getSequences(gene.getSeqIds(), speciesRelease);
-
-    gene.parseSeqs(seqs);
-
-    return gene;
-  }
-
-  async _getGeneData(gene, speciesRelease) {
-
-    const { ddb } = this.state;
-
-    var ensemblIds = gene.ensembl_gene_id.S.split(';');
-    var geneData = [];
-
-    for (var i = 0; i < ensemblIds.length; i++) {
-      var geneData_i = await ddb.getGene(ensemblIds[i], speciesRelease);
-      if (geneData_i !== undefined) {
-        geneData.push(new Gene(ensemblIds[i], geneData_i));
-      }
-    }
-
-    return geneData;
-  }
-
-  async _validateGene(gene_id, speciesRelease) {
-
-    const { ddb } = this.state;
-    var gene = null;
-
-    if (gene_id.match(/^ENS.*G/)) {
-      gene = await ddb.getGene(gene_id, speciesRelease);
-      gene = {ensembl_gene_id: {S: gene_id}};
-    } else {
-      gene = await ddb.getGeneSynonym(gene_id, speciesRelease);
-    }
-
-
-    if (gene === undefined) {
-      // if it did not find anything, then look on
-      return
-    } else {
-      return gene;
-    }
-  }
 }
 
 const DataForm = Form.create({ name: 'fusion_data' })(Data);
