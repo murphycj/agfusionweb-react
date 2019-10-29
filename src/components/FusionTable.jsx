@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select } from 'antd';
+import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider } from 'antd';
 
 import Plot from './Plot.jsx';
 import './FusionTable.css';
@@ -133,11 +133,11 @@ class FusionTable extends React.Component {
     return (
       fusions ?
         <Fragment>
-          <hr/>
+          <Divider>Protein and exon plot</Divider>
           <Row>
             <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
           </Row>
-          <hr/>
+          <Divider>Table of fusion isoforms</Divider>
           <Row className="Controls">
             <Col span={6}>
               <span className="HelpText">Selected gene fusion:</span>
