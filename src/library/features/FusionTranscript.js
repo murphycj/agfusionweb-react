@@ -1,5 +1,5 @@
 
-import { CODING_COMBINATIONS, PDBS, molecularWeight, translate  } from './utils';
+import { CODING_COMBINATIONS, PDBS, molecularWeight, translate  } from '../utils/utils';
 
 const MIN_DOMAIN_LENGTH = 5;
 

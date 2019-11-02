@@ -1,13 +1,20 @@
 import React from 'react';
-import {Form, Input, InputNumber, Row, Col, Card, Select, Button } from 'antd';
+import {Form, Row, Col, Card, Select, Button, Upload, Icon, Tooltip, message } from 'antd';
 
 import './DataForm.css';
 
 import { DynamoDB } from '../library/utils/DynamoDB';
 import { ProcessQuery } from '../library/utils/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils/utils';
+import { UPLOAD_FORMATS } from '../library/utils/utils';
+import { BaseUpload } from '../library/upload/base';
 
-class Data extends React.Component {
+const { Dragger } = Upload;
+const helpText = {
+  format: "Generic upload format has one fusion per row, where each row has a comma-separated list with this format: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,121487991,CCDC6,59807078)",
+};
+
+class BulkData extends React.Component {
 
   constructor(props) {
     super(props);
@@ -22,13 +29,16 @@ class Data extends React.Component {
     this._setLoading = this._setLoading.bind(this);
     this._handleSpeciesChange = this._handleSpeciesChange.bind(this);
     this._handleReleaseChange = this._handleReleaseChange.bind(this);
+    this._handleFormatChange = this._handleFormatChange.bind(this);
+    this._uploadRequest = this._uploadRequest.bind(this);
   }
 
   componentDidMount() {
 
     this.props.form.setFieldsValue({
       species: 'homo_sapiens_hg38',
-      release: 94
+      release: 94,
+      format: 'Generic'
     });
   }
 
@@ -50,68 +60,52 @@ class Data extends React.Component {
       return <Select.Option key={val}>{AVAILABLE_ENSEMBL_SPECIES[val]['display']}</Select.Option>;
     });
 
+    const uploadFormats = UPLOAD_FORMATS.map(val => {
+      return <Select.Option key={val}>{val}</Select.Option>;
+    });
+
+    const props = {
+      name: 'file',
+      customRequest: this._uploadRequest,
+      onChange(info) {
+        const { status } = info.file;
+        if (status === 'done') {
+          message.success(`${info.file.name} file uploaded successfully.`);
+        } else if (status === 'error') {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      },
+    };
+
     return (
       <Form onSubmit={this._onSubmit}>
         <Row gutter={16}>
-          <Col span={8}>
-            <Card className="Card-input" title="5' gene" bordered={true}>
-              <div className="input">
-                <label>Gene name:</label>
-                <Form.Item>
-                  {getFieldDecorator('gene1', {
-                    validateTrigger: 'onSubmit',
-                    initialValue: '',
-                    rules: [{required: true, message: 'Provide a gene!'}],
-                  })(
-                    <Input
-                      placeholder="FGFR2"
-                      style={{ width: '50%' }}/>
-                  )}
-                </Form.Item>
-              </div>
-              <br />
-              <br />
-              <div className="input">
-                <label>Breakpoint:</label>
-                <Form.Item>
-                  {getFieldDecorator('gene1_breakpoint', {
-                    rules: [{required: true, message: 'Provide a positive integer for the breakpoint!'}],
-                  })(
-                    <InputNumber min={0} placeholder="121598458" style={{ width: '50%' }}/>
-                  )}
-                </Form.Item>
-              </div>
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card className="Card-input" title="3' gene" bordered={true}>
-              <div className="input">
-                <label>Gene name:</label>
-                <Form.Item>
-                  {getFieldDecorator('gene2', {
-                    validateTrigger: 'onSubmit',
-                    rules: [{required: true, message: 'Provide a gene!'}],
-                  })(
-                    <Input placeholder="DNM3" style={{ width: '50%' }}/>
-                  )}
-                </Form.Item>
-              </div>
-              <br />
-              <br />
-              <div className="input">
-                <label>Breakpoint:</label>
-                <Form.Item>
-                  {getFieldDecorator('gene2_breakpoint', {
-                    rules: [{required: true, message: 'Provide a positive integer for the breakpoint!'}],
-                  })(
-                    <InputNumber min={0} placeholder="171841498" style={{ width: '50%' }}/>
-                  )}
-                </Form.Item>
-              </div>
+          <Col span={16}>
+            <Card className="Card-input" title="Upload" bordered={true}>
+              <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                  <Icon type="inbox" />
+                </p>
+                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+              </Dragger>
             </Card>
           </Col>
           <Col span={8}>
             <Card className="Card-input" title="Other information" bordered={true}>
+              <label>Upload format:
+                <Tooltip className="Tooltip" title={helpText.format}>
+                  <Icon type="question-circle" />
+                </Tooltip>:
+              </label>
+              <Form.Item>
+                {getFieldDecorator('format', {
+                })(
+                  <Select style={{ width: 200 }} onChange={this._handleFormatChange}>
+                    {uploadFormats}
+                  </Select>
+                )}
+              </Form.Item>
+              <br />
               <label>Species:</label>
               <Form.Item>
                 {getFieldDecorator('species', {
@@ -121,7 +115,6 @@ class Data extends React.Component {
                   </Select>
                 )}
               </Form.Item>
-              <br />
               <br />
               <label>Ensembl release:</label>
               <Form.Item>
@@ -145,6 +138,19 @@ class Data extends React.Component {
         </Row>
       </Form>
     )
+  }
+
+  _uploadRequest({file, onSuccess}) {
+    setTimeout(() => {
+      onSuccess("ok");
+
+    }, 0);
+  };
+
+  _handleFormatChange(value) {
+    this.props.form.setFieldsValue({
+      format: value,
+    });
   }
 
   _handleSpeciesChange(value) {
@@ -326,5 +332,5 @@ class Data extends React.Component {
 
 }
 
-const DataForm = Form.create({ name: 'fusion_data' })(Data);
-export default DataForm;
+const BulkDataForm = Form.create({ name: 'bulk_fusion_data' })(BulkData);
+export default BulkDataForm;

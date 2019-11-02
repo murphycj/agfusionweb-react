@@ -1,5 +1,5 @@
 import { DynamoDB } from './DynamoDB';
-import { Gene } from './Gene';
+import { Gene } from '../features/Gene';
 
 export class ProcessQuery {
   constructor() {

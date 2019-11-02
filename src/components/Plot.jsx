@@ -4,7 +4,7 @@ import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip } from 'antd';
 
 import './Plot.css';
 
-import { COLORS, PDBS } from '../library/utils';
+import { COLORS, PDBS } from '../library/utils/utils';
 
 const { Option } = Select;
 const helpText = {

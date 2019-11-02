@@ -295,4 +295,7 @@ const AVAILABLE_ENSEMBL_SPECIES = {
   },
 };
 
-export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS, AVAILABLE_ENSEMBL_SPECIES };
+const UPLOAD_FORMATS = ['Generic'];
+
+
+export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS, AVAILABLE_ENSEMBL_SPECIES, UPLOAD_FORMATS };

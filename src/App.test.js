@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-import { Gene } from './library/Gene';
-import { Fusion } from './library/Fusion';
-import { DynamoDB } from './library/DynamoDB';
-import { translate } from './library/utils';
+import { Gene } from './library/featues/Gene';
+import { Fusion } from './library/featues/Fusion';
+import { DynamoDB } from './library/utils/DynamoDB';
+import { translate } from './library/utils/utils';
 
 const ddb = new DynamoDB();
 

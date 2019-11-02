@@ -1,6 +1,6 @@
 import { Plot } from './Plot';
 
-import { PDBS } from '../utils';
+import { PDBS } from '../utils/utils';
 // const HORIZONTAL_LEVELS = [1, 2, 3, 4];
 
 export class PlotProtein extends Plot {

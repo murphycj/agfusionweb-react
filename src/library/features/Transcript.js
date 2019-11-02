@@ -1,4 +1,4 @@
-import { PDBS } from './utils';
+import { PDBS } from '../utils/utils';
 
 export class Transcript {
   constructor(id, data, strand) {
