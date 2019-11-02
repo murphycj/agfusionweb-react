@@ -1,9 +1,34 @@
 import { DynamoDB } from './DynamoDB';
 import { Gene } from '../features/Gene';
+import { Fusion } from '../features/Fusion';
 
 export class ProcessQuery {
   constructor() {
     this.ddb = new DynamoDB();
+  }
+
+  createFusions(fusionData) {
+    var fusions = {};
+
+    for (var k = 0; k < fusionData.length; k++) {
+
+      var fusionData_i = fusionData[k];
+
+      for (var i = 0; i < fusionData_i.gene1Data.length; i++) {
+        for (var j = 0; j < fusionData_i.gene2Data.length; j++) {
+          var fusion = new Fusion(
+            fusionData_i.gene1Data[i],
+            fusionData_i.gene2Data[j],
+            fusionData_i.gene1Junction,
+            fusionData_i.gene2Junction
+          );
+
+          fusions[fusion.id] = fusion;
+        }
+      }
+    }
+
+    return fusions;
   }
 
   async _getSequenceData(gene, speciesRelease) {
