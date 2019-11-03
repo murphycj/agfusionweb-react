@@ -117,7 +117,7 @@ class BulkDataForm extends React.Component {
                 <Select
                   style={{ width: 200 }}
                   onChange={this._handleSpeciesChange}
-                  defaultValue="homo_sapiens_hg38">
+                  value={species}>
                   {speciesOption}
                 </Select>
                 <br />
@@ -125,7 +125,7 @@ class BulkDataForm extends React.Component {
                 <Select
                   style={{ width: 200 }}
                   onChange={this._handleReleaseChange}
-                  defaultValue="94">
+                  value={release}>
                   {ensembleVersionsOptions[species]}
                 </Select>
               </Fragment>
