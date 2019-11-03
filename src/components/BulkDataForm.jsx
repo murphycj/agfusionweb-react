@@ -30,6 +30,7 @@ class BulkDataForm extends React.Component {
       progress: null,
       showModal: false,
       errorMsg: null,
+      fileList: [],
     }
 
     this._onSubmit = this._onSubmit.bind(this);
@@ -40,6 +41,7 @@ class BulkDataForm extends React.Component {
     this._handleFormatChange = this._handleFormatChange.bind(this);
     this._uploadRequest = this._uploadRequest.bind(this);
     this._closeModal = this._closeModal.bind(this);
+    this._onUploadChange = this._onUploadChange.bind(this);
   }
 
   render() {
@@ -52,6 +54,7 @@ class BulkDataForm extends React.Component {
       progress,
       showModal,
       uploadedFusionData,
+      fileList,
       errorMsg } = this.state;
 
     var ensembleVersionsOptions = {};
@@ -74,19 +77,8 @@ class BulkDataForm extends React.Component {
       name: 'file',
       multiple: false,
       customRequest: this._uploadRequest,
-      beforeUpload: (file, fileList) => {
-        console.log(file);
-        console.log(fileList);
-      },
-      onChange(info) {
-        const { status } = info.file;
-        if (status === 'done') {
-          message.success(`${info.file.name} file uploaded successfully.`);
-        } else if (status === 'error') {
-          info.fileList.pop();
-          message.error(`${info.file.name} file upload failed.`);
-        }
-      },
+      onChange: this._onUploadChange,
+      fileList: fileList,
     };
 
     return (
@@ -167,6 +159,22 @@ class BulkDataForm extends React.Component {
     )
   }
 
+  _onUploadChange({file, fileList, e}) {
+
+    if (fileList.length > 1) {
+      fileList.shift();
+    }
+
+    if (file.status === 'done') {
+      message.success(`${fileList[0].name} file uploaded successfully.`);
+    } else if (file.status === 'error') {
+      this.setState({
+        fileList: [],
+      });
+      message.error(`${fileList[0].name} file upload failed.`);
+    }
+  }
+
   _uploadRequest({file, onSuccess, onError}) {
 
     const { format } = this.state;
@@ -175,11 +183,13 @@ class BulkDataForm extends React.Component {
       const fusionData = await parseUpload(file, format);
 
       if (fusionData.errorMsg.length === 0) {
-        onSuccess();
+        file.status = "done";
         this.setState({
           uploadedFusionData: fusionData.fusions,
           disabled: false,
+          fileList: [file],
         });
+        onSuccess();
       } else {
         onError();
         this.setState({
@@ -224,6 +234,7 @@ class BulkDataForm extends React.Component {
       progress: null,
       showModal: false,
       errorMsg: null,
+      fileList: []
     });
     this.props.onClearCallback();
   }
