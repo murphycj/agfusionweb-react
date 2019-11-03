@@ -13,6 +13,7 @@ export class FusionTranscript {
 
     this.displayData = [
       {
+        geneName: this.transcript1.geneName,
         id: this.transcript1.id,
         name: this.transcript1.name,
         biotype: this.transcript1.biotype,
@@ -22,6 +23,7 @@ export class FusionTranscript {
         proteinLength: this.transcript1.proteinLength
       },
       {
+        geneName: this.transcript2.geneName,
         id: this.transcript2.id,
         name: this.transcript2.name,
         biotype: this.transcript2.biotype,
@@ -81,6 +83,7 @@ export class FusionTranscript {
     // predict the fusion
 
     if (this.effect !== 'out-of-gene-boundary') {
+      this.effect = 'NA';
       this.predict();
     }
   }

@@ -24,7 +24,7 @@ class FusionTableDetail extends React.Component {
       {
         title: '5\' gene',
         dataIndex: 'displayData',
-        key: 'transcript1.id',
+        key: 'transcript1.geneName',
         render: val => {
 
           if (!val[0].id) {
@@ -41,7 +41,7 @@ class FusionTableDetail extends React.Component {
 
           const contentGene = (
             <div>
-              <p><b>ID: </b>{val[0].id}</p>
+              <p><b>Transcript ID: </b>{val[0].id}</p>
               <p><b>Biotype: </b>{val[0].biotype}</p>
               <p><b>Complete CDS: </b>{val[0].complete ? 'Yes' : 'No'}</p>
               <p><b>cDNA length: </b>{val[0].cdnaLength} bp</p>
@@ -52,18 +52,22 @@ class FusionTableDetail extends React.Component {
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[0].name}>
-                <Tag key={val[0].name}>{val[0].name}</Tag>
+              <Popover content={contentGene} title={val[0].geneName}>
+                <Tag key={val[0].name}>{val[0].geneName}</Tag>
               </Popover>
             </Fragment>
           )
         },
-        width: '20%'
+        width: '20%',
+        filters: [...new Set(fusionIsoforms.map(val => val.transcript1.geneName))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.transcript1.geneName.indexOf(value) === 0,
       },
       {
         title: '3\' gene',
         dataIndex: 'displayData',
-        key: 'transcript2.id',
+        key: 'transcript2.geneName',
         render: val => {
 
           if (!val[1].id) {
@@ -72,7 +76,7 @@ class FusionTableDetail extends React.Component {
 
           const contentGene = (
             <div>
-              <p><b>ID: </b>{val[1].id}</p>
+              <p><b>Transcript ID: </b>{val[1].id}</p>
               <p><b>Biotype: </b>{val[1].biotype}</p>
               <p><b>Complete CDS: </b>{val[1].complete ? 'Yes' : 'No'}</p>
               <p><b>cDNA length: </b>{val[1].cdnaLength} bp</p>
@@ -83,20 +87,27 @@ class FusionTableDetail extends React.Component {
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[1].name}>
-                <Tag key={val[1].name}>{val[1].name}</Tag>
+              <Popover content={contentGene} title={val[1].geneName}>
+                <Tag key={val[1].name}>{val[1].geneName}</Tag>
               </Popover>
             </Fragment>
           )
         },
-        width: '20%'
+        width: '20%',
+        filters: [...new Set(fusionIsoforms.map(val => val.transcript2.geneName))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.transcript2.geneName.indexOf(value) === 0,
       },
       {
         title: 'Protein effect',
         dataIndex: 'effect',
         key: 'effect',
-        render: val => (val ? val : 'NA'),
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
       {
         title: '5\' junction',
@@ -115,7 +126,13 @@ class FusionTableDetail extends React.Component {
         dataIndex: 'hasProteinCodingPotential',
         key: 'hasProteinCodingPotential',
         render: val => (val ? 'Yes' : 'Unknown'),
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => {
+          return val ? 'Yes' : 'Unknown';
+        }))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
     ];
 

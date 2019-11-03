@@ -68,7 +68,16 @@ class FusionTableDetail extends React.Component {
             </Fragment>
           )
         },
-        width: '20%'
+        width: '20%',
+        filters: [...new Set(fusionIsoforms.map(val => {
+          return `${val.transcript1.name} / ${val.transcript1.id}`;
+        }))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => {
+          var val = `${record.transcript1.name} / ${record.transcript1.id}`;
+          return val.indexOf(value) === 0;
+        },
       },
       {
         title: '3\' gene isoform',
@@ -94,33 +103,59 @@ class FusionTableDetail extends React.Component {
             </Fragment>
           )
         },
-        width: '20%'
+        width: '20%',
+        filters: [...new Set(fusionIsoforms.map(val => {
+          return `${val.transcript2.name} / ${val.transcript2.id}`;
+        }))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => {
+          var val = `${record.transcript2.name} / ${record.transcript2.id}`;
+          return val.indexOf(value) === 0;
+        },
       },
       {
         title: 'Protein effect',
         dataIndex: 'effect',
         key: 'effect',
-        render: val => (val ? val : 'NA'),
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
       {
         title: '5\' junction location',
         dataIndex: 'gene1JunctionLoc',
         key: 'gene1JunctionLoc',
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => val.gene1JunctionLoc))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
       {
         title: '3\' junction location',
         dataIndex: 'gene2JunctionLoc',
         key: 'gene2JunctionLoc',
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => val.gene2JunctionLoc))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
       {
         title: 'Has protein coding potential',
         dataIndex: 'hasProteinCodingPotential',
         key: 'hasProteinCodingPotential',
         render: val => (val ? 'Yes' : 'Unknown'),
-        width: '15%'
+        width: '15%',
+        filters: [...new Set(fusionIsoforms.map(val => {
+          return val ? 'Yes' : 'Unknown';
+        }))].map(val => {
+          return {text: val, value: val};
+        }),
+        onFilter: (value, record) => record.effect.indexOf(value) === 0,
       },
     ];
 
