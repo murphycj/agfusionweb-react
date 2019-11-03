@@ -20,6 +20,7 @@ class App extends React.Component {
     this.state = {
       fusions: null,
       selectedFusion: null,
+      selectedFusionTranscript: null,
       activeTableTab: "1",
     }
     this.contentRef = React.createRef();
@@ -32,7 +33,7 @@ class App extends React.Component {
 
   render() {
 
-    const { fusions, selectedFusion, contentRef, activeTableTab } = this.state;
+    const { fusions, selectedFusion, selectedFusionTranscript, contentRef, activeTableTab } = this.state;
 
     var width = null;
     if (this.contentRef && this.contentRef.current) {
@@ -64,7 +65,14 @@ class App extends React.Component {
                     onTableRowClickCallback={this._onTableRowClick}/>
                 </TabPane>
                 <TabPane tab="Detail view" key="2">
-                  <FusionTableDetail fusions={fusions} defaultFusion={selectedFusion} width={width}/>
+                  {activeTableTab === "2" ?
+                    <FusionTableDetail
+                      fusion={fusions[selectedFusion]}
+                      defaultFusionTranscript={selectedFusionTranscript}
+                      width={width}
+                    />
+                  : null
+                  }
                 </TabPane>
               </Tabs>
               : null}
@@ -79,8 +87,12 @@ class App extends React.Component {
     );
   }
 
-  _onTableRowClick(fusion) {
-    console.log(fusion)
+  _onTableRowClick(fusionTranscript) {
+    this.setState({
+      selectedFusionTranscript: fusionTranscript,
+      selectedFusion: fusionTranscript.fusionId,
+      activeTableTab: "2",
+    });
   }
 
   _onTableTabClick(e) {
@@ -99,7 +111,8 @@ class App extends React.Component {
   _onClear() {
     this.setState({
       fusions: null,
-      defaultFusion: null,
+      selectedFusion: null,
+      activeTableTab: "1",
     });
   }
 
@@ -107,14 +120,8 @@ class App extends React.Component {
 
     console.log(fusions);
 
-    var defaultFusion = Object.keys(fusions).length === 1 ?
-      Object.keys(fusions)[0] : null;
-
-    // defaultFusion = Object.keys(fusions)[0];
-
     this.setState({
       fusions: fusions,
-      selectedFusion: null,
     });
   }
 }

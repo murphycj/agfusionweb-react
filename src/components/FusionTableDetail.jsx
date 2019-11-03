@@ -21,7 +21,6 @@ class FusionTableDetail extends React.Component {
     super(props);
     this.state = {
       onlyCanonical: true,
-      selectedFusion: null,
       selectedFusionTranscript: null,
       plotDataAll: null,
     };
@@ -31,23 +30,18 @@ class FusionTableDetail extends React.Component {
   }
 
   componentDidMount() {
-    const { fusions, defaultFusion } = this.props;
-    var fusionIsoforms = this._filterFusions(fusions, defaultFusion, true);
-    this._createPlotDate(fusionIsoforms[0]);
+    const { defaultFusionTranscript } = this.props;
+    this._createPlotDate(defaultFusionTranscript);
   }
 
   render() {
+    const { plotDataAll, onlyCanonical } = this.state;
+    var { selectedFusionTranscript } = this.state;
+    const { fusion, defaultFusionTranscript, width } = this.props;
 
+    selectedFusionTranscript = selectedFusionTranscript || defaultFusionTranscript;
 
-    const { selectedFusionTranscript, plotDataAll, onlyCanonical } = this.state;
-    var { selectedFusion } = this.state;
-    const { fusions, defaultFusion, width } = this.props;
-
-    selectedFusion = selectedFusion || defaultFusion;
-
-    var fusionIsoforms = this._filterFusions(fusions, selectedFusion, onlyCanonical);
-
-    console.log(fusions[selectedFusion]);
+    var fusionIsoforms = fusion ? this._filterFusions(fusion, onlyCanonical) : null;
 
     const columns = [
       {
@@ -131,7 +125,7 @@ class FusionTableDetail extends React.Component {
     ];
 
     return (
-      fusions ?
+      fusion ?
         <Fragment>
           <Divider>Protein and exon plot</Divider>
           <Row>
@@ -140,12 +134,7 @@ class FusionTableDetail extends React.Component {
           <Divider>Table of fusion isoforms</Divider>
           <Row className="Controls">
             <Col span={6}>
-              <span className="HelpText">Selected gene fusion:</span>
-              <Select defaultValue={defaultFusion}>
-                {Object.keys(fusions).map(val => {
-                  return <Option key={val} value={val}>{fusions[val].displayName}</Option>;
-                })}
-              </Select>
+              <span className="HelpText">{`Fusion: ${fusion.displayName}`}</span>
             </Col>
             <Col span={6}>
               Show only canonical
@@ -172,14 +161,15 @@ class FusionTableDetail extends React.Component {
     )
   }
 
-  _filterFusions(fusions, selectedFusion, onlyCanonical) {
+  _filterFusions(fusion, onlyCanonical) {
     var fusionIsoforms = null;
 
-    if (selectedFusion) {
-      fusionIsoforms = Object.keys(fusions[selectedFusion].transcripts).map(val => fusions[selectedFusion].transcripts[val]);
-      if (onlyCanonical) {
-        fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
-      }
+    fusionIsoforms = Object.keys(fusion.transcripts).map(val => {
+      return fusion.transcripts[val]
+    });
+
+    if (onlyCanonical) {
+      fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
     }
 
     return fusionIsoforms;
