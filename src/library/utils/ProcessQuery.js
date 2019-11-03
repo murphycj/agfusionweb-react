@@ -14,6 +14,15 @@ export class ProcessQuery {
 
       var fusionData_i = fusionData[k];
 
+      if (fusionData_i.errorMsg && fusionData_i.errorMsg.length > 0) {
+
+        fusions[k] = {
+          ...fusionData_i,
+          errorMsg: fusionData_i.errorMsg};
+          
+        continue;
+      }
+
       for (var i = 0; i < fusionData_i.gene1Data.length; i++) {
         for (var j = 0; j < fusionData_i.gene2Data.length; j++) {
           var fusion = new Fusion(
@@ -70,7 +79,7 @@ export class ProcessQuery {
 
     if (gene === undefined) {
       // if it did not find anything, then look on
-      return
+      return null;
     } else {
       return gene;
     }
