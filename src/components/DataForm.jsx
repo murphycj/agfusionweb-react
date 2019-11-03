@@ -3,7 +3,6 @@ import {Form, Input, InputNumber, Row, Col, Card, Select, Button } from 'antd';
 
 import './DataForm.css';
 
-import { DynamoDB } from '../library/utils/DynamoDB';
 import { ProcessQuery } from '../library/utils/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils/utils';
 
@@ -36,7 +35,7 @@ class Data extends React.Component {
 
     const { getFieldDecorator } = this.props.form;
     const { loading } = this.state;
-    const { species, release } = this.props.form.getFieldsValue;
+    const { species, release } = this.props.form.getFieldsValue();
 
     var ensembleVersionsOptions = {};
 
@@ -312,14 +311,16 @@ class Data extends React.Component {
 
         // got here so data is valid
 
-        this.props.onSubmitCallback({
+        var fusions = query.createFusions([{
           gene1: gene1,
           gene1Data: gene1DataFinal,
           gene1Junction: values.gene1_breakpoint,
           gene2: gene2,
           gene2Data: gene2DataFinal,
-          gene2Junction: values.gene2_breakpoint},
-        this._setLoading);
+          gene2Junction: values.gene2_breakpoint}]);
+
+        this._setLoading();
+        this.props.onSubmitCallback(fusions);
       }
     });
   }
