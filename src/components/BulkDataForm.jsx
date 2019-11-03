@@ -1,5 +1,5 @@
-import React from 'react';
-import {Form, Row, Col, Card, Select, Button, Upload, Icon, Tooltip, message } from 'antd';
+import React, { Fragment } from 'react';
+import {Row, Col, Card, Select, Button, Upload, Icon, Tooltip, message, Progress } from 'antd';
 
 import './DataForm.css';
 
@@ -7,46 +7,52 @@ import { DynamoDB } from '../library/utils/DynamoDB';
 import { ProcessQuery } from '../library/utils/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils/utils';
 import { UPLOAD_FORMATS } from '../library/utils/utils';
-import { BaseUpload } from '../library/upload/base';
+import { parseUpload } from '../library/upload/base';
+import { ErrorModal } from './ErrorModal';
 
 const { Dragger } = Upload;
 const helpText = {
   format: "Generic upload format has one fusion per row, where each row has a comma-separated list with this format: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,121487991,CCDC6,59807078)",
 };
 
-class BulkData extends React.Component {
+class BulkDataForm extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       query: new ProcessQuery(),
       loading: false,
+      uploadedFusionData: null,
+      disabled: true,
+      species: 'homo_sapiens_hg38',
+      release: 94,
+      format: 'Generic',
+      progress: null,
+      showModal: false,
+      errorMsg: null,
     }
 
     this._onSubmit = this._onSubmit.bind(this);
     this._clearData = this._clearData.bind(this);
-    this._runExample = this._runExample.bind(this);
     this._setLoading = this._setLoading.bind(this);
     this._handleSpeciesChange = this._handleSpeciesChange.bind(this);
     this._handleReleaseChange = this._handleReleaseChange.bind(this);
     this._handleFormatChange = this._handleFormatChange.bind(this);
     this._uploadRequest = this._uploadRequest.bind(this);
-  }
-
-  componentDidMount() {
-
-    this.props.form.setFieldsValue({
-      species: 'homo_sapiens_hg38',
-      release: 94,
-      format: 'Generic'
-    });
+    this._closeModal = this._closeModal.bind(this);
   }
 
   render() {
 
-    const { getFieldDecorator } = this.props.form;
-    const { loading } = this.state;
-    const { species, release } = this.props.form.getFieldsValue;
+    const {
+      loading,
+      disabled,
+      species,
+      release,
+      progress,
+      showModal,
+      uploadedFusionData,
+      errorMsg } = this.state;
 
     var ensembleVersionsOptions = {};
 
@@ -66,19 +72,21 @@ class BulkData extends React.Component {
 
     const props = {
       name: 'file',
+      multiple: false,
       customRequest: this._uploadRequest,
       onChange(info) {
         const { status } = info.file;
         if (status === 'done') {
           message.success(`${info.file.name} file uploaded successfully.`);
         } else if (status === 'error') {
+          info.fileList.pop();
           message.error(`${info.file.name} file upload failed.`);
         }
       },
     };
 
     return (
-      <Form onSubmit={this._onSubmit}>
+      <Fragment>
         <Row gutter={16}>
           <Col span={16}>
             <Card className="Card-input" title="Upload" bordered={true}>
@@ -92,96 +100,111 @@ class BulkData extends React.Component {
           </Col>
           <Col span={8}>
             <Card className="Card-input" title="Other information" bordered={true}>
-              <label>Upload format:
-                <Tooltip className="Tooltip" title={helpText.format}>
-                  <Icon type="question-circle" />
-                </Tooltip>:
-              </label>
-              <Form.Item>
-                {getFieldDecorator('format', {
-                })(
-                  <Select style={{ width: 200 }} onChange={this._handleFormatChange}>
-                    {uploadFormats}
-                  </Select>
-                )}
-              </Form.Item>
-              <br />
-              <label>Species:</label>
-              <Form.Item>
-                {getFieldDecorator('species', {
-                })(
-                  <Select style={{ width: 200 }} onChange={this._handleSpeciesChange}>
-                    {speciesOption}
-                  </Select>
-                )}
-              </Form.Item>
-              <br />
-              <label>Ensembl release:</label>
-              <Form.Item>
-                {getFieldDecorator('release', {
-                })(
-                  <Select style={{ width: 200 }} onChange={this._handleReleaseChange}>
-                    {ensembleVersionsOptions[species]}
-                  </Select>
-                )}
-              </Form.Item>
+              <Fragment>
+                <label>Upload format:
+                  <Tooltip className="Tooltip" title={helpText.format}>
+                    <Icon type="question-circle" />
+                  </Tooltip>:
+                </label>
+                <Select
+                  style={{ width: 200 }}
+                  onChange={this._handleFormatChange}
+                  defaultValue="Generic">
+                  {uploadFormats}
+                </Select>
+                <br />
+                <label>Species:</label>
+                <Select
+                  style={{ width: 200 }}
+                  onChange={this._handleSpeciesChange}
+                  defaultValue="homo_sapiens_hg38">
+                  {speciesOption}
+                </Select>
+                <br />
+                <label>Ensembl release:</label>
+                <Select
+                  style={{ width: 200 }}
+                  onChange={this._handleReleaseChange}
+                  defaultValue="94">
+                  {ensembleVersionsOptions[species]}
+                </Select>
+              </Fragment>
             </Card>
           </Col>
         </Row>
         <br />
         <Row className="row-input">
-          <Form.Item>
-            <Button type="primary" className="button" htmlType="submit" loading={loading}>Submit</Button>
-            <Button type="default" className="button" onClick={this._clearData}>Clear</Button>
-            <Button type="default" className="button" onClick={this._runExample}>Run example</Button>
-          </Form.Item>
+          <Button
+            disabled={disabled}
+            type="primary"
+            className="button"
+            onClick={this._onSubmit}
+            loading={loading}>
+            Submit
+          </Button>
+          <Button type="default" className="button" onClick={this._clearData}>Clear</Button>
         </Row>
-      </Form>
+        <Row>
+          {progress ? <Progress percent={progress}/> : null}
+        </Row>
+        {showModal ? <ErrorModal errorMsg={errorMsg} closeModalCallback={this._closeModal}/> : null}
+      </Fragment>
     )
   }
 
-  _uploadRequest({file, onSuccess}) {
-    setTimeout(() => {
-      onSuccess("ok");
+  _uploadRequest({file, onSuccess, onError}) {
+
+    const { format } = this.state;
+
+    setTimeout(async () => {
+      const fusionData = await parseUpload(file, format);
+
+      if (fusionData.errorMsg.length === 0) {
+        onSuccess();
+        this.setState({
+          uploadedFusionData: fusionData.fusions,
+          disabled: false,
+        });
+      } else {
+        onError();
+        this.setState({
+          errorMsg: fusionData.errorMsg,
+          disabled: true,
+          showModal: true,
+        });
+      }
 
     }, 0);
   };
 
+  _closeModal() {
+    console.log('boo')
+    this.setState({
+      showModal: false,
+    });
+  }
+
   _handleFormatChange(value) {
-    this.props.form.setFieldsValue({
+    this.setState({
       format: value,
     });
   }
 
   _handleSpeciesChange(value) {
-    this.props.form.setFieldsValue({
+    this.setState({
       species: value,
       release: AVAILABLE_ENSEMBL_SPECIES[value]['default_release'],
     });
   }
 
   _handleReleaseChange(value) {
-    this.props.form.setFieldsValue({
+    this.setState({
       release: value,
     });
   }
 
   _clearData() {
-    this.props.form.resetFields();
     this.props.onClearCallback();
-  }
-
-  _runExample() {
-
-    this.props.form.setFields({
-      gene1: {value: 'FGFR2'},
-      gene1_breakpoint: {value: 121487991},
-      gene2: {value: 'CCDC6'},
-      gene2_breakpoint: {value: 59807078},
-      species: {value: 'homo_sapiens_hg38'},
-      release: {value: 94}
-    });
-    this._onSubmit(new Event('submit'));
   }
 
   _setLoading() {
@@ -193,144 +216,125 @@ class BulkData extends React.Component {
     })
   }
 
-  async _onSubmit(e) {
+  async _onSubmit() {
 
-    const { query } = this.state;
+    const { query, species, release, uploadedFusionData, progress } = this.state;
+    const speciesName = AVAILABLE_ENSEMBL_SPECIES[species]['species'];
+    const speciesRelease = `${speciesName}_${release}`;
+    var fusions = [];
 
     this._setLoading();
 
-    e.preventDefault();
+    for (var i = 0; i < uploadedFusionData.length; i++) {
 
-    this.props.form.validateFields( async (err, values) => {
-      if (!err) {
+      var fusion = uploadedFusionData[i];
+      var gene1 = null;
+      var gene1Data = null;
+      var gene1DataFinal = [];
+      var gene2 = null;
+      var gene2Data = null;
+      var gene2DataFinal = [];
+      var errorMsg = [];
 
-        const species = AVAILABLE_ENSEMBL_SPECIES[values.species]['species'];
-        const speciesRelease = `${species}_${values.release}`;
+      // validate gene 1 and get gene data
 
+      gene1 = await query._validateGene(fusion.gene1, speciesRelease);
 
-        // validate gene 1 and get gene data
-
-        var gene1 = await query._validateGene(values.gene1, speciesRelease)
-
-        if (gene1 === undefined) {
-          this.props.form.setFields({
-            gene1: {
-              value: values.gene1,
-              errors: [new Error('Not a valid gene!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
-
+      if (gene1 !== null) {
         // fetch the gene/transcirpt data
 
-        var gene1Data = await query._getGeneData(gene1, speciesRelease);
+        gene1Data = await query._getGeneData(gene1, speciesRelease);
 
-        if (gene1Data.length === 0) {
-          this.props.form.setFields({
-            gene1: {
-              value: values.gene1,
-              errors: [new Error('Cannot fetch gene data!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
+        if (gene1Data.length !== 0) {
+          // get genes where junction occurs in
 
-        // get genes where junction occurs in
+          gene1DataFinal = []
 
-        var gene1DataFinal = []
-
-        for (var i = 0; i < gene1Data.length; i++) {
-          if (gene1Data[i].contains(values.gene1_breakpoint)) {
-            gene1Data[i] = await query._getSequenceData(gene1Data[i], speciesRelease);
-            gene1DataFinal.push(gene1Data[i]);
+          for (var j = 0; j < gene1Data.length; j++) {
+            if (gene1Data[j].contains(fusion.gene1Pos)) {
+              gene1Data[j] = await query._getSequenceData(gene1Data[j], speciesRelease);
+              gene1DataFinal.push(gene1Data[j]);
+            }
           }
+
+          if (gene1DataFinal.length === 0) {
+            errorMsg.push('Junction not within the 5\' gene. Check the selected genome.');
+          }
+        } else {
+          errorMsg.push('Unknown 5\'gene gene. Check your spelling and genome.');
         }
+      } else {
+        errorMsg.push('Unknown 5\'gene gene. Check your spelling and genome.');
+      }
 
-        // if no genes left, then raise error
+      // validate gene 2
 
-        if (gene1DataFinal.length === 0) {
-          this.props.form.setFields({
-            gene1_breakpoint: {
-              value: values.gene1_breakpoint,
-              errors: [new Error('Position not within the gene!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
+      gene2 = await query._validateGene(fusion.gene2, speciesRelease);
 
-        // validate gene 2
-
-        var gene2 = await query._validateGene(values.gene2, speciesRelease)
-
-        if (gene2 === undefined) {
-          this.props.form.setFields({
-            gene2: {
-              value: values.gene2,
-              errors: [new Error('Not a valid gene!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
-
+      if (gene2 !== null) {
         // fetch the gene/transcirpt data
 
-        var gene2Data = await query._getGeneData(gene2, speciesRelease);
+        gene2Data = await query._getGeneData(gene2, speciesRelease);
 
-        if (gene2Data.length === 0) {
-          this.props.form.setFields({
-            gene2: {
-              value: values.gene2,
-              errors: [new Error('Cannot fetch gene data!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
+        if (gene2Data.length !== 0) {
+          // get genes where junction occurs in
 
-        // get genes where junction occurs in
+          gene2DataFinal = []
 
-        var gene2DataFinal = []
-
-        for (var i = 0; i < gene2Data.length; i++) {
-          if (gene2Data[i].contains(values.gene2_breakpoint)) {
-            gene2Data[i] = await query._getSequenceData(gene2Data[i], speciesRelease);
-            gene2DataFinal.push(gene2Data[i]);
+          for (var j = 0; j < gene2Data.length; j++) {
+            if (gene2Data[j].contains(fusion.gene2Pos)) {
+              gene2Data[j] = await query._getSequenceData(gene2Data[j], speciesRelease);
+              gene2DataFinal.push(gene2Data[j]);
+            }
           }
+
+          if (gene2DataFinal.length === 0) {
+            errorMsg.push('Junction not within the 3\' gene. Check the selected genome.');
+          }
+        } else {
+          errorMsg.push('Unknown 3\'gene gene. Check your spelling and genome.');
         }
+      } else {
+        errorMsg.push('Unknown 3\'gene gene. Check your spelling and genome.');
+      }
 
-        // if no genes left, then raise error
-
-        if (gene2DataFinal.length === 0) {
-          this.props.form.setFields({
-            gene2_breakpoint: {
-              value: values.gene2_breakpoint,
-              errors: [new Error('Position not within the gene!')],
-            },
-          });
-          this._setLoading();
-          return;
-        }
-
-        // got here so data is valid
-
-        this.props.onSubmitCallback({
-          gene1: gene1,
-          gene1Data: gene1DataFinal,
-          gene1Junction: values.gene1_breakpoint,
+      if (errorMsg.length > 0) {
+        fusions.push({
+          gene1: fusion.gene1,
+          gene1Data: fusion.gene2,
+          gene1Junction: fusion.gene1Pos,
           gene2: gene2,
           gene2Data: gene2DataFinal,
-          gene2Junction: values.gene2_breakpoint},
-        this._setLoading);
+          gene2Junction: fusion.gene2Pos,
+          errorMsg: errorMsg});
+      } else {
+        fusions.push({
+          gene1: gene1,
+          gene1Data: gene1DataFinal,
+          gene1Junction: fusion.gene1Pos,
+          gene2: gene2,
+          gene2Data: gene2DataFinal,
+          gene2Junction: fusion.gene2Pos,
+          errorMsg: errorMsg});
       }
-    });
-  }
 
+      this.setState({
+        progress: 100 * ((i + 1) / uploadedFusionData.length),
+      });
+    }
+
+    // got here so data is valid
+
+    fusions = query.createFusions(fusions);
+
+    this._setLoading();
+    setTimeout(() => {
+      this.setState({
+        progress: null,
+      });
+    }, 1000);
+    this.props.onSubmitCallback(fusions);
+  }
 }
 
-const BulkDataForm = Form.create({ name: 'bulk_fusion_data' })(BulkData);
 export default BulkDataForm;
