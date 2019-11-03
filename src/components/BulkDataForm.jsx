@@ -101,33 +101,44 @@ class BulkDataForm extends React.Component {
           <Col span={8}>
             <Card className="Card-input" title="Other information" bordered={true}>
               <Fragment>
-                <label>Upload format:
-                  <Tooltip className="Tooltip" title={helpText.format}>
-                    <Icon type="question-circle" />
-                  </Tooltip>:
-                </label>
-                <Select
-                  style={{ width: 200 }}
-                  onChange={this._handleFormatChange}
-                  defaultValue="Generic">
-                  {uploadFormats}
-                </Select>
-                <br />
-                <label>Species:</label>
-                <Select
-                  style={{ width: 200 }}
-                  onChange={this._handleSpeciesChange}
-                  value={species}>
-                  {speciesOption}
-                </Select>
-                <br />
-                <label>Ensembl release:</label>
-                <Select
-                  style={{ width: 200 }}
-                  onChange={this._handleReleaseChange}
-                  value={release}>
-                  {ensembleVersionsOptions[species]}
-                </Select>
+                <Row>
+                  <p>
+                    Upload format:
+                    <Tooltip className="Tooltip" title={helpText.format}>
+                      <Icon type="question-circle" />
+                    </Tooltip>:
+                  </p>
+                  <p>
+                    <Select
+                      style={{ width: 200 }}
+                      onChange={this._handleFormatChange}
+                      defaultValue="Generic">
+                      {uploadFormats}
+                    </Select>
+                  </p>
+                </Row>
+                <Row>
+                  <p>Species:</p>
+                  <p>
+                    <Select
+                      style={{ width: 200 }}
+                      onChange={this._handleSpeciesChange}
+                      value={species}>
+                      {speciesOption}
+                    </Select>
+                  </p>
+                </Row>
+                <Row>
+                  <p>Ensembl release:</p>
+                  <p>
+                    <Select
+                      style={{ width: 200 }}
+                      onChange={this._handleReleaseChange}
+                      value={release}>
+                      {ensembleVersionsOptions[species]}
+                    </Select>
+                  </p>
+                </Row>
               </Fragment>
             </Card>
           </Col>
