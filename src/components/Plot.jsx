@@ -134,7 +134,7 @@ class Plot extends React.Component {
               <Row className="Plot-Settings-Row">
                 <Col span={6} className="Plot-Settings-Labels">
                   <b>Protein databases</b>
-                  <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <p>{val}</p>)}</Fragment>}>
+                  <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <p key={val}>{val}</p>)}</Fragment>}>
                     <Icon type="question-circle" />
                   </Tooltip>:
                 </Col>
@@ -320,7 +320,6 @@ class Plot extends React.Component {
   }
 
   _handlePdbChange(e) {
-    console.log(e)
     this.setState({
       pdbs: e
     });

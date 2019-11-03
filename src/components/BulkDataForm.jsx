@@ -178,7 +178,6 @@ class BulkDataForm extends React.Component {
   };
 
   _closeModal() {
-    console.log('boo')
     this.setState({
       showModal: false,
     });

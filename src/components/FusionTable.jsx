@@ -128,11 +128,11 @@ class FusionTableDetail extends React.Component {
         render: val => (val ? 'Yes' : 'Unknown'),
         width: '15%',
         filters: [...new Set(fusionIsoforms.map(val => {
-          return val ? 'Yes' : 'Unknown';
+          return val.hasProteinCodingPotential ? 'Yes' : 'Unknown';
         }))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => record.hasProteinCodingPotential.indexOf(value) === 0,
       },
     ];
 
@@ -165,13 +165,20 @@ class FusionTableDetail extends React.Component {
 
       if (fusions[fusion].errorMsg) {
         fusionIsoforms.push({
+          name: `${fusions[fusion].gene1}_${fusions[fusion].gene2}`,
           displayData: [
             fusions[fusion].gene1,
             fusions[fusion].gene2,
             fusions[fusion].errorMsg
           ],
-          transcript1: {id: fusions[fusion].gene1},
-          transcript2: {id: fusions[fusion].gene2},
+          transcript1: {
+            id: fusions[fusion].gene1,
+            geneName: fusions[fusion].gene1
+          },
+          transcript2: {
+            id: fusions[fusion].gene2,
+            geneName: fusions[fusion].gene2
+          },
           gene1Junction: fusions[fusion].gene1Junction,
           gene2Junction: fusions[fusion].gene2Junction,
           effect: 'NA',

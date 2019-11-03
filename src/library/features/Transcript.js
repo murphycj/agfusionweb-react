@@ -252,7 +252,7 @@ export class Transcript {
     if (this.cds) {
       this.cdsLength = this.cds.map((cds_i) => cds_i[1] - cds_i[0] + 1).reduce((a,b) => a+b);
       if ((this.cdsLength % 3) != 0) {
-        console.log(this.id);
+        console.log(`CDS not multiple of 3: ${this.id}`);
       }
       this.proteinLength = parseFloat((this.cdsLength / 3).toFixed(2));
     }
