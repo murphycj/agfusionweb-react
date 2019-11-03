@@ -303,8 +303,8 @@ class BulkDataForm extends React.Component {
           gene1: fusion.gene1,
           gene1Data: fusion.gene2,
           gene1Junction: fusion.gene1Pos,
-          gene2: gene2,
-          gene2Data: gene2DataFinal,
+          gene2: fusion.gene2,
+          gene2Data: fusion.gene2,
           gene2Junction: fusion.gene2Pos,
           errorMsg: errorMsg});
       } else {
