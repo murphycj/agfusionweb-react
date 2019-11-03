@@ -80,8 +80,8 @@ class Plot extends React.Component {
         <Col span={8}>
           <Card title="Plot settings" className="Card-input">
             <Row className="Plot-Settings-Row">
-              <p><b>Plot protein: </b></p>
-              <p>
+              <div><b>Plot protein: </b></div>
+              <div>
                 <Radio.Group
                     value={plotTypeProtein}
                     onChange={this._handleRadioChange}
@@ -91,13 +91,13 @@ class Plot extends React.Component {
                   <Radio.Button value="gene1Protein">5' gene</Radio.Button>
                   <Radio.Button value="gene2Protein">3' gene</Radio.Button>
                 </Radio.Group>
-              </p>
+              </div>
             </Row>
             <Row className="Plot-Settings-Row">
-              <p>
+              <div>
                 <b>Plot exons: </b>
-              </p>
-              <p>
+              </div>
+              <div>
                 <Radio.Group
                     value={plotTypeExon}
                     onChange={this._handleRadioChange}
@@ -106,15 +106,15 @@ class Plot extends React.Component {
                   <Radio.Button value="gene1Exon">5' gene</Radio.Button>
                   <Radio.Button value="gene2Exon">3' gene </Radio.Button>
                 </Radio.Group>
-              </p>
+              </div>
             </Row>
             { // for controlling domain colors
               domains ?
               <Row className="Plot-Settings-Row">
-                <p>
+                <div>
                   <b>Domain colors: </b>
-                </p>
-                <p>
+                </div>
+                <div>
                   <Select
                     mode="tags"
                     placeholder="Please select"
@@ -123,20 +123,20 @@ class Plot extends React.Component {
                   >
                     {domainsNames}
                   </Select>
-                </p>
+                </div>
               </Row>
             : null
             }
             { // for controlling which PDBs
               domains ?
               <Row className="Plot-Settings-Row">
-                <p>
+                <div>
                   <b>Protein databases</b>
-                  <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <p key={val}>{val}</p>)}</Fragment>}>
+                  <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <div key={val}>{val}</div>)}</Fragment>}>
                     <Icon type="question-circle" />
                   </Tooltip>:
-                </p>
-                <p>
+                </div>
+                <div>
                   <Select
                     mode="tags"
                     placeholder="Please select"
@@ -146,7 +146,7 @@ class Plot extends React.Component {
                   >
                     {PDBS.map(val => <Option key={val}>{val}</Option>)}
                   </Select>
-                </p>
+                </div>
               </Row>
             : null
             }

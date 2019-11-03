@@ -74,6 +74,10 @@ class BulkDataForm extends React.Component {
       name: 'file',
       multiple: false,
       customRequest: this._uploadRequest,
+      beforeUpload: (file, fileList) => {
+        console.log(file);
+        console.log(fileList);
+      },
       onChange(info) {
         const { status } = info.file;
         if (status === 'done') {
@@ -91,10 +95,10 @@ class BulkDataForm extends React.Component {
           <Col span={16}>
             <Card className="Card-input" title="Upload" bordered={true}>
               <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
+                <div className="ant-upload-drag-icon">
                   <Icon type="inbox" />
-                </p>
-                <p className="ant-upload-text">Click or drag file to this area to upload</p>
+                </div>
+                <div className="ant-upload-text">Click or drag file to this area to upload</div>
               </Dragger>
             </Card>
           </Col>
@@ -102,42 +106,42 @@ class BulkDataForm extends React.Component {
             <Card className="Card-input" title="Other information" bordered={true}>
               <Fragment>
                 <Row>
-                  <p>
+                  <div>
                     Upload format:
                     <Tooltip className="Tooltip" title={helpText.format}>
                       <Icon type="question-circle" />
                     </Tooltip>:
-                  </p>
-                  <p>
+                  </div>
+                  <div>
                     <Select
                       style={{ width: 200 }}
                       onChange={this._handleFormatChange}
                       defaultValue="Generic">
                       {uploadFormats}
                     </Select>
-                  </p>
+                  </div>
                 </Row>
                 <Row>
-                  <p>Species:</p>
-                  <p>
+                  <div>Species:</div>
+                  <div>
                     <Select
                       style={{ width: 200 }}
                       onChange={this._handleSpeciesChange}
                       value={species}>
                       {speciesOption}
                     </Select>
-                  </p>
+                  </div>
                 </Row>
                 <Row>
-                  <p>Ensembl release:</p>
-                  <p>
+                  <div>Ensembl release:</div>
+                  <div>
                     <Select
                       style={{ width: 200 }}
                       onChange={this._handleReleaseChange}
                       value={release}>
                       {ensembleVersionsOptions[species]}
                     </Select>
-                  </p>
+                  </div>
                 </Row>
               </Fragment>
             </Card>
@@ -213,6 +217,14 @@ class BulkDataForm extends React.Component {
   }
 
   _clearData() {
+    this.setState({
+      loading: false,
+      uploadedFusionData: null,
+      disabled: true,
+      progress: null,
+      showModal: false,
+      errorMsg: null,
+    });
     this.props.onClearCallback();
   }
 
@@ -226,6 +238,8 @@ class BulkDataForm extends React.Component {
   }
 
   async _onSubmit() {
+
+    this._clearData();
 
     const { query, species, release, uploadedFusionData, progress } = this.state;
     const speciesName = AVAILABLE_ENSEMBL_SPECIES[species]['species'];

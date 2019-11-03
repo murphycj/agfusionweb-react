@@ -177,12 +177,10 @@ class Data extends React.Component {
     this._onSubmit(new Event('submit'));
   }
 
-  _setLoading() {
-
-    const { loading } = this.state;
+  _setLoading(loading) {
 
     this.setState({
-      loading: !loading,
+      loading: loading,
     })
   }
 
@@ -190,7 +188,7 @@ class Data extends React.Component {
 
     const { query } = this.state;
 
-    this._setLoading();
+    this._setLoading(true);
 
     e.preventDefault();
 
@@ -212,7 +210,7 @@ class Data extends React.Component {
               errors: [new Error('Not a valid gene!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -227,7 +225,7 @@ class Data extends React.Component {
               errors: [new Error('Cannot fetch gene data!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -251,7 +249,7 @@ class Data extends React.Component {
               errors: [new Error('Position not within the gene!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -266,7 +264,7 @@ class Data extends React.Component {
               errors: [new Error('Not a valid gene!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -281,7 +279,7 @@ class Data extends React.Component {
               errors: [new Error('Cannot fetch gene data!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -305,7 +303,7 @@ class Data extends React.Component {
               errors: [new Error('Position not within the gene!')],
             },
           });
-          this._setLoading();
+          this._setLoading(false);
           return;
         }
 
@@ -319,8 +317,10 @@ class Data extends React.Component {
           gene2Data: gene2DataFinal,
           gene2Junction: values.gene2_breakpoint}]);
 
-        this._setLoading();
+        this._setLoading(false);
         this.props.onSubmitCallback(fusions);
+      } else {
+        this._setLoading(false);
       }
     });
   }
