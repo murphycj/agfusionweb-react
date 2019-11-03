@@ -17,6 +17,10 @@ export class BaseUpload {
         lines = text.split('\n');
       }
 
+      // skip empty rows such as trailing newline
+
+      lines = lines.filter(val => val !== '');
+
       return lines;
     });
 

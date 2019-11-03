@@ -16,7 +16,7 @@ export class GenericUpload extends BaseUpload {
         return null;
       }
 
-      const [ gene1, gene1Pos, gene2, gene2Pos ] = val.split(',');
+      const [ gene1, gene1Pos, gene2, gene2Pos ] = val.split(',').map(val => val.trim());
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
         return {
