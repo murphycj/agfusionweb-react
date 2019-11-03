@@ -1,13 +1,7 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider } from 'antd';
 
-import Plot from './Plot.jsx';
-import './FusionTable.css';
-
-import { PlotWTExons } from '../library/plot/PlotWTExons';
-import { PlotFusionExons } from '../library/plot/PlotFusionExons';
-import { PlotWTProtein } from '../library/plot/PlotWTProtein';
-import { PlotFusionProtein } from '../library/plot/PlotFusionProtein';
+import './FusionTableDetail.css';
 
 const { Option } = Select;
 
@@ -15,39 +9,16 @@ const helpText = {
   canonical: "By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence."
 };
 
-class FusionTable extends React.Component {
+class FusionTableDetail extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      onlyCanonical: true,
-      selectedFusion: null,
-      selectedFusionTranscript: null,
-      plotDataAll: null,
-    };
-
-    this._onChangeCanonical = this._onChangeCanonical.bind(this);
-    this._onSelectRow = this._onSelectRow.bind(this);
-  }
-
-  componentDidMount() {
-    const { fusions, defaultFusion } = this.props;
-    var fusionIsoforms = this._filterFusions(fusions, defaultFusion, true);
-    this._createPlotDate(fusionIsoforms[0]);
   }
 
   render() {
+    const { fusions, width, onTableRowClickCallback } = this.props;
 
-
-    const { selectedFusionTranscript, plotDataAll, onlyCanonical } = this.state;
-    var { selectedFusion } = this.state;
-    const { fusions, defaultFusion, width } = this.props;
-
-    selectedFusion = selectedFusion || defaultFusion;
-
-    var fusionIsoforms = this._filterFusions(fusions, selectedFusion, onlyCanonical);
-
-    console.log(fusions[selectedFusion]);
+    var fusionIsoforms = fusions ? this._filterFusions(fusions) : null;
 
     const columns = [
       {
@@ -133,29 +104,7 @@ class FusionTable extends React.Component {
     return (
       fusions ?
         <Fragment>
-          <Divider>Protein and exon plot</Divider>
-          <Row>
-            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
-          </Row>
           <Divider>Table of fusion isoforms</Divider>
-          <Row className="Controls">
-            <Col span={6}>
-              <span className="HelpText">Selected gene fusion:</span>
-              <Select defaultValue={defaultFusion}>
-                {Object.keys(fusions).map(val => {
-                  return <Option key={val} value={val}>{fusions[val].displayName}</Option>;
-                })}
-              </Select>
-            </Col>
-            <Col span={6}>
-              Show only canonical
-              <Tooltip className="Tooltip" title={helpText.canonical}>
-                <Icon type="question-circle" />
-              </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
-            </Col>
-            <Col span={6} />
-            <Col span={6} />
-          </Row>
           <Row>
             <Table
               rowKey="name"
@@ -163,7 +112,7 @@ class FusionTable extends React.Component {
               columns={columns}
               onRow={(record, rowIndex) => {
                 return {
-                  onClick: event => this._onSelectRow(record)
+                  onClick: event => onTableRowClickCallback(record)
                 };
               }} />
           </Row>
@@ -172,61 +121,20 @@ class FusionTable extends React.Component {
     )
   }
 
-  _filterFusions(fusions, selectedFusion, onlyCanonical) {
-    var fusionIsoforms = null;
+  _filterFusions(fusions) {
 
-    if (selectedFusion) {
-      fusionIsoforms = Object.keys(fusions[selectedFusion].transcripts).map(val => fusions[selectedFusion].transcripts[val]);
-      if (onlyCanonical) {
-        fusionIsoforms = fusionIsoforms.filter(val => val.canonical);
-      }
-    }
+    var fusionIsoforms = [];
+
+    Object.keys(fusions).map(fusion => {
+      return Object.keys(fusions[fusion].transcripts).map(val => {
+        if (fusions[fusion].transcripts[val].canonical) {
+          fusionIsoforms.push(fusions[fusion].transcripts[val]);
+        }
+      });
+    });
 
     return fusionIsoforms;
   }
-
-  _createPlotDate(fusionTranscript) {
-    var plotDataAll = {
-      fusionProtein: null,
-      gene1Protein: null,
-      gene2Protein: null,
-      fusionExon: null,
-      gene1Exon: null,
-      gene2Exon: null
-    };
-
-    if (fusionTranscript.hasProteinCodingPotential) {
-      plotDataAll.fusionProtein = new PlotFusionProtein(fusionTranscript);
-    }
-
-    if (fusionTranscript.transcript1.isProteinCoding) {
-      plotDataAll.gene1Protein = new PlotWTProtein(fusionTranscript.transcript1);
-    }
-
-    if (fusionTranscript.transcript2.isProteinCoding) {
-      plotDataAll.gene2Protein = new PlotWTProtein(fusionTranscript.transcript2);
-    }
-
-    plotDataAll.fusionExon = new PlotFusionExons(fusionTranscript);
-    plotDataAll.gene1Exon = new PlotWTExons(fusionTranscript.transcript1);
-    plotDataAll.gene2Exon = new PlotWTExons(fusionTranscript.transcript2);
-
-    this.setState({
-      selectedFusionTranscript: fusionTranscript,
-      plotDataAll: plotDataAll
-    });
-  }
-
-  _onSelectRow(fusionTranscript) {
-    this._createPlotDate(fusionTranscript)
-  }
-
-  _onChangeCanonical() {
-    var onlyCanonical = !this.state.onlyCanonical;
-    this.setState({
-      onlyCanonical: onlyCanonical,
-    });
-  }
 }
 
-export default FusionTable;
+export default FusionTableDetail;

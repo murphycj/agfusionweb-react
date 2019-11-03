@@ -2,11 +2,12 @@ import React from 'react';
 import 'antd/dist/antd.css';
 // import logo from './logo.svg';
 import './App.css';
-import { Layout, Tabs } from 'antd';
+import { Layout, Tabs, message } from 'antd';
 
 import DataForm from './components/DataForm.jsx';
 import BulkDataForm from './components/BulkDataForm.jsx';
 import FusionTable from './components/FusionTable.jsx';
+import FusionTableDetail from './components/FusionTableDetail.jsx';
 
 const { Header, Footer, Content } = Layout;
 const { TabPane } = Tabs;
@@ -18,17 +19,20 @@ class App extends React.Component {
 
     this.state = {
       fusions: null,
-      defaultFusion: null,
+      selectedFusion: null,
+      activeTableTab: "1",
     }
     this.contentRef = React.createRef();
 
     this._onSubmit = this._onSubmit.bind(this);
     this._onClear = this._onClear.bind(this);
+    this._onTableTabClick = this._onTableTabClick.bind(this);
+    this._onTableRowClick = this._onTableRowClick.bind(this);
   }
 
   render() {
 
-    const { fusions, defaultFusion, contentRef } = this.state;
+    const { fusions, selectedFusion, contentRef, activeTableTab } = this.state;
 
     var width = null;
     if (this.contentRef && this.contentRef.current) {
@@ -46,12 +50,23 @@ class App extends React.Component {
               <TabPane tab="Annotate single fusion" key="1">
                 <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
               </TabPane>
-              <TabPane tab="Bulk annotate" key="2">
+              <TabPane tab="Bulk upload" key="2">
                 <BulkDataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
               </TabPane>
             </Tabs>
             {fusions ?
-              <FusionTable fusions={fusions} defaultFusion={defaultFusion} width={width}/>
+              <Tabs activeKey={activeTableTab} onTabClick={this._onTableTabClick}>
+                <TabPane tab="All fusions" key="1">
+                  <FusionTable
+                    fusions={fusions}
+                    defaultFusion={selectedFusion}
+                    width={width}
+                    onTableRowClickCallback={this._onTableRowClick}/>
+                </TabPane>
+                <TabPane tab="Detail view" key="2">
+                  <FusionTableDetail fusions={fusions} defaultFusion={selectedFusion} width={width}/>
+                </TabPane>
+              </Tabs>
               : null}
           </div>
         </Content>
@@ -62,6 +77,23 @@ class App extends React.Component {
         </Footer>
       </Layout>
     );
+  }
+
+  _onTableRowClick(fusion) {
+    console.log(fusion)
+  }
+
+  _onTableTabClick(e) {
+    const { selectedFusion } = this.state;
+
+    if (e === "2" && selectedFusion === null) {
+      message.error("Select a fusion in the table to be shown the detail view.")
+      return;
+    }
+
+    this.setState({
+      activeTableTab: e,
+    })
   }
 
   _onClear() {
@@ -78,9 +110,11 @@ class App extends React.Component {
     var defaultFusion = Object.keys(fusions).length === 1 ?
       Object.keys(fusions)[0] : null;
 
+    // defaultFusion = Object.keys(fusions)[0];
+
     this.setState({
       fusions: fusions,
-      defaultFusion: defaultFusion,
+      selectedFusion: null,
     });
   }
 }
