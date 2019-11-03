@@ -279,19 +279,19 @@ const AVAILABLE_ENSEMBL_SPECIES = {
     ensembl_releases: [94],
     default_release: 94,
     species: 'homo_sapiens',
-    display: 'Human (GRCh38/hg38)',
+    display: 'Human (hg38 / GRCh38)',
   },
   homo_sapiens_hg19: {
     ensembl_releases: [75],
     default_release: 75,
     species: 'homo_sapiens',
-    display: 'Human (GRCh37/hg19)',
+    display: 'Human (hg19 / GRCh37)',
   },
   mus_musculus_mm10: {
     ensembl_releases: [92],
     default_release: 92,
     species: 'mus_musculus',
-    display: 'Mouse (GRCm38/mm10)',
+    display: 'Mouse (mm10 / GRCm38)',
   },
 };
 

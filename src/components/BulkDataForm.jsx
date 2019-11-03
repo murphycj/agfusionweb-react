@@ -295,10 +295,10 @@ class BulkDataForm extends React.Component {
             errorMsg.push('Junction not within the 5\' gene. Check the selected genome.');
           }
         } else {
-          errorMsg.push('Unknown 5\'gene gene. Check your spelling and genome.');
+          errorMsg.push('Unknown 5\' gene gene. Check your spelling and genome.');
         }
       } else {
-        errorMsg.push('Unknown 5\'gene gene. Check your spelling and genome.');
+        errorMsg.push('Unknown 5\' gene gene. Check your spelling and genome.');
       }
 
       // validate gene 2
@@ -326,10 +326,10 @@ class BulkDataForm extends React.Component {
             errorMsg.push('Junction not within the 3\' gene. Check the selected genome.');
           }
         } else {
-          errorMsg.push('Unknown 3\'gene gene. Check your spelling and genome.');
+          errorMsg.push('Unknown 3\' gene gene. Check your spelling and genome.');
         }
       } else {
-        errorMsg.push('Unknown 3\'gene gene. Check your spelling and genome.');
+        errorMsg.push('Unknown 3\' gene gene. Check your spelling and genome.');
       }
 
       if (errorMsg.length > 0) {
