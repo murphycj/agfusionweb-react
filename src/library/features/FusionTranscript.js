@@ -80,7 +80,7 @@ export class FusionTranscript {
 
     // predict the fusion
 
-    if (this.effect!='OGB') {
+    if (this.effect !== 'out-of-gene-boundary') {
       this.predict();
     }
   }
