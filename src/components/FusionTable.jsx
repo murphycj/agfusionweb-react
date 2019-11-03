@@ -27,33 +27,33 @@ class FusionTableDetail extends React.Component {
         key: 'transcript1.geneName',
         render: val => {
 
-          if (!val[0].id) {
+          if (!val.gene1.id) {
             return (
               <p>
-                <Tooltip title={val[2].join(' ')}>
+                <Tooltip title={val.errorMsg.join(' ')}>
                   <Icon type="warning" theme="twoTone" twoToneColor="red" />
-                  {val[0]}
+                  {val.gene1}
                 </Tooltip>
               </p>
             )
-            return val[0];
+            return val.gene1;
           }
 
           const contentGene = (
             <div>
-              <p><b>Transcript ID: </b>{val[0].id}</p>
-              <p><b>Biotype: </b>{val[0].biotype}</p>
-              <p><b>Complete CDS: </b>{val[0].complete ? 'Yes' : 'No'}</p>
-              <p><b>cDNA length: </b>{val[0].cdnaLength} bp</p>
-              <p><b>CDS length: </b>{val[0].cdsLength ? val[0].cdsLength + ' bp' : 'NA'}</p>
-              <p><b>Protein length: </b>{val[0].proteinLength ? val[0].proteinLength + ' aa' : 'NA'}</p>
+              <p><b>Transcript ID: </b>{val.gene1.id}</p>
+              <p><b>Biotype: </b>{val.gene1.biotype}</p>
+              <p><b>Complete CDS: </b>{val.gene1.complete ? 'Yes' : 'No'}</p>
+              <p><b>cDNA length: </b>{val.gene1.cdnaLength} bp</p>
+              <p><b>CDS length: </b>{val.gene1.cdsLength ? val.gene1.cdsLength + ' bp' : 'NA'}</p>
+              <p><b>Protein length: </b>{val.gene1.proteinLength ? val.gene1.proteinLength + ' aa' : 'NA'}</p>
             </div>
           );
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[0].geneName}>
-                <Tag key={val[0].name}>{val[0].geneName}</Tag>
+              <Popover content={contentGene} title={val.gene1.geneName}>
+                <Tag key={val.gene1.name}>{val.gene1.geneName}</Tag>
               </Popover>
             </Fragment>
           )
@@ -70,25 +70,25 @@ class FusionTableDetail extends React.Component {
         key: 'transcript2.geneName',
         render: val => {
 
-          if (!val[1].id) {
-            return val[1];
+          if (!val.gene2.id) {
+            return val.gene2;
           }
 
           const contentGene = (
             <div>
-              <p><b>Transcript ID: </b>{val[1].id}</p>
-              <p><b>Biotype: </b>{val[1].biotype}</p>
-              <p><b>Complete CDS: </b>{val[1].complete ? 'Yes' : 'No'}</p>
-              <p><b>cDNA length: </b>{val[1].cdnaLength} bp</p>
-              <p><b>CDS length: </b>{val[1].cdsLength ? val[1].cdsLength + ' bp' : 'NA'}</p>
-              <p><b>Protein length: </b>{val[1].proteinLength ? val[1].proteinLength + ' aa' : 'NA'}</p>
+              <p><b>Transcript ID: </b>{val.gene2.id}</p>
+              <p><b>Biotype: </b>{val.gene2.biotype}</p>
+              <p><b>Complete CDS: </b>{val.gene2.complete ? 'Yes' : 'No'}</p>
+              <p><b>cDNA length: </b>{val.gene2.cdnaLength} bp</p>
+              <p><b>CDS length: </b>{val.gene2.cdsLength ? val.gene2.cdsLength + ' bp' : 'NA'}</p>
+              <p><b>Protein length: </b>{val.gene2.proteinLength ? val.gene2.proteinLength + ' aa' : 'NA'}</p>
             </div>
           );
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[1].geneName}>
-                <Tag key={val[1].name}>{val[1].geneName}</Tag>
+              <Popover content={contentGene} title={val.gene2.geneName}>
+                <Tag key={val.gene2.name}>{val.gene2.geneName}</Tag>
               </Popover>
             </Fragment>
           )
@@ -166,11 +166,11 @@ class FusionTableDetail extends React.Component {
       if (fusions[fusion].errorMsg) {
         fusionIsoforms.push({
           name: `${fusions[fusion].gene1}_${fusions[fusion].gene2}`,
-          displayData: [
-            fusions[fusion].gene1,
-            fusions[fusion].gene2,
-            fusions[fusion].errorMsg
-          ],
+          displayData: {
+            gene1: fusions[fusion].gene1,
+            gene2: fusions[fusion].gene2,
+            errorMsg: fusions[fusion].errorMsg,
+          },
           transcript1: {
             id: fusions[fusion].gene1,
             geneName: fusions[fusion].gene1

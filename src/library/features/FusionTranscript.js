@@ -11,8 +11,8 @@ export class FusionTranscript {
     this.gene2Junction = gene2Junction;
     this.canonical = this.transcript1.canonical && this.transcript2.canonical;
 
-    this.displayData = [
-      {
+    this.displayData = {
+      gene1: {
         geneName: this.transcript1.geneName,
         id: this.transcript1.id,
         name: this.transcript1.name,
@@ -22,7 +22,7 @@ export class FusionTranscript {
         cdsLength: this.transcript1.cdsLength,
         proteinLength: this.transcript1.proteinLength
       },
-      {
+      gene2: {
         geneName: this.transcript2.geneName,
         id: this.transcript2.id,
         name: this.transcript2.name,
@@ -32,7 +32,7 @@ export class FusionTranscript {
         cdsLength: this.transcript2.cdsLength,
         proteinLength: this.transcript2.proteinLength
       }
-    ];
+    };
 
     this.name = this.transcript1.name && this.transcript2.name ?
       this.transcript1.name + ' : ' + this.transcript2.name :

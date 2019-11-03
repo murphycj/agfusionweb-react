@@ -22,6 +22,7 @@ class App extends React.Component {
       selectedFusion: null,
       selectedFusionTranscript: null,
       activeTableTab: "1",
+      tableRef: React.createRef(),
     }
     this.contentRef = React.createRef();
 
@@ -33,7 +34,7 @@ class App extends React.Component {
 
   render() {
 
-    const { fusions, selectedFusion, selectedFusionTranscript, contentRef, activeTableTab } = this.state;
+    const { fusions, selectedFusion, selectedFusionTranscript, contentRef, activeTableTab, tableRef } = this.state;
 
     var width = null;
     if (this.contentRef && this.contentRef.current) {
@@ -47,7 +48,7 @@ class App extends React.Component {
         </Header>
         <Content className="App-content">
           <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
-            <Tabs defaultActiveKey="2">
+            <Tabs defaultActiveKey="1">
               <TabPane tab="Annotate single fusion" key="1">
                 <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
               </TabPane>
@@ -58,11 +59,13 @@ class App extends React.Component {
             {fusions ?
               <Tabs activeKey={activeTableTab} onTabClick={this._onTableTabClick}>
                 <TabPane tab="All fusions" key="1">
-                  <FusionTable
-                    fusions={fusions}
-                    defaultFusion={selectedFusion}
-                    width={width}
-                    onTableRowClickCallback={this._onTableRowClick}/>
+                  <div ref={tableRef}>
+                    <FusionTable
+                      fusions={fusions}
+                      defaultFusion={selectedFusion}
+                      width={width}
+                      onTableRowClickCallback={this._onTableRowClick}/>
+                  </div>
                 </TabPane>
                 <TabPane tab="Detail view" key="2">
                   {activeTableTab === "2" ?
@@ -87,7 +90,23 @@ class App extends React.Component {
     );
   }
 
+  _scrollTo() {
+    const { tableRef } = this.state;
+
+    tableRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  }
+
   _onTableRowClick(fusionTranscript) {
+
+    // conso
+    if (fusionTranscript.displayData.errorMsg) {
+      message.error("That fusion cannot be viewed due to input error. Hover over the warning icon on the left to see the cause.")
+      return;
+    }
+
     this.setState({
       selectedFusionTranscript: fusionTranscript,
       selectedFusion: fusionTranscript.fusionId,
@@ -123,6 +142,8 @@ class App extends React.Component {
     this.setState({
       fusions: fusions,
     });
+
+    this._scrollTo();
   }
 }
 

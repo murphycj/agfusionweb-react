@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider } from 'antd';
+import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider, Button } from 'antd';
 
 import Plot from './Plot.jsx';
 import './FusionTableDetail.css';
@@ -8,6 +8,9 @@ import { PlotWTExons } from '../library/plot/PlotWTExons';
 import { PlotFusionExons } from '../library/plot/PlotFusionExons';
 import { PlotWTProtein } from '../library/plot/PlotWTProtein';
 import { PlotFusionProtein } from '../library/plot/PlotFusionProtein';
+
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 
 const { Option } = Select;
 
@@ -23,10 +26,12 @@ class FusionTableDetail extends React.Component {
       onlyCanonical: true,
       selectedFusionTranscript: null,
       plotDataAll: null,
+      plotRef: React.createRef(),
     };
 
     this._onChangeCanonical = this._onChangeCanonical.bind(this);
     this._onSelectRow = this._onSelectRow.bind(this);
+    this._downloadFiles = this._downloadFiles.bind(this);
   }
 
   componentDidMount() {
@@ -35,7 +40,7 @@ class FusionTableDetail extends React.Component {
   }
 
   render() {
-    const { plotDataAll, onlyCanonical } = this.state;
+    const { plotDataAll, onlyCanonical, plotRef } = this.state;
     var { selectedFusionTranscript } = this.state;
     const { fusion, defaultFusionTranscript, width } = this.props;
 
@@ -51,19 +56,19 @@ class FusionTableDetail extends React.Component {
         render: val => {
           const contentGene = (
             <div>
-              <p><b>ID: </b>{val[0].id}</p>
-              <p><b>Biotype: </b>{val[0].biotype}</p>
-              <p><b>Complete CDS: </b>{val[0].complete ? 'Yes' : 'No'}</p>
-              <p><b>cDNA length: </b>{val[0].cdnaLength} bp</p>
-              <p><b>CDS length: </b>{val[0].cdsLength ? val[0].cdsLength + ' bp' : 'NA'}</p>
-              <p><b>Protein length: </b>{val[0].proteinLength ? val[0].proteinLength + ' aa' : 'NA'}</p>
+              <p><b>ID: </b>{val.gene1.id}</p>
+              <p><b>Biotype: </b>{val.gene1.biotype}</p>
+              <p><b>Complete CDS: </b>{val.gene1.complete ? 'Yes' : 'No'}</p>
+              <p><b>cDNA length: </b>{val.gene1.cdnaLength} bp</p>
+              <p><b>CDS length: </b>{val.gene1.cdsLength ? val.gene1.cdsLength + ' bp' : 'NA'}</p>
+              <p><b>Protein length: </b>{val.gene1.proteinLength ? val.gene1.proteinLength + ' aa' : 'NA'}</p>
             </div>
           );
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[0].name}>
-                <Tag key={val[0].name}>{val[0].name}</Tag>
+              <Popover content={contentGene} title={val.gene1.name}>
+                <Tag key={val.gene1.name}>{val.gene1.name}</Tag>
               </Popover>
             </Fragment>
           )
@@ -86,19 +91,19 @@ class FusionTableDetail extends React.Component {
         render: val => {
           const contentGene = (
             <div>
-              <p><b>ID: </b>{val[1].id}</p>
-              <p><b>Biotype: </b>{val[1].biotype}</p>
-              <p><b>Complete CDS: </b>{val[1].complete ? 'Yes' : 'No'}</p>
-              <p><b>cDNA length: </b>{val[1].cdnaLength} bp</p>
-              <p><b>CDS length: </b>{val[1].cdsLength ? val[1].cdsLength + ' bp' : 'NA'}</p>
-              <p><b>Protein length: </b>{val[1].proteinLength ? val[1].proteinLength + ' aa' : 'NA'}</p>
+              <p><b>ID: </b>{val.gene2.id}</p>
+              <p><b>Biotype: </b>{val.gene2.biotype}</p>
+              <p><b>Complete CDS: </b>{val.gene2.complete ? 'Yes' : 'No'}</p>
+              <p><b>cDNA length: </b>{val.gene2.cdnaLength} bp</p>
+              <p><b>CDS length: </b>{val.gene2.cdsLength ? val.gene2.cdsLength + ' bp' : 'NA'}</p>
+              <p><b>Protein length: </b>{val.gene2.proteinLength ? val.gene2.proteinLength + ' aa' : 'NA'}</p>
             </div>
           );
 
           return (
             <Fragment>
-              <Popover content={contentGene} title={val[1].name}>
-                <Tag key={val[1].name}>{val[1].name}</Tag>
+              <Popover content={contentGene} title={val.gene2.name}>
+                <Tag key={val.gene2.name}>{val.gene2.name}</Tag>
               </Popover>
             </Fragment>
           )
@@ -164,7 +169,9 @@ class FusionTableDetail extends React.Component {
         <Fragment>
           <Divider>Protein and exon plot</Divider>
           <Row>
-            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
+            <div ref={plotRef}>
+              <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
+            </div>
           </Row>
           <Divider>Table of fusion isoforms</Divider>
           <Row className="Controls">
@@ -178,7 +185,12 @@ class FusionTableDetail extends React.Component {
               </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
             <Col span={6} />
-            <Col span={6} />
+            <Col span={6}>
+              <Button loading={false} onClick={this._downloadFiles}>
+                <Icon type="download" />
+                Download
+              </Button>
+            </Col>
           </Row>
           <Row>
             <Table
@@ -194,6 +206,27 @@ class FusionTableDetail extends React.Component {
         </Fragment>
         : null
     )
+  }
+
+  _downloadFiles() {
+    var zip = new JSZip();
+
+    zip.file("Hello.", "hello.txt");
+
+    zip.generateAsync({type:"blob"})
+    .then(function (blob) {
+      saveAs(blob, "hello.zip");
+    });
+    // console.log(data)
+  }
+
+  _scrollToPlot() {
+    const { plotRef } = this.state;
+
+    plotRef.current.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   }
 
   _filterFusions(fusion, onlyCanonical) {
@@ -243,6 +276,7 @@ class FusionTableDetail extends React.Component {
   }
 
   _onSelectRow(fusionTranscript) {
+    this._scrollToPlot();
     this._createPlotDate(fusionTranscript)
   }
 
