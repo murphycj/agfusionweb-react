@@ -80,10 +80,8 @@ class Plot extends React.Component {
         <Col span={8}>
           <Card title="Plot settings" className="Card-input">
             <Row className="Plot-Settings-Row">
-              <Col span={6} className="Plot-Settings-Labels">
-                <b>Plot protein: </b>
-              </Col>
-              <Col span={18}>
+              <p><b>Plot protein: </b></p>
+              <p>
                 <Radio.Group
                     value={plotTypeProtein}
                     onChange={this._handleRadioChange}
@@ -93,13 +91,13 @@ class Plot extends React.Component {
                   <Radio.Button value="gene1Protein">5' gene</Radio.Button>
                   <Radio.Button value="gene2Protein">3' gene</Radio.Button>
                 </Radio.Group>
-              </Col>
+              </p>
             </Row>
             <Row className="Plot-Settings-Row">
-              <Col span={6} className="Plot-Settings-Labels">
+              <p>
                 <b>Plot exons: </b>
-              </Col>
-              <Col span={18}>
+              </p>
+              <p>
                 <Radio.Group
                     value={plotTypeExon}
                     onChange={this._handleRadioChange}
@@ -108,57 +106,53 @@ class Plot extends React.Component {
                   <Radio.Button value="gene1Exon">5' gene</Radio.Button>
                   <Radio.Button value="gene2Exon">3' gene </Radio.Button>
                 </Radio.Group>
-              </Col>
+              </p>
             </Row>
             { // for controlling domain colors
               domains ?
               <Row className="Plot-Settings-Row">
-                <Col span={6} className="Plot-Settings-Labels">
+                <p>
                   <b>Domain colors: </b>
-                </Col>
-                <Col span={18}>
+                </p>
+                <p>
                   <Select
                     mode="tags"
                     placeholder="Please select"
                     onChange={this._handleColorChange}
-                    style={{ width: '100%', marginLeft: '5px' }}
+                    className="Plot-Control-Buttons"
                   >
                     {domainsNames}
                   </Select>
-                </Col>
+                </p>
               </Row>
             : null
             }
             { // for controlling which PDBs
               domains ?
               <Row className="Plot-Settings-Row">
-                <Col span={6} className="Plot-Settings-Labels">
+                <p>
                   <b>Protein databases</b>
                   <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <p key={val}>{val}</p>)}</Fragment>}>
                     <Icon type="question-circle" />
                   </Tooltip>:
-                </Col>
-                <Col span={18}>
+                </p>
+                <p>
                   <Select
                     mode="tags"
                     placeholder="Please select"
                     defaultValue={pdbs}
                     onChange={this._handlePdbChange}
-                    style={{ width: '100%', marginLeft: '5px' }}
+                    className="Plot-Control-Buttons"
                   >
                     {PDBS.map(val => <Option key={val}>{val}</Option>)}
                   </Select>
-                </Col>
+                </p>
               </Row>
             : null
             }
             <Row className="Plot-Settings-Row">
-              <Col span={6} className="Plot-Settings-Labels">
-                <b>Download: </b>
-              </Col>
-              <Col span={18}>
-                <Button className="Plot-Control-Buttons" onClick={this._downloadImage}><Icon type="download" />PNG</Button>
-              </Col>
+              <b>Download: </b>
+              <Button onClick={this._downloadImage}><Icon type="download" />PNG</Button>
             </Row>
           </Card>
         </Col>

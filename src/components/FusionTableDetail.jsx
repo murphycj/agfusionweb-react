@@ -169,7 +169,7 @@ class FusionTableDetail extends React.Component {
           <Divider>Table of fusion isoforms</Divider>
           <Row className="Controls">
             <Col span={6}>
-              <span className="HelpText">{`Fusion: ${fusion.displayName}`}</span>
+              <span className="HelpText"><b>{"Fusion: "}</b>{fusion.displayName}</span>
             </Col>
             <Col span={6}>
               Show only canonical

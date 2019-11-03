@@ -173,7 +173,6 @@ class BulkDataForm extends React.Component {
           showModal: true,
         });
       }
-
     }, 0);
   };
 

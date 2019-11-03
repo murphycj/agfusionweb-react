@@ -21,19 +21,17 @@
 }
 
 .Plot-Settings-Row {
-  margin-top: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0px;
   min-height: 40px;
 }
 
-.Plot-Settings-Col {
-  margin-left: 5px;
-}
-
 .Plot-Control-Buttons {
-  display: flex;
   align-items: center;
   justify-content: flex-start;
   margin-left: 5px;
+  width: 100%;
 }
 
 .Plot-Settings-Labels {
