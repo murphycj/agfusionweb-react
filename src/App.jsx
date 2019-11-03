@@ -103,7 +103,9 @@ class App extends React.Component {
 
     // conso
     if (fusionTranscript.displayData.errorMsg) {
-      message.error("That fusion cannot be viewed due to input error. Hover over the warning icon on the left to see the cause.")
+      message.error(
+        "That fusion cannot be viewed due to input error. Hover over the warning icon on the left to see the cause.",
+        6)
       return;
     }
 
