@@ -101,7 +101,6 @@ class App extends React.Component {
 
   _onTableRowClick(fusionTranscript) {
 
-    // conso
     if (fusionTranscript.displayData.errorMsg) {
       message.error(
         "That fusion cannot be viewed due to input error. Hover over the warning icon on the left to see the cause.",

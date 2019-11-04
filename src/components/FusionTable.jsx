@@ -1,7 +1,10 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider } from 'antd';
+import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider, Button } from 'antd';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 
 import './FusionTable.css';
+import { Download } from '../library/utils/download';
 
 const { Option } = Select;
 
@@ -13,6 +16,8 @@ class FusionTableDetail extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this._downloadFiles = this._downloadFiles.bind(this);
   }
 
   render() {
@@ -141,6 +146,15 @@ class FusionTableDetail extends React.Component {
         <Fragment>
           <Divider>Table of fusion isoforms</Divider>
           <Row>
+            <Col span={18} />
+            <Col span={6}>
+              <Button loading={false} onClick={this._downloadFiles}>
+                <Icon type="download" />
+                Download
+              </Button>
+            </Col>
+          </Row>
+          <Row>
             <Table
               rowKey="name"
               dataSource={fusionIsoforms}
@@ -155,6 +169,21 @@ class FusionTableDetail extends React.Component {
         </Fragment>
         : null
     )
+  }
+
+  _downloadFiles() {
+
+    const { fusions } = this.props;
+
+    var zip = new JSZip();
+
+    var download = new Download(zip, fusions);
+
+    zip.generateAsync({type:"blob"})
+    .then(function (blob) {
+      saveAs(blob, "fusions.zip");
+    });
+    // console.log(data)
   }
 
   _filterFusions(fusions) {
