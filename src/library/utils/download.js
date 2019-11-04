@@ -6,6 +6,10 @@ export class Download {
 
     Object.keys(this.fusions).map(val => {
 
+      if (this.fusions[val].errorMsg) {
+        return null;
+      }
+
       var fusionFolder = this.fusions[val].name;
 
       if (params.fasta) {
