@@ -39,7 +39,6 @@ export class Download {
     Object.keys(fusionIsoforms).map(val => {
 
       var iso = fusionIsoforms[val];
-      console.log(iso)
 
       cdnaSeqs.push(`>${val} ${iso.name}\n${iso.cdnaSeq}`);
 
@@ -48,9 +47,6 @@ export class Download {
         proteinSeqs.push(`>${val} ${iso.name}\n${iso.proteinSeq}`);
       }
     });
-    console.log(cdnaSeqs)
-    console.log(cdsSeqs)
-    console.log(proteinSeqs)
 
     if (cdnaSeqs.length > 0) {
       this.zip.folder('fusions').folder(fusionFolder).file('cDNA-fusion.fa', cdnaSeqs.join('\n'));
@@ -67,6 +63,42 @@ export class Download {
 
   prepFusionCsv(fusionFolder, fusionIsoforms) {
 
+    var lines = [];
+
+    Object.keys(fusionIsoforms).map(val => {
+      var fusion = fusionIsoforms[val];
+
+      var values = [
+        fusion.transcript1.geneName,
+        fusion.transcript1.geneId,
+        fusion.transcript1.name,
+        fusion.transcript1.id,
+        fusion.gene1Junction,
+        fusion.gene1JunctionLoc,
+        fusion.transcript2.geneName,
+        fusion.transcript2.geneId,
+        fusion.transcript2.name,
+        fusion.transcript2.id,
+        fusion.gene2Junction,
+        fusion.gene2JunctionLoc,
+        fusion.effect,
+        fusion.hasProteinCodingPotential ? 'Yes' : 'NA'
+      ];
+
+      lines.push(values.join(','));
+    }
+
+    );
+
+    if (lines.length > 0) {
+      var header = ['Gene1_name', 'Gene1_ID', 'Gene1_transcript_name', 'Gene1_transcript_id', 'Gene1_junction', 'Gene1_feature_location'];
+      header.push(['Gene2_name', 'Gene2_ID', 'Gene2_transcript_name', 'Gene2_transcript_id', 'Gene2_Junction', 'Gene2_feature_location']);
+      header.push(['Protein_effect', 'Has_protein_coding_potential']);
+      
+      lines.unshift(header.join(','));
+
+      this.zip.folder('fusions').folder(fusionFolder).file('fusion-isoforms.csv', lines.join('\n'));
+    }
   }
 
   prepProteinCsv(fusionFolder, fusionIsoforms) {

@@ -13,7 +13,7 @@ export class Gene {
     this.transcripts = [];
 
     for (var transcript in data.transcripts.M) {
-      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M, this.strand, this.name));
+      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M, this.strand, this.name, this.id));
     }
   }
 

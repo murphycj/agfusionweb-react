@@ -1,9 +1,10 @@
 import { PDBS } from '../utils/utils';
 
 export class Transcript {
-  constructor(id, data, strand, geneName) {
+  constructor(id, data, strand, geneName, geneId) {
     this.id = id;
     this.geneName = geneName;
+    this.geneId = geneId;
     this.biotype = data.biotype.S || '';
     this.complete = data.complete.BOOL || false;
     this.canonical = data.canonical.BOOL || false;
