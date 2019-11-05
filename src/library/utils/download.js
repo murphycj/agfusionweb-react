@@ -94,7 +94,7 @@ export class Download {
       var header = ['Gene1_name', 'Gene1_ID', 'Gene1_transcript_name', 'Gene1_transcript_id', 'Gene1_junction', 'Gene1_feature_location'];
       header.push(['Gene2_name', 'Gene2_ID', 'Gene2_transcript_name', 'Gene2_transcript_id', 'Gene2_Junction', 'Gene2_feature_location']);
       header.push(['Protein_effect', 'Has_protein_coding_potential']);
-      
+
       lines.unshift(header.join(','));
 
       this.zip.folder('fusions').folder(fusionFolder).file('fusion-isoforms.csv', lines.join('\n'));
@@ -102,7 +102,39 @@ export class Download {
   }
 
   prepProteinCsv(fusionFolder, fusionIsoforms) {
+    var lines = [];
 
+    Object.keys(fusionIsoforms).map(val => {
+      var fusion = fusionIsoforms[val];
+
+      if (fusion.hasProteinCodingPotential) {
+        Object.keys(fusion.proteinDomains).map(pdb => {
+
+          fusion.proteinDomains[pdb].map(domain => {
+            var values = [
+              fusion.name,
+              fusion.id,
+              pdb,
+              domain.id,
+              domain.name,
+              domain.desc,
+              domain.start,
+              domain.end
+            ];
+            lines.push(values.join(','));
+          });
+        });
+      }
+    })
+
+    if (lines.length > 0) {
+      var header = ['Fusion_name', 'Fusion_id'];
+      header.push(['Domain_database', 'Domain_id', 'Domain_name', 'Domain_description', 'Domain_start', 'Domain_end']);
+
+      lines.unshift(header.join(','));
+
+      this.zip.folder('fusions').folder(fusionFolder).file('fusion-protein-domains.csv', lines.join('\n'));
+    }
   }
 
   prepExonCsv(fusionFolder, fusionIsoforms) {
