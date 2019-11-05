@@ -76,6 +76,7 @@ class Plot extends React.Component {
     var height = 300;
 
     return (
+      <Fragment>
       <Row>
         <Col span={8}>
           <Card title="Plot settings" className="Card-input">
@@ -253,6 +254,7 @@ class Plot extends React.Component {
                         text={rect.shortName}
                         align={"center"}
                         verticalAlign="middle"
+                        draggable={true}
                         sceneFunc = {(ctx, shape) => {
                           ctx.font = '14px Arial';
                           ctx.fillText(
@@ -306,6 +308,16 @@ class Plot extends React.Component {
           </Stage>
         </Col>
       </Row>
+      <Row>
+        <Col span={8}/>
+        <Col span={16}>
+          <p>
+            <Icon type="info-circle" />
+            {" Tips: Hover over domains to view more detailed information. Click to the left of the domain labels to drag them."}
+          </p>
+        </Col>
+      </Row>
+    </Fragment>
     )
   }
 
