@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-import { Gene } from './library/featues/Gene';
-import { Fusion } from './library/featues/Fusion';
+import { Gene } from './library/features/Gene';
+import { Fusion } from './library/features/Fusion';
 import { DynamoDB } from './library/utils/DynamoDB';
 import { translate } from './library/utils/utils';
 
