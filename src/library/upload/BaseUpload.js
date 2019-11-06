@@ -28,7 +28,7 @@ export class BaseUpload {
   }
 
   _validateInteger(i, pos, name,) {
-    if (!(parseInt(pos) == pos)) {
+    if (!(parseInt(pos) === pos)) {
       this.errorMsg.push(`Line ${i+1}: ${name} junction must be an integer: ${pos};`);
       return false;
     }

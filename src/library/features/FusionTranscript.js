@@ -138,9 +138,8 @@ export class FusionTranscript {
     // within intron
 
     var exons = this.transcript1.exons;
-    var nMax = exons.length;
 
-    if (this.transcript1.strand == '+') {
+    if (this.transcript1.strand === '+') {
       for (var i = 0; i < exons.length; i++) {
 
         // get the exon intervals
@@ -194,9 +193,8 @@ export class FusionTranscript {
     // within intron
 
     exons = this.transcript2.exons;
-    nMax = exons.length;
 
-    if (this.transcript2.strand == '+') {
+    if (this.transcript2.strand === '+') {
       for (var i = 0; i < exons.length; i++) {
 
         // get the exons in the fusion
@@ -282,7 +280,7 @@ export class FusionTranscript {
 
     // 5prime transcript
 
-    if (this.transcript1.strand == "+") {
+    if (this.transcript1.strand === "+") {
       for (var i = 0; i < cds.length; i++) {
         if (this.gene1Junction >= cds[i][1]) {
           this.cdsJunctionGene1 += (cds[i][1] - cds[i][0] + 1);
@@ -307,7 +305,7 @@ export class FusionTranscript {
 
     cds = this.transcript2.cds;
 
-    if (this.transcript2.strand == "+") {
+    if (this.transcript2.strand === "+") {
       for (var i = 0; i < cds.length; i++) {
         if (this.gene2Junction >= cds[i][1]) {
           this.cdsJunctionGene2 += (cds[i][1] - cds[i][0] + 1);
@@ -346,7 +344,7 @@ export class FusionTranscript {
     if (Number.isInteger(this.cdsGene1Len/3) && (Number.isInteger(this.cdsGene2Len/3))) {
       this.effect='in-frame';
       this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
-    } else if (Number.parseFloat(((this.cdsGene1Len/3 % 1) + (this.cdsGene2Len/3 % 1)).toPrecision(3)) == 1.0) {
+    } else if (Number.parseFloat(((this.cdsGene1Len/3 % 1) + (this.cdsGene2Len/3 % 1)).toPrecision(3)) === 1.0) {
       this.effect = 'in-frame (with mutation)';
       this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
     } else {
@@ -355,13 +353,13 @@ export class FusionTranscript {
 
     // check if CDS's length is multiple of 3, if not then print warning
 
-    if (this.effect == 'in-frame' && (this.cdsSeq.length % 3) != 0) {
+    if (this.effect === 'in-frame' && (this.cdsSeq.length % 3) !== 0) {
       console.log('fusion is in-frame but cds is not a multiple of 3!');
     }
 
     // translate CDS into protein and remove everything after the stop codon
 
-    if (this.effect == 'out-of-frame') {
+    if (this.effect === 'out-of-frame') {
 
       // trim the CDS sequence if fusion is out-of-frame
 
@@ -419,7 +417,7 @@ export class FusionTranscript {
 
       // only find the 3' gene partner's domains if the fusion is in-frame
 
-      if (this.effect != 'out-of-frame') {
+      if (this.effect !== 'out-of-frame') {
 
         for (var i = 0; i < this.transcript2.proteinDomains[pdb].length; i++) {
 

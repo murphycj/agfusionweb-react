@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider, Button } from 'antd';
+import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Divider, Button } from 'antd';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
@@ -11,8 +11,6 @@ import { PlotFusionExons } from '../library/plot/PlotFusionExons';
 import { PlotWTProtein } from '../library/plot/PlotWTProtein';
 import { PlotFusionProtein } from '../library/plot/PlotFusionProtein';
 import { Download } from '../library/utils/download';
-
-const { Option } = Select;
 
 const helpText = {
   canonical: "By default, only the canonical isoform for each gene in the fusion are shown. Each gene has one canonical isoform, which usually represents the biologically most interesting isoform as well as having the longest coding sequence."
@@ -215,7 +213,7 @@ class FusionTableDetail extends React.Component {
 
     var download = new Download(zip, {'1': fusion});
 
-    zip.generateAsync({type:"blob"})
+    download.zip.generateAsync({type:"blob"})
     .then(function (blob) {
       saveAs(blob, "fusions.zip");
     });
