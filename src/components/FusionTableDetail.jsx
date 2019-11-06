@@ -1,5 +1,7 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Select, Divider, Button } from 'antd';
+import { saveAs } from 'file-saver';
+import JSZip from 'jszip';
 
 import Plot from './Plot.jsx';
 import './FusionTableDetail.css';
@@ -8,9 +10,7 @@ import { PlotWTExons } from '../library/plot/PlotWTExons';
 import { PlotFusionExons } from '../library/plot/PlotFusionExons';
 import { PlotWTProtein } from '../library/plot/PlotWTProtein';
 import { PlotFusionProtein } from '../library/plot/PlotFusionProtein';
-
-import { saveAs } from 'file-saver';
-import JSZip from 'jszip';
+import { Download } from '../library/utils/download';
 
 const { Option } = Select;
 
@@ -209,15 +209,16 @@ class FusionTableDetail extends React.Component {
   }
 
   _downloadFiles() {
+    const { fusion } = this.props;
+
     var zip = new JSZip();
 
-    zip.file("Hello.", "hello.txt");
+    var download = new Download(zip, {'1': fusion});
 
     zip.generateAsync({type:"blob"})
     .then(function (blob) {
-      saveAs(blob, "hello.zip");
+      saveAs(blob, "fusions.zip");
     });
-    // console.log(data)
   }
 
   _scrollToPlot() {

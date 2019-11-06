@@ -183,7 +183,6 @@ class FusionTableDetail extends React.Component {
     .then(function (blob) {
       saveAs(blob, "fusions.zip");
     });
-    // console.log(data)
   }
 
   _filterFusions(fusions) {

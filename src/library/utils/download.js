@@ -173,7 +173,7 @@ export class Download {
 
       lines.unshift(header.join(','));
 
-      this.zip.folder('fusions').folder(fusionFolder).file('fusion-protein-domains.csv', lines.join('\n'));
+      this.zip.folder('fusions').folder(fusionFolder).file('fusion-exon-cds.csv', lines.join('\n'));
     }
   }
 }
