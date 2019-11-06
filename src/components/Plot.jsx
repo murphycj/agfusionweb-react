@@ -334,9 +334,6 @@ class Plot extends React.Component {
 
   _closeModal(domain=null, color=null) {
 
-    console.log(domain)
-    console.log(color)
-
     if (!domain) {
       this.setState({
         showModal: false,
@@ -349,8 +346,6 @@ class Plot extends React.Component {
         showModal: false,
         domainColors: domainColors,
       });
-
-      console.log(domainColors);
     }
   }
 
