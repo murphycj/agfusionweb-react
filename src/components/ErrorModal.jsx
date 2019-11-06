@@ -45,5 +45,3 @@ export class ErrorModal extends React.Component {
 
   }
 }
-
-// <p><Text type="danger">{item[0]}</Text>{item[1]}</p>

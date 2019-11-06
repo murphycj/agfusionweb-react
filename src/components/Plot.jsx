@@ -5,6 +5,7 @@ import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip } from 'antd';
 import './Plot.css';
 
 import { COLORS, PDBS } from '../library/utils/utils';
+import { ColorModal } from './ColorModal';
 
 const { Option } = Select;
 const helpText = {
@@ -36,6 +37,8 @@ class Plot extends React.Component {
       colorIndex: 0,
       fusionPlotData: null,
       rectShowIndex: null,
+      showModal: false,
+      domainToColor: null,
     }
 
     this._downloadImage = this._downloadImage.bind(this);
@@ -44,6 +47,7 @@ class Plot extends React.Component {
     this._handleRadioChange = this._handleRadioChange.bind(this);
     this._handleColorChange = this._handleColorChange.bind(this);
     this._handlePdbChange = this._handlePdbChange.bind(this);
+    this._closeModal = this._closeModal.bind(this);
   }
 
   render() {
@@ -53,6 +57,8 @@ class Plot extends React.Component {
       plotTypeExon,
       imageRef,
       domainColors,
+      domainToColor,
+      showModal,
       pdbs,
       showImageDownload,
       hoveringOverImageButton,
@@ -118,6 +124,7 @@ class Plot extends React.Component {
                 <div>
                   <Select
                     mode="tags"
+                    value={Object.keys(domainColors)}
                     placeholder="Please select"
                     onChange={this._handleColorChange}
                     className="Plot-Control-Buttons"
@@ -188,11 +195,14 @@ class Plot extends React.Component {
 
                 {plotData.rects.map(rect => {
                   // plots the domains/exons
+
+                  var color = domainColors[rect.shortName] ? domainColors[rect.shortName] : rect.color;
+
                   return (
                     rect.show ?
                       <Rect
                         key={rect.index}
-                        fill={rect.color}
+                        fill={color}
                         onMouseOver = {(e) => {
                           this.setState({rectShowIndex: rect.index});
                         }}
@@ -317,12 +327,61 @@ class Plot extends React.Component {
           </p>
         </Col>
       </Row>
+      {showModal ? <ColorModal domainToColor={domainToColor} closeModalCallback={this._closeModal}/> : null}
     </Fragment>
     )
   }
 
+  _closeModal(domain=null, color=null) {
+
+    console.log(domain)
+    console.log(color)
+
+    if (!domain) {
+      this.setState({
+        showModal: false,
+      });
+    } else {
+      var { domainColors } = this.state;
+      domainColors[domain] = color;
+
+      this.setState({
+        showModal: false,
+        domainColors: domainColors,
+      });
+
+      console.log(domainColors);
+    }
+  }
+
   _handleColorChange(e) {
-    console.log(e)
+    var { domainColors } = this.state;
+
+    var newDomainColors = {};
+    var domainToColor = null;
+
+    // get the new domain to color
+
+    for (var i = 0; i < e.length; i++) {
+      if (domainColors[e[i]] === undefined) {
+        domainToColor = e[i];
+        break;
+      }
+    }
+
+    // remove any unused colors
+
+    Object.keys(domainColors).map(domain => {
+      if (e.includes(domain)) {
+        newDomainColors[domain] = domainColors[domain];
+      }
+    });
+
+    this.setState({
+      showModal: domainToColor ? true : false,
+      domainToColor: domainToColor,
+      domainColors: newDomainColors,
+    });
   }
 
   _handlePdbChange(e) {
