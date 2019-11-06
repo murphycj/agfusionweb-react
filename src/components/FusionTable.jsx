@@ -144,7 +144,7 @@ class FusionTableDetail extends React.Component {
             <Col span={6}>
               <Button loading={false} onClick={this._downloadFiles}>
                 <Icon type="download" />
-                Download
+                Fusion data
               </Button>
             </Col>
           </Row>

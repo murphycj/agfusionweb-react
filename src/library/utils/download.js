@@ -90,9 +90,7 @@ export class Download {
       ];
 
       lines.push(values.join(','));
-    }
-
-    );
+    });
 
     if (lines.length > 0) {
       var header = ['Gene1_name', 'Gene1_ID', 'Gene1_transcript_name', 'Gene1_transcript_id', 'Gene1_junction', 'Gene1_feature_location'];
@@ -129,7 +127,7 @@ export class Download {
           });
         });
       }
-    })
+    });
 
     if (lines.length > 0) {
       var header = ['Fusion_name', 'Fusion_id'];
@@ -147,29 +145,54 @@ export class Download {
     Object.keys(fusionIsoforms).map(val => {
       var fusion = fusionIsoforms[val];
 
-      if (fusion.hasProteinCodingPotential) {
-        Object.keys(fusion.proteinDomains).map(pdb => {
+      fusion.cdnaIntervalsGene1.map(exon => {
+        lines.push([
+          fusion.name,
+          fusion.id,
+          'exon',
+          exon[0],
+          exon[1],
+          exon[2]
+        ]);
+      });
+      fusion.cdnaIntervalsGene2.map(exon => {
+        lines.push([
+          fusion.name,
+          fusion.id,
+          'exon',
+          exon[0],
+          exon[1],
+          exon[2]
+        ]);
+      });
 
-          fusion.proteinDomains[pdb].map(domain => {
-            var values = [
-              fusion.name,
-              fusion.id,
-              pdb,
-              domain.id,
-              domain.name,
-              domain.desc,
-              domain.start,
-              domain.end
-            ];
-            lines.push(values.join(','));
-          });
+      if (fusion.hasProteinCodingPotential) {
+        fusion.cdnaIntervalsGene1.map(exon => {
+          lines.push([
+            fusion.name,
+            fusion.id,
+            'CDS',
+            exon[0],
+            exon[1],
+            exon[2]
+          ]);
+        });
+        fusion.cdnaIntervalsGene2.map(exon => {
+          lines.push([
+            fusion.name,
+            fusion.id,
+            'CDS',
+            exon[0],
+            exon[1],
+            exon[2]
+          ]);
         });
       }
-    })
+    });
 
     if (lines.length > 0) {
       var header = ['Fusion_name', 'Fusion_id'];
-      header.push(['Domain_database', 'Domain_id', 'Domain_name', 'Domain_description', 'Domain_start', 'Domain_end']);
+      header.push(['Feature_type', 'Start', 'End', 'Feature_number_in_wildtype']);
 
       lines.unshift(header.join(','));
 
