@@ -40,10 +40,10 @@ export class Download {
 
       var iso = fusionIsoforms[val];
 
-      cdnaSeqs.push(`>${val} ${iso.name}\n${iso.cdnaSeq}`);
+      cdnaSeqs.push(`>${val} ${iso.name}\n${iso.cdnaGene1Seq}*${iso.cdnaGene2Seq}`);
 
       if (iso.hasProteinCodingPotential) {
-        cdsSeqs.push(`>${val} ${iso.name}\n${iso.cdsSeq}`);
+        cdsSeqs.push(`>${val} ${iso.name}\n${iso.cdsGene1Seq}*${iso.cdsGene2Seq}`);
         proteinSeqs.push(`>${val} ${iso.name}\n${iso.proteinSeq}`);
       }
     });
