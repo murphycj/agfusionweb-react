@@ -4,8 +4,17 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  color: white;
 }
+
+.App-logo-feedback {
+  float: right;
+  color: white;
+}
+
+/* .App-logo-feedback:hover {
+  color: 'white';
+} */
 
 .App-header {
   background-color: #282c34;

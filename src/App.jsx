@@ -44,7 +44,10 @@ class App extends React.Component {
     return (
       <Layout >
         <Header>
-          <div className="logo" style={{color: 'white'}}>AGFusion | Annotate Gene Fusions (v0.1)</div>
+          <div className="App-logo">
+            AGFusion | Annotate Gene Fusions (v0.1)
+            <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-logo-feedback"> Feedback / requests? </a>
+          </div>
         </Header>
         <Content className="App-content">
           <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
@@ -83,7 +86,7 @@ class App extends React.Component {
         </Content>
         <Footer className="App-footer">
           For research use only |
-          <a href="https://github.com/murphycj/AGFusion"> AGFusion on GitHub </a>
+          <a href="https://github.com/murphycj/AGFusion"> AGFusion Python package </a>
           | {'\u00A9'} 2019 Charlie Murphy
         </Footer>
       </Layout>
