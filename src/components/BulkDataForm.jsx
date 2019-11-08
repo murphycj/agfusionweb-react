@@ -8,7 +8,7 @@ import { ProcessQuery } from '../library/utils/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils/utils';
 import { UPLOAD_FORMATS } from '../library/utils/utils';
 import { parseUpload } from '../library/upload/base';
-import { ErrorModal } from './ErrorModal';
+import { ErrorModal } from './ErrorModal.jsx';
 
 const { Dragger } = Upload;
 const helpText = {

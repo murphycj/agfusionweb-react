@@ -5,7 +5,7 @@ import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip } from 'antd';
 import './Plot.css';
 
 import { COLORS, PDBS } from '../library/utils/utils';
-import { ColorModal } from './ColorModal';
+import { ColorModal } from './ColorModal.jsx';
 
 const { Option } = Select;
 const helpText = {
