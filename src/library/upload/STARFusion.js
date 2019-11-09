@@ -22,15 +22,10 @@ export class STARFusion extends BaseUpload {
             `Expected first line to start with #FusionName or #fusion_name.`);
         }
 
-        if (line[4] !== 'LeftGene') {
-          this.addErrorMsg(i+1, 'Expected column 5 to be LeftGene');
-        } else if (line[5] !== 'LeftBreakpoint') {
-          this.addErrorMsg(i+1, 'Expected column 6 to be LeftGene');
-        } else if (line[6] !== 'RightGene') {
-          this.addErrorMsg(i+1, 'Expected column 7 to be RightGene');
-        } else if (line[7] !== 'RightBreakpoint') {
-          this.addErrorMsg(i+1, 'Expected column 8 to be RightBreakpoint');
-        }
+        this.checkColumnHeader(line, i, 4, 'LeftGene');
+        this.checkColumnHeader(line, i, 5, 'LeftBreakpoint');
+        this.checkColumnHeader(line, i, 6, 'RightGene');
+        this.checkColumnHeader(line, i, 7, 'RightBreakpoint');
 
         return null;
       }

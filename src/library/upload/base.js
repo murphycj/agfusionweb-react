@@ -1,5 +1,7 @@
 import { GenericUpload } from './GenericUpload';
 import { STARFusion } from './STARFusion';
+import { EricScript } from './EricScript';
+import { FusionCatcher } from './FusionCatcher';
 
 
 async function parseUpload(file, format) {
@@ -13,7 +15,13 @@ async function parseUpload(file, format) {
       data = new GenericUpload(file, '\t');
       break;
     case 'STARFusion':
-      data = new STARFusion(file, '\t');
+      data = new STARFusion(file);
+      break;
+    case 'EricScript':
+      data = new EricScript(file);
+      break;
+    case 'FusionCatcher':
+      data = new FusionCatcher(file);
       break;
     default:
       data = new GenericUpload(file, ',');

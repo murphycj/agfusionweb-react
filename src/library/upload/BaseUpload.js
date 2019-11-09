@@ -9,6 +9,12 @@ export class BaseUpload {
     this.errorMsg.push(`Line ${line}: ${msg}`);
   }
 
+  checkColumnHeader(line, i, index, columnName) {
+    if (line[index] !== columnName) {
+      this.addErrorMsg(i+1, `Expected column ${index+1} to be ${columnName}`);
+    }
+  }
+
   async preprocess() {
 
     var lines = await this.file.text().then(text => {

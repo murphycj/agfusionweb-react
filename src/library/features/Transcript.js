@@ -17,14 +17,14 @@ export class Transcript {
     this.name = data.name.S || this.id;
 
     //cdna
-    this.exons = null;
+    this.exons = [];
     this.exonSeqs = [];
     this.cdnaSeq = null;
     this.cdnaLength = null;
 
     //cds
-    this.cds = null;
-    this.cdsSeq = null;
+    this.cds = [];
+    this.cdsSeq = '';
     this.cdsSeqs = [];
     this.cdsLength = null;
 
@@ -252,7 +252,7 @@ export class Transcript {
   getLengths() {
     this.cdnaLength = this.exons.map((exon) => exon[1] - exon[0] + 1).reduce((a,b) => a+b);
 
-    if (this.cds) {
+    if (this.cds.length !== 0) {
       this.cdsLength = this.cds.map((cds_i) => cds_i[1] - cds_i[0] + 1).reduce((a,b) => a+b);
       if ((this.cdsLength % 3) != 0) {
         console.log(`CDS not multiple of 3: ${this.id}`);
