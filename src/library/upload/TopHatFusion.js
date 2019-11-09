@@ -13,6 +13,10 @@ export class TopHatFusion extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 7, line)) {
+        return;
+      }
+
       const gene1 = [line[1]];
       const gene1Pos = line[3];
       const gene2 = [line[4]];

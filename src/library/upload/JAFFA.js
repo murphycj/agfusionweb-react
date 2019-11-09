@@ -13,6 +13,10 @@ export class JAFFA extends BaseUpload {
 
       const line = val.split(',').map(val => val.trim().replace(/"/g, ''));
 
+      if (!this.areThereEnoughColumns(i, 7, line)) {
+        return;
+      }
+
       if (val.startsWith('\"sample') || val.startsWith('sample')) {
 
         this.checkColumnHeader(line, i, 3, 'base1');

@@ -13,6 +13,10 @@ export class STARFusion extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 8, line)) {
+        return;
+      }
+
       if (val.startsWith('#')) {
 
         if (line[0] !== '#FusionName' && line[0] !== '#fusion_name') {

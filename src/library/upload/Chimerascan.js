@@ -13,6 +13,14 @@ export class Chimerascan extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 14, line)) {
+        return;
+      }
+
+      if (!this.areThereEnoughColumns(i, 14, line)) {
+        return;
+      }
+
       if (val.startsWith('#chrom5p')) {
 
         this.checkColumnHeader(line, i, 12, 'genes5p');

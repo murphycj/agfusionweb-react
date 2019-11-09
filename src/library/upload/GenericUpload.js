@@ -12,12 +12,18 @@ export class GenericUpload extends BaseUpload {
     const lines = await this.preprocess();
 
     this.fusions = lines.map((val, i) => {
-      if (val.split(this.delim).length !== 4) {
-        this.addErrorMsg(i+1, `does not have four values: ${val}`);
+
+      const line = val.split(this.delim).map(val => val.trim());
+
+      if (!this.areThereEnoughColumns(i, 4, line)) {
         return null;
       }
 
-      const [ gene1, gene1Pos, gene2, gene2Pos ] = val.split(this.delim).map(val => val.trim());
+      const gene1 = line[0];
+      const gene1Pos = line[1];
+      const gene2 = line[2];
+      const gene2Pos = line[3];
+
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
         return {
@@ -31,6 +37,7 @@ export class GenericUpload extends BaseUpload {
       }
     });
 
+    console.log(this.fusions)
     this.fusions = this.fusions.filter(val => val);
 
   }

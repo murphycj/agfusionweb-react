@@ -13,6 +13,10 @@ export class FusionCatcher extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 12, line)) {
+        return;
+      }
+
       if (val.startsWith('Gene_1_symbol')) {
 
         this.checkColumnHeader(line, i, 8, 'Fusion_point_for_gene_1(5end_fusion_partner)');

@@ -6,13 +6,27 @@ export class BaseUpload {
   }
 
   addErrorMsg(line, msg) {
-    this.errorMsg.push(`Line ${line}: ${msg}`);
+    if (msg) {
+      this.errorMsg.push(`Line ${line}: ${msg}`);
+    } else {
+      this.errorMsg.push(`${line}`);
+    }
   }
 
   checkColumnHeader(line, i, index, columnName) {
     if (line[index] !== columnName) {
       this.addErrorMsg(i+1, `Expected column ${index+1} to be ${columnName}`);
     }
+  }
+
+  areThereEnoughColumns(i, minLength, line) {
+
+    if (line.length < minLength) {
+      this.addErrorMsg(`Line ${i+1}: does not have enough columns. Expected at least: ${minLength}.`);
+      return false;
+    }
+
+    return true
   }
 
   async preprocess() {

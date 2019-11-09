@@ -13,6 +13,10 @@ export class MapSplice extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 62, line)) {
+        return;
+      }
+
       if (val.startsWith('chrom')) {
 
         this.checkColumnHeader(line, i, 1, 'doner_end');

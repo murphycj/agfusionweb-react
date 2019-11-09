@@ -1,6 +1,6 @@
 import { BaseUpload } from './BaseUpload';
 
-export class Defuse extends BaseUpload {
+export class FusionInspector extends BaseUpload {
   constructor(file) {
     super(file);
   }
@@ -13,24 +13,24 @@ export class Defuse extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
-      if (!this.areThereEnoughColumns(i, 41, line)) {
+      if (!this.areThereEnoughColumns(i, 9, line)) {
         return;
       }
 
-      if (val.startsWith('cluster_id')) {
+      if (val.startsWith('#FusionName')) {
 
-        this.checkColumnHeader(line, i, 22, 'gene1');
-        this.checkColumnHeader(line, i, 23, 'gene2');
-        this.checkColumnHeader(line, i, 39, 'genomic_break_pos1');
-        this.checkColumnHeader(line, i, 40, 'genomic_break_pos2');
+        this.checkColumnHeader(line, i, 3, 'LeftGene');
+        this.checkColumnHeader(line, i, 5, 'LeftBreakpoint');
+        this.checkColumnHeader(line, i, 6, 'RightGene');
+        this.checkColumnHeader(line, i, 8, 'RightBreakpoint');
 
         return null;
       }
 
-      const gene1 = [line[22]];
-      const gene1Pos = line[39];
-      const gene2 = [line[23]];
-      const gene2Pos = line[40];
+      const gene1 = [line[3].split('^')[1].split('.')[0]];
+      const gene1Pos = line[5].split(':')[1];
+      const gene2 = [line[6].split('^')[1].split('.')[0]];
+      const gene2Pos = line[8].split(':')[1];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
         return {

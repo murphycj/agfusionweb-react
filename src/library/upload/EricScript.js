@@ -13,6 +13,10 @@ export class EricScript extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 10, line)) {
+        return;
+      }
+
       if (val.startsWith('GeneName1')) {
 
         this.checkColumnHeader(line, i, 3, 'Breakpoint1');

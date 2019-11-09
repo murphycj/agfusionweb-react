@@ -13,6 +13,10 @@ export class FusionMap extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 14, line)) {
+        return;
+      }
+
       if (val.startsWith('FusionID')) {
 
         this.checkColumnHeader(line, i, 6, 'Position1');

@@ -13,8 +13,8 @@ export class Bellerophontes extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
-      if (line.length <= 11) {
-        return null;
+      if (!this.areThereEnoughColumns(i, 12, line)) {
+        return;
       }
 
       const gene1 = [line[0]];

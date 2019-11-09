@@ -13,6 +13,10 @@ export class ChimeRScope extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
+      if (!this.areThereEnoughColumns(i, 10, line)) {
+        return;
+      }
+
       if (val.startsWith('ConfidentScore')) {
 
         this.checkColumnHeader(line, i, 2, 'Gene1');
