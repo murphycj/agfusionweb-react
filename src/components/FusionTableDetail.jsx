@@ -125,7 +125,7 @@ class FusionTableDetail extends React.Component {
         filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => record.effect === value,
       },
       {
         title: '5\' junction location',
@@ -135,7 +135,7 @@ class FusionTableDetail extends React.Component {
         filters: [...new Set(fusionIsoforms.map(val => val.gene1JunctionLoc))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => record.gene1JunctionLoc === value,
       },
       {
         title: '3\' junction location',
@@ -145,7 +145,7 @@ class FusionTableDetail extends React.Component {
         filters: [...new Set(fusionIsoforms.map(val => val.gene2JunctionLoc))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => record.gene2JunctionLoc === value,
       },
       {
         title: 'Has protein coding potential',
@@ -154,11 +154,13 @@ class FusionTableDetail extends React.Component {
         render: val => (val ? 'Yes' : 'Unknown'),
         width: '15%',
         filters: [...new Set(fusionIsoforms.map(val => {
-          return val ? 'Yes' : 'Unknown';
+          return val.hasProteinCodingPotential ? 'Yes' : 'Unknown';
         }))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => {
+          return (record.hasProteinCodingPotential ? 'Yes' : 'Unknown') === value;
+        },
       },
     ];
 
