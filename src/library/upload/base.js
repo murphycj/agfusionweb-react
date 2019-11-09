@@ -9,6 +9,7 @@ import { Defuse } from './Defuse';
 import { Chimerascan } from './Chimerascan';
 import { ChimeRScope } from './ChimeRScope';
 import { JAFFA } from './JAFFA';
+import { Bellerophontes } from './Bellerophontes';
 
 async function parseUpload(file, format) {
   var data = null;
@@ -49,6 +50,9 @@ async function parseUpload(file, format) {
       break;
     case 'JAFFA':
       data = new JAFFA(file);
+      break;
+    case 'Bellerophontes':
+      data = new Bellerophontes(file);
       break;
     default:
       data = new GenericUpload(file, ',');
