@@ -26,7 +26,7 @@ class BulkDataForm extends React.Component {
       disabled: true,
       species: 'homo_sapiens_hg38',
       release: 94,
-      format: 'Generic',
+      format: 'Generic CSV',
       progress: null,
       showModal: false,
       errorMsg: null,
@@ -108,7 +108,7 @@ class BulkDataForm extends React.Component {
                     <Select
                       style={{ width: 200 }}
                       onChange={this._handleFormatChange}
-                      defaultValue="Generic">
+                      defaultValue="Generic CSV">
                       {uploadFormats}
                     </Select>
                   </div>

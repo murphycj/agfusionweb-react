@@ -295,7 +295,10 @@ const AVAILABLE_ENSEMBL_SPECIES = {
   },
 };
 
-const UPLOAD_FORMATS = ['Generic'];
+const UPLOAD_FORMATS = [
+  'Generic CSV',
+  'Generic TSV'
+];
 
 
 export { CODING_COMBINATIONS, PDBS, translate, molecularWeight, COLORS, AVAILABLE_ENSEMBL_SPECIES, UPLOAD_FORMATS };
