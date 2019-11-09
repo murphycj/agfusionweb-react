@@ -400,7 +400,8 @@ export class FusionTranscript {
 
       for (var i = 0; i < this.transcript1.proteinDomains[pdb].length; i++) {
 
-        domain = this.transcript1.proteinDomains[pdb][i];
+        // domain = this.transcript1.proteinDomains[pdb][i];
+        domain = Object.assign({}, this.transcript1.proteinDomains[pdb][i]);
 
         if (this.proteinJunctionGene1 < domain.start) {
           continue;
@@ -421,7 +422,8 @@ export class FusionTranscript {
 
         for (var i = 0; i < this.transcript2.proteinDomains[pdb].length; i++) {
 
-          domain = this.transcript2.proteinDomains[pdb][i];
+          // domain = this.transcript2.proteinDomains[pdb][i];
+          domain = Object.assign({}, this.transcript2.proteinDomains[pdb][i]);
 
           if (this.proteinJunctionGene2 > domain.end) {
               continue

@@ -5,8 +5,8 @@ export class Gene {
     this.id = id;
     this.biotype = data.biotype.S;
     this.contig = data.contig.S;
-    this.start = parseInt(data.start.N);
-    this.end = parseInt(data.end.N);
+    this.start = parseInt(data.start.N) || 0;
+    this.end = parseInt(data.end.N) || 0;
     this.isProteinCoding = data.is_protein_coding.BOOL || false;
     this.name = data.name.S || this.id;
     this.strand = data.strand.S;

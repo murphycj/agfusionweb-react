@@ -12,7 +12,7 @@ import { ErrorModal } from './ErrorModal.jsx';
 
 const { Dragger } = Upload;
 const helpText = {
-  format: "Generic upload format has one fusion per row, where each row has a comma-separated list with this format: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,121487991,CCDC6,59807078)",
+  format: "Generic format has one fusion per row (either TSV or CSV) with this format: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,121487991,CCDC6,59807078)",
 };
 
 class BulkDataForm extends React.Component {

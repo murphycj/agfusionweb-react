@@ -33,8 +33,8 @@ export class Transcript {
     this.proteinSeq = null;
     this.isProteinCoding = data.is_protein_coding.BOOL || false;
     this.proteinId = data.protein_id.S;
-    this.proteinDomains = {};
     this.proteinSeq = null;
+    this.proteinDomains = {};
     for (var i = 0; i < PDBS.length; i++) {
       this.proteinDomains[PDBS[i]] = [];
     }
@@ -206,7 +206,6 @@ export class Transcript {
   }
 
   parseDomains(data) {
-    var domain = null;
 
     if (!('M' in data.domains)) {
       return;
@@ -214,17 +213,20 @@ export class Transcript {
 
     for (var i = 0; i < PDBS.length; i++) {
       var pdb = PDBS[i];
-      this.proteinDomains[PDBS[i]] = [];
 
       if (data.domains.M[pdb].L.length > 0) {
         this.proteinDomains[pdb] = data.domains.M[pdb].L.map((val) => {
-          return {
+
+          var domain = {
             id: val.L[0].S,
             start: parseInt(val.L[1].N) || 0,
             end: parseInt(val.L[2].N) || 0,
             name: val.L[3].S || '',
             desc: val.L[4].S || ''};
-        });
+
+          return domain;
+          }
+        )
       }
     }
   }

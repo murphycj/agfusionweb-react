@@ -174,6 +174,14 @@ class Data extends React.Component {
       species: {value: 'homo_sapiens_hg38'},
       release: {value: 94}
     });
+    // this.props.form.setFields({
+    //   gene1: {value: 'ENSG00000108443'},
+    //   gene1_breakpoint: {value: 57970686},
+    //   gene2: {value: 'ENSG00000159210'},
+    //   gene2_breakpoint: {value: 47021337},
+    //   species: {value: 'homo_sapiens_hg19'},
+    //   release: {value: 75}
+    // });
     this._onSubmit(new Event('submit'));
   }
 
