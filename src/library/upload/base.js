@@ -1,4 +1,5 @@
 import { GenericUpload } from './GenericUpload';
+import { STARFusion } from './STARFusion';
 
 
 async function parseUpload(file, format) {
@@ -10,6 +11,9 @@ async function parseUpload(file, format) {
       break;
     case 'Generic TSV':
       data = new GenericUpload(file, '\t');
+      break;
+    case 'STARFusion':
+      data = new STARFusion(file, '\t');
       break;
     default:
       data = new GenericUpload(file, ',');

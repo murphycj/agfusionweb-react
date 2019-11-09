@@ -5,6 +5,10 @@ export class BaseUpload {
     this.errorMsg = [];
   }
 
+  addErrorMsg(line, msg) {
+    this.errorMsg.push(`Line ${line}: ${msg}`);
+  }
+
   async preprocess() {
 
     var lines = await this.file.text().then(text => {

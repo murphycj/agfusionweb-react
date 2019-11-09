@@ -297,7 +297,22 @@ const AVAILABLE_ENSEMBL_SPECIES = {
 
 const UPLOAD_FORMATS = [
   'Generic CSV',
-  'Generic TSV'
+  'Generic TSV',
+  'STARFusion',
+  'EricScript',
+  'FusionCatcher',
+  'FusionHunter',
+  'FusionMap',
+  'MapSplice',
+  'TopHatFusion',
+  'DeFuse',
+  'Chimerascan',
+  'ChimeRScope',
+  'JAFFA',
+  'Bellerophontes',
+  'BreakFusion',
+  'InFusion',
+  'FusionInspector'
 ];
 
 

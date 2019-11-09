@@ -13,7 +13,7 @@ export class GenericUpload extends BaseUpload {
 
     this.fusions = lines.map((val, i) => {
       if (val.split(this.delim).length !== 4) {
-        this.errorMsg.push(`Line ${i+1}: does not have four values: ${val}`);
+        this.addErrorMsg(i+1, `does not have four values: ${val}`);
         return null;
       }
 
