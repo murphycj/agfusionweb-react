@@ -262,22 +262,22 @@ class BulkDataForm extends React.Component {
     for (var i = 0; i < uploadedFusionData.length; i++) {
 
       var fusion = uploadedFusionData[i];
-      var gene1 = null;
+      var gene1EnsemblIds = null;
       var gene1Data = null;
       var gene1DataFinal = [];
-      var gene2 = null;
+      var gene2EnsemblIds = null;
       var gene2Data = null;
       var gene2DataFinal = [];
       var errorMsg = [];
 
       // validate gene 1 and get gene data
 
-      gene1 = await query._validateGene(fusion.gene1, speciesRelease);
+      gene1EnsemblIds = await query._validateGene(fusion.gene1, speciesRelease);
 
-      if (gene1 !== null) {
+      if (gene1EnsemblIds !== null) {
         // fetch the gene/transcirpt data
 
-        gene1Data = await query._getGeneData(gene1, speciesRelease);
+        gene1Data = await query._getGeneData(gene1EnsemblIds, speciesRelease);
 
         if (gene1Data.length !== 0) {
           // get genes where junction occurs in
@@ -303,12 +303,12 @@ class BulkDataForm extends React.Component {
 
       // validate gene 2
 
-      gene2 = await query._validateGene(fusion.gene2, speciesRelease);
+      gene2EnsemblIds = await query._validateGene(fusion.gene2, speciesRelease);
 
-      if (gene2 !== null) {
+      if (gene2EnsemblIds !== null) {
         // fetch the gene/transcirpt data
 
-        gene2Data = await query._getGeneData(gene2, speciesRelease);
+        gene2Data = await query._getGeneData(gene2EnsemblIds, speciesRelease);
 
         if (gene2Data.length !== 0) {
           // get genes where junction occurs in
@@ -332,21 +332,24 @@ class BulkDataForm extends React.Component {
         errorMsg.push('Unknown 3\' gene gene. Check your spelling and genome.');
       }
 
+      console.log(gene1EnsemblIds)
+      console.log(gene2EnsemblIds)
+
       if (errorMsg.length > 0) {
         fusions.push({
-          gene1: fusion.gene1,
-          gene1Data: fusion.gene2,
+          gene1: fusion.gene1.join(','),
+          gene1Data: fusion.gene2.join(','),
           gene1Junction: fusion.gene1Pos,
-          gene2: fusion.gene2,
-          gene2Data: fusion.gene2,
+          gene2: fusion.gene2.join(','),
+          gene2Data: fusion.gene2.join(','),
           gene2Junction: fusion.gene2Pos,
           errorMsg: errorMsg});
       } else {
         fusions.push({
-          gene1: gene1,
+          gene1: gene1EnsemblIds,
           gene1Data: gene1DataFinal,
           gene1Junction: fusion.gene1Pos,
-          gene2: gene2,
+          gene2: gene2EnsemblIds,
           gene2Data: gene2DataFinal,
           gene2Junction: fusion.gene2Pos,
           errorMsg: errorMsg});

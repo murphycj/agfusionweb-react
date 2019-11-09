@@ -19,7 +19,7 @@ export class ProcessQuery {
         fusions[k] = {
           ...fusionData_i,
           errorMsg: fusionData_i.errorMsg};
-          
+
         continue;
       }
 
@@ -50,9 +50,8 @@ export class ProcessQuery {
     return gene;
   }
 
-  async _getGeneData(gene, speciesRelease) {
+  async _getGeneData(ensemblIds, speciesRelease) {
 
-    var ensemblIds = gene.ensembl_gene_id.S.split(';');
     var geneData = [];
 
     for (var i = 0; i < ensemblIds.length; i++) {
@@ -65,23 +64,37 @@ export class ProcessQuery {
     return geneData;
   }
 
-  async _validateGene(gene_id, speciesRelease) {
+  async _validateGene(genes, speciesRelease) {
 
-    var gene = null;
+    var ensemblIds = [];
 
-    if (gene_id.match(/^ENS.*G/)) {
-      gene = await this.ddb.getGene(gene_id, speciesRelease);
-      gene = {ensembl_gene_id: {S: gene_id}};
-    } else {
-      gene = await this.ddb.getGeneSynonym(gene_id, speciesRelease);
+    if (genes.length === 0) {
+      return null;
     }
 
+    for (var i = 0; i < genes.length; i++) {
+      var gene = genes[i];
 
-    if (gene === undefined) {
+      if (gene.match(/^ENS.*G/)) {
+        var result = await this.ddb.getGene(gene, speciesRelease);
+
+        if (result !== undefined) {
+          ensemblIds.push(gene);
+        }
+      } else {
+        var result = await this.ddb.getGeneSynonym(gene, speciesRelease);
+
+        if (result !== undefined) {
+          ensemblIds = ensemblIds.concat(result.ensembl_gene_id.S.split(';'));
+        }
+      }
+    }
+
+    if (ensemblIds.length === 0) {
       // if it did not find anything, then look on
       return null;
     } else {
-      return gene;
+      return ensemblIds;
     }
   }
 }

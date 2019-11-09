@@ -209,9 +209,9 @@ class Data extends React.Component {
 
         // validate gene 1 and get gene data
 
-        var gene1 = await query._validateGene(values.gene1, speciesRelease)
+        var gene1EnsemblIds = await query._validateGene([values.gene1], speciesRelease)
 
-        if (gene1 === undefined) {
+        if (gene1EnsemblIds === null) {
           this.props.form.setFields({
             gene1: {
               value: values.gene1,
@@ -224,7 +224,7 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene1Data = await query._getGeneData(gene1, speciesRelease);
+        var gene1Data = await query._getGeneData(gene1EnsemblIds, speciesRelease);
 
         if (gene1Data.length === 0) {
           this.props.form.setFields({
@@ -263,9 +263,9 @@ class Data extends React.Component {
 
         // validate gene 2
 
-        var gene2 = await query._validateGene(values.gene2, speciesRelease)
+        var gene2EnsemblIds = await query._validateGene([values.gene2], speciesRelease)
 
-        if (gene2 === undefined) {
+        if (gene2EnsemblIds === null) {
           this.props.form.setFields({
             gene2: {
               value: values.gene2,
@@ -278,7 +278,7 @@ class Data extends React.Component {
 
         // fetch the gene/transcirpt data
 
-        var gene2Data = await query._getGeneData(gene2, speciesRelease);
+        var gene2Data = await query._getGeneData(gene2EnsemblIds, speciesRelease);
 
         if (gene2Data.length === 0) {
           this.props.form.setFields({
@@ -318,10 +318,10 @@ class Data extends React.Component {
         // got here so data is valid
 
         var fusions = query.createFusions([{
-          gene1: gene1,
+          gene1: gene1EnsemblIds,
           gene1Data: gene1DataFinal,
           gene1Junction: values.gene1_breakpoint,
-          gene2: gene2,
+          gene2: gene2EnsemblIds,
           gene2Data: gene2DataFinal,
           gene2Junction: values.gene2_breakpoint}]);
 
