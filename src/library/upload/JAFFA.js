@@ -1,6 +1,6 @@
 import { BaseUpload } from './BaseUpload';
 
-export class EricScript extends BaseUpload {
+export class JAFFA extends BaseUpload {
   constructor(file) {
     super(file);
   }
@@ -11,21 +11,20 @@ export class EricScript extends BaseUpload {
 
     this.fusions = lines.map((val, i) => {
 
-      const line = val.split('\t').map(val => val.trim());
+      const line = val.split(',').map(val => val.trim().replace(/"/g, ''));
 
-      if (val.startsWith('GeneName1')) {
+      if (val.startsWith('\"sample') || val.startsWith('sample')) {
 
-        this.checkColumnHeader(line, i, 3, 'Breakpoint1');
-        this.checkColumnHeader(line, i, 6, 'Breakpoint2');
-        this.checkColumnHeader(line, i, 8, 'EnsemblGene1');
-        this.checkColumnHeader(line, i, 9, 'EnsemblGene2');
+        this.checkColumnHeader(line, i, 3, 'base1');
+        this.checkColumnHeader(line, i, 6, 'base2');
+        this.checkColumnHeader(line, i, 1, 'fusion genes');
 
         return null;
       }
 
-      const gene1 = [line[8]];
+      const gene1 = [line[1].split(':')[0]];
       const gene1Pos = line[3];
-      const gene2 = [line[9]];
+      const gene2 = [line[1].split(':')[1]];
       const gene2Pos = line[6];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

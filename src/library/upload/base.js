@@ -8,6 +8,7 @@ import { TopHatFusion } from './TopHatFusion';
 import { Defuse } from './Defuse';
 import { Chimerascan } from './Chimerascan';
 import { ChimeRScope } from './ChimeRScope';
+import { JAFFA } from './JAFFA';
 
 async function parseUpload(file, format) {
   var data = null;
@@ -45,6 +46,9 @@ async function parseUpload(file, format) {
       break;
     case 'ChimeRScope':
       data = new ChimeRScope(file);
+      break;
+    case 'JAFFA':
+      data = new JAFFA(file);
       break;
     default:
       data = new GenericUpload(file, ',');

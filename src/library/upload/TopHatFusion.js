@@ -13,9 +13,9 @@ export class TopHatFusion extends BaseUpload {
 
       const line = val.split('\t').map(val => val.trim());
 
-      const gene1 = line[1];
+      const gene1 = [line[1]];
       const gene1Pos = line[3];
-      const gene2 = line[4];
+      const gene2 = [line[4]];
       const gene2Pos = line[6];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

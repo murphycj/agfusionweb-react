@@ -23,9 +23,9 @@ export class MapSplice extends BaseUpload {
         return null;
       }
 
-      const gene1 = line[60];
+      const gene1 = [line[60]];
       const gene1Pos = line[1];
-      const gene2 = line[61];
+      const gene2 = [line[61]];
       const gene2Pos = line[2];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

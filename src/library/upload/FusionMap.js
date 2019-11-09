@@ -23,9 +23,9 @@ export class FusionMap extends BaseUpload {
         return null;
       }
 
-      const gene1 = line[9];
+      const gene1 = [line[9]];
       const gene1Pos = line[6];
-      const gene2 = line[13];
+      const gene2 = [line[13]];
       const gene2Pos = line[8];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

@@ -23,9 +23,9 @@ export class ChimeRScope extends BaseUpload {
         return null;
       }
 
-      const gene1 = line[2];
+      const gene1 = [line[2]];
       const gene1Pos = line[7];
-      const gene2 = line[4];
+      const gene2 = [line[4]];
       const gene2Pos = line[9];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

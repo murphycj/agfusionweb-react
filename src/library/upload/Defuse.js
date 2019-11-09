@@ -23,9 +23,9 @@ export class Defuse extends BaseUpload {
         return null;
       }
 
-      const gene1 = line[22];
+      const gene1 = [line[22]];
       const gene1Pos = line[39];
-      const gene2 = line[23];
+      const gene2 = [line[23]];
       const gene2Pos = line[40];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {

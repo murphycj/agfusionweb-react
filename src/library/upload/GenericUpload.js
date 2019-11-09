@@ -21,9 +21,9 @@ export class GenericUpload extends BaseUpload {
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
         return {
-          gene1: gene1,
+          gene1: [gene1],
           gene1Pos: gene1Pos,
-          gene2: gene2,
+          gene2: [gene2],
           gene2Pos: gene2Pos
         };
       } else {

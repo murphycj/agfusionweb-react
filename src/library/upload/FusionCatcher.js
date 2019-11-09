@@ -23,9 +23,9 @@ export class FusionCatcher extends BaseUpload {
         return null;
       }
 
-      const gene1 = line[10];
+      const gene1 = [line[10]];
       const gene1Pos = line[8].split(':')[1];
-      const gene2 = line[11];
+      const gene2 = [line[11]];
       const gene2Pos = line[9].split(':')[1];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
