@@ -35,7 +35,6 @@ export class PlotProtein extends Plot {
 
         var domainStart = (domain.start / this.normalize) * 0.9 + this.offset;
         var domainEnd = (domain.end / this.normalize) * 0.9 + this.offset;
-        var domainCenter = (domainEnd - domainStart) / 2 + domainStart;
 
         this.rects.push({
           x: domainStart,
@@ -135,21 +134,5 @@ export class PlotProtein extends Plot {
       height: 0.1,
       stroke: 'black'
     });
-
-    // this.ax.text(
-    //     0.5,
-    //     0.95,
-    //     name_symbols,
-    //     horizontalalignment='center',
-    //     fontsize=this.fontsize
-    // )
-    //
-    // this.ax.text(
-    //     0.5,
-    //     0.88,
-    //     name_isoform,
-    //     horizontalalignment='center',
-    //     fontsize=this.fontsize-3
-    // )
   }
 }

@@ -183,7 +183,7 @@ class FusionTableDetail extends React.Component {
               </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
             <Col span={6} />
-            <Col span={6}>
+            <Col span={6} className="Download-button">
               <Button loading={false} onClick={this._downloadFiles}>
                 <Icon type="download" />
                 Fusion data

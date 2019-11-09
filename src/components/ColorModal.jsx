@@ -21,7 +21,6 @@ export class ColorModal extends React.Component {
   render() {
 
     const { color } = this.state;
-    const { domainToColor } = this.props;
 
     return (
       <Modal

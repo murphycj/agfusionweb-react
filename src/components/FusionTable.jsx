@@ -141,7 +141,7 @@ class FusionTableDetail extends React.Component {
           <Divider>Table of fusion isoforms</Divider>
           <Row>
             <Col span={18} />
-            <Col span={6}>
+            <Col span={6} className="Download-button">
               <Button loading={false} onClick={this._downloadFiles}>
                 <Icon type="download" />
                 Fusion data

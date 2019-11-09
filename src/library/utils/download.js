@@ -27,7 +27,7 @@ export class Download {
       if (params.exonCsv) {
         this.prepExonCsv(fusionFolder, this.fusions[val].transcripts);
       }
-    })
+    });
   }
 
   prepFasta(fusionFolder, fusionIsoforms) {
