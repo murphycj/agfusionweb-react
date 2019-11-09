@@ -82,7 +82,7 @@ export class FusionTranscript {
 
     // predict the fusion
 
-    if (this.effect !== 'out-of-gene-boundary') {
+    if (this.effect !== 'out-of-transcript-boundary') {
       this.effect = 'Unknown';
       this.predict();
     }

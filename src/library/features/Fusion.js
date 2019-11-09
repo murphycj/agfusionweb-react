@@ -29,11 +29,10 @@ export class Fusion {
         transcript.fusionId = this.id;
 
         if (!this.gene1.transcripts[i].contains(gene1Junction) || !this.gene2.transcripts[j].contains(gene2Junction)) {
-          transcript.effect = 'out-of-gene-boundary';
-        } else {
-          this.transcripts[transcript.id] = transcript;
+          transcript.effect = 'out-of-transcript-boundary';
         }
 
+        this.transcripts[transcript.id] = transcript;
       }
     }
   }
