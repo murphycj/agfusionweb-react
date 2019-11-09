@@ -10,6 +10,7 @@ import { Chimerascan } from './Chimerascan';
 import { ChimeRScope } from './ChimeRScope';
 import { JAFFA } from './JAFFA';
 import { Bellerophontes } from './Bellerophontes';
+import { FusionInspector } from './FusionInspector';
 
 async function parseUpload(file, format) {
   var data = null;
@@ -54,11 +55,18 @@ async function parseUpload(file, format) {
     case 'Bellerophontes':
       data = new Bellerophontes(file);
       break;
+    case 'FusionInspector':
+      data = new FusionInspector(file);
+      break;
     default:
       data = new GenericUpload(file, ',');
   }
 
   await data.parse();
+
+  if (data.fusions.length === 0) {
+    data.addErrorMsg('Could not parse any fusions.');
+  }
 
   return data;
 }

@@ -33,8 +33,8 @@ export class ErrorModal extends React.Component {
         renderItem={item => (
           <List.Item>
             {
-              item.split(' ').length == 1 ?
-                item :
+              item.split(' ').length != 2 ?
+                <p>{item}</p> :
                 <p><b>{item.split(': ')[0] + ': '}</b> {item.split(': ')[1]}</p>
             }
           </List.Item>

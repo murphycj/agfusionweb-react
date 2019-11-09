@@ -182,7 +182,7 @@ class BulkDataForm extends React.Component {
     setTimeout(async () => {
       const fusionData = await parseUpload(file, format);
 
-      if (fusionData.errorMsg.length === 0) {
+      if (fusionData.errorMsg.length === 0 && fusionData.fusions.length !== 0) {
         file.status = "done";
         this.setState({
           uploadedFusionData: fusionData.fusions,
@@ -331,9 +331,6 @@ class BulkDataForm extends React.Component {
       } else {
         errorMsg.push('Unknown 3\' gene gene. Check your spelling and genome.');
       }
-
-      console.log(gene1EnsemblIds)
-      console.log(gene2EnsemblIds)
 
       if (errorMsg.length > 0) {
         fusions.push({
