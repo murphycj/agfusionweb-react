@@ -106,7 +106,7 @@ class FusionTableDetail extends React.Component {
         filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.effect.indexOf(value) === 0,
+        onFilter: (value, record) => record.effect === value,
       },
       {
         title: '5\' junction',
@@ -131,7 +131,9 @@ class FusionTableDetail extends React.Component {
         }))].map(val => {
           return {text: val, value: val};
         }),
-        onFilter: (value, record) => record.hasProteinCodingPotential.indexOf(value) === 0,
+        onFilter: (value, record) => {
+          return (record.hasProteinCodingPotential ? 'Yes' : 'Unknown') === value;
+        },
       },
     ];
 
