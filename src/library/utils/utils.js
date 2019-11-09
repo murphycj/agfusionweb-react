@@ -301,7 +301,7 @@ const UPLOAD_FORMATS = [
   'STARFusion',
   'EricScript',
   'FusionCatcher',
-  'FusionHunter',
+  // 'FusionHunter',
   'FusionMap',
   'MapSplice',
   'TopHatFusion',
