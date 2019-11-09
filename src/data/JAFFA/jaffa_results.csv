@@ -1,0 +1,3 @@
+"sample","fusion genes","chrom1","base1","strand1","chrom2","base2","strand2","gap (kb)","spanning pairs","spanning reads","inframe","aligns","rearrangement","contig","contig break","classification","known"
+"jaffa_outreads","LSM14A:MAP4","chr19",34215661,"+","chr3",47877523,"-",Inf,"26",111,TRUE,TRUE,TRUE,"Locus_2_Transcript_1/3_Confidence_0.333_Length_643",249,"HighConfidence","-"
+"jaffa_outreads","RYBP:ADAM15","chr3",72446496,"-","chr1",155056953,"+",Inf,"-",149,FALSE,TRUE,TRUE,"Locus_1_Transcript_1/1_Confidence_0.000_Length_404",130,"MediumConfidence","-"
