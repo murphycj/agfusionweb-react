@@ -6,6 +6,7 @@ import { FusionMap } from './FusionMap';
 import { MapSplice } from './MapSplice';
 import { TopHatFusion } from './TopHatFusion';
 import { Defuse } from './Defuse';
+import { Chimerascan } from './Chimerascan';
 
 async function parseUpload(file, format) {
   var data = null;
@@ -37,6 +38,9 @@ async function parseUpload(file, format) {
       break;
     case 'DeFuse':
       data = new Defuse(file);
+      break;
+    case 'Chimerascan':
+      data = new Chimerascan(file);
       break;
     default:
       data = new GenericUpload(file, ',');
