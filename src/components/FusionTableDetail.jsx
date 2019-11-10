@@ -197,6 +197,7 @@ class FusionTableDetail extends React.Component {
               rowKey="name"
               dataSource={fusionIsoforms}
               columns={columns}
+              pagination={false}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => this._onSelectRow(record)
