@@ -4,12 +4,11 @@ export class GenericUpload extends BaseUpload {
   constructor(file, delim) {
     super(file);
     this.delim = delim;
-
   }
 
   async parse() {
 
-    const lines = await this.preprocess();
+    var lines = await this.preprocess();
 
     this.fusions = lines.map((val, i) => {
 
@@ -37,8 +36,8 @@ export class GenericUpload extends BaseUpload {
       }
     });
 
+    console.log('fusions')
     console.log(this.fusions)
     this.fusions = this.fusions.filter(val => val);
-
   }
 }

@@ -29,26 +29,40 @@ export class BaseUpload {
     return true
   }
 
-  async preprocess() {
+  preprocess() {
 
-    var lines = await this.file.text().then(text => {
+    var reader = new FileReader();
 
-      var lines = null;
+    var self = this;
 
-      if (text === undefined || text === '') {
-        this.errorMsg.push('File is empty!');
-      } else {
-        lines = text.split('\n');
-      }
+    return new Promise((resolve, reject) => {
+      reader.onerror = () => {
+        reader.abort();
+        reject(new DOMException("Problem parsing input file."));
+      };
 
-      // skip empty rows such as trailing newline
+      reader.onload = (e) => {
 
-      lines = lines.filter(val => val !== '');
+        var text = e.target.result;
+        var lines = null;
 
-      return lines;
+        if (text === undefined || text === '') {
+          self.errorMsg.push('File is empty!');
+        } else {
+          lines = text.split('\n');
+        }
+
+        // skip empty rows such as trailing newline
+
+        lines = lines.filter(val => val !== '');
+
+        // parse the lines;
+
+        resolve(lines);
+      };
+
+      reader.readAsText(self.file);
     });
-
-    return lines;
   }
 
   _validateInteger(i, pos, name,) {
