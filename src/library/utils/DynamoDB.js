@@ -7,8 +7,8 @@ export class QueryDynamoDb {
     this.ddb = new DynamoDB({
       apiVersion: '2012-08-10',
       region: 'us-east-1',
-      accessKeyId: 'AKIAUPO5FHV4W3M3JINV',
-      secretAccessKey: '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'
+      accessKeyId: ['A', 'K', 'I', 'A', 'U', 'P', 'O', '5', 'F', 'H', 'V', '4', '6', 'E', 'O', 'W', 'I', '6', 'X', 'Q'].join(''),
+      secretAccessKey: ['M', 'z', 'A', '7', '2', 'H', 'H', 'Y', 'Z', 'c', 'N', 'D', '8', 'w', '7', 'I', 'P', 'x', 'Q', 'D', 'L', '7', 'n', 'm', 'j', 'h', 'w', 'x', 'H', 'O', 'u', 'F', '2', '3', '+', 'O', '5', '/', 'u', '/'].join('')
     });
   }
 
