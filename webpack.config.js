@@ -1,4 +1,6 @@
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 module.exports = () => {
@@ -27,10 +29,21 @@ module.exports = () => {
       new HtmlWebPackPlugin({
         template: "./public/index.html",
         filename: "./index.html"
-      })
+      }),
+      new webpack.DefinePlugin({ // <-- key to reducing React's size
+        'process.env': {
+          'NODE_ENV': JSON.stringify('production')
+        }
+      }),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.optimize.AggressiveMergingPlugin()
     ],
     node: {
       fs: 'empty'
-    }
+    },
+    optimization: {
+      minimize: true,
+      minimizer: [new UglifyJsPlugin()],
+    },
   };
 };

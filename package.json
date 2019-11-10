@@ -4,28 +4,19 @@
   "dependencies": {
     "antd": "^3.23.4",
     "aws-sdk": "^2.533.0",
-    "babel-loader": "^8.0.6",
-    "css-loader": "^3.2.0",
     "file-saver": "^2.0.2",
     "fs": "0.0.1-security",
-    "html-webpack-plugin": "^3.2.0",
     "jszip": "^3.2.2",
     "konva": "^4.0.13",
-    "mysql": "^2.17.1",
-    "net": "^1.0.2",
-    "node-sass": "^4.12.0",
     "react": "^16.9.0",
     "react-color": "^2.17.3",
     "react-dom": "^16.9.0",
     "react-konva": "^16.10.1-0",
-    "react-scripts": "3.1.2",
-    "sass-loader": "^8.0.0",
-    "style-loader": "^1.0.0",
-    "tls": "0.0.1"
+    "react-scripts": "3.1.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --mode production ./src/index.js --output ./build/main.js",
+    "build": "webpack --mode production ./src/index.js --output ./build/main.js -p --optimize-dedupe",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "aws s3 sync build/ s3://agfusionweb"
@@ -49,6 +40,14 @@
     "@babel/plugin-transform-runtime": "^7.6.0",
     "@babel/preset-env": "^7.6.0",
     "@babel/runtime": "^7.6.0",
+    "babel-loader": "^8.0.6",
+    "babel-plugin-import": "^1.12.2",
+    "css-loader": "^3.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.0",
+    "style-loader": "^1.0.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
   }

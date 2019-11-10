@@ -1,10 +1,10 @@
-import { DynamoDB } from './DynamoDB';
+import { QueryDynamoDb } from './DynamoDB';
 import { Gene } from '../features/Gene';
 import { Fusion } from '../features/Fusion';
 
 export class ProcessQuery {
   constructor() {
-    this.ddb = new DynamoDB();
+    this.ddb = new QueryDynamoDb();
   }
 
   createFusions(fusionData) {

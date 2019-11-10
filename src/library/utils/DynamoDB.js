@@ -1,17 +1,15 @@
-var AWS = require('aws-sdk');
+var DynamoDB = require('aws-sdk/clients/dynamodb');
 
 // Set the region and aws keys (that have read-only access to dynamodb)
 
-AWS.config.update({
-  region: 'us-east-1',
-  accessKeyId: 'AKIAUPO5FHV4W3M3JINV',
-  secretAccessKey: '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'
-});
-
-
-export class DynamoDB {
+export class QueryDynamoDb {
   constructor() {
-    this.ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+    this.ddb = new DynamoDB({
+      apiVersion: '2012-08-10',
+      region: 'us-east-1',
+      accessKeyId: 'AKIAUPO5FHV4W3M3JINV',
+      secretAccessKey: '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'
+    });
   }
 
   getGene(gene_id, speciesRelease='homo_sapiens_94') {
