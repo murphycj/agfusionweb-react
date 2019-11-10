@@ -155,7 +155,7 @@ class FusionTableDetail extends React.Component {
               rowKey="name"
               dataSource={fusionIsoforms}
               columns={columns}
-
+              pagination={{ pageSize: 25 }} 
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => onTableRowClickCallback(record)
