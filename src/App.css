@@ -44,9 +44,9 @@
   justify-content: center;
   flex: 0 0 50px;
   margin-top: auto;
-  /* position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%; */
+}
+
+.App-footer-gitub {
+  padding-left: 4px;
+  padding-right: 4px;
 }

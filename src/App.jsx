@@ -86,7 +86,9 @@ class App extends React.Component {
         </Content>
         <Footer className="App-footer">
           For research use only |
-          <a href="https://github.com/murphycj/AGFusion"> AGFusion Python package </a>
+          <a href="https://github.com/murphycj/AGFusion" className="App-footer-gitub">
+            AGFusion Python package
+          </a>
           | {'\u00A9'} 2019 Charlie Murphy
         </Footer>
       </Layout>
