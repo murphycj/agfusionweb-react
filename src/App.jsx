@@ -2,6 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import './App.css';
 import { Layout, Tabs, message } from 'antd';
+import Rollbar from "rollbar";
 
 import DataForm from './components/DataForm.jsx';
 import BulkDataForm from './components/BulkDataForm.jsx';
@@ -22,6 +23,13 @@ class App extends React.Component {
       selectedFusionTranscript: null,
       activeTableTab: "1",
       tableRef: React.createRef(),
+      rollbar: new Rollbar({
+        accessToken: '5038f24f7a3042a9a3a8784cb526e72c',
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+        crossorigin: "anonymous",
+        captureIp: 'anonymize',
+      }),
     }
     this.contentRef = React.createRef();
 
@@ -33,7 +41,15 @@ class App extends React.Component {
 
   render() {
 
-    const { fusions, selectedFusion, selectedFusionTranscript, contentRef, activeTableTab, tableRef } = this.state;
+    const {
+      fusions,
+      selectedFusion,
+      selectedFusionTranscript,
+      contentRef,
+      activeTableTab,
+      tableRef,
+      rollbar,
+      } = this.state;
 
     var width = null;
     if (this.contentRef && this.contentRef.current) {
@@ -52,10 +68,10 @@ class App extends React.Component {
           <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
             <Tabs defaultActiveKey="1">
               <TabPane tab="Annotate single fusion" key="1">
-                <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
+                <DataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} rollbar={rollbar}/>
               </TabPane>
               <TabPane tab="Bulk upload" key="2">
-                <BulkDataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} />
+                <BulkDataForm onSubmitCallback={this._onSubmit} onClearCallback={this._onClear} rollbar={rollbar}/>
               </TabPane>
             </Tabs>
             {fusions ?
@@ -141,8 +157,6 @@ class App extends React.Component {
   }
 
   _onSubmit(fusions) {
-
-    console.log(fusions);
 
     this.setState({
       fusions: fusions,

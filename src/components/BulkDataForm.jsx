@@ -253,6 +253,8 @@ class BulkDataForm extends React.Component {
     this._clearData();
 
     const { query, species, release, uploadedFusionData, progress } = this.state;
+    const { rollbar } = this.props;
+
     const speciesName = AVAILABLE_ENSEMBL_SPECIES[species]['species'];
     const speciesRelease = `${speciesName}_${release}`;
     var fusions = [];
@@ -269,6 +271,13 @@ class BulkDataForm extends React.Component {
       var gene2Data = null;
       var gene2DataFinal = [];
       var errorMsg = [];
+
+      rollbar.info(
+        'Bulk gene fusion',
+        `gene1: ${fusion.gene1}, ` +
+        `gene1Pos: ${fusion.gene1Pos}, ` +
+        `gene2: ${fusion.gene2}, ` +
+        `gene2Pos: ${fusion.gene2Pos}`);
 
       // validate gene 1 and get gene data
 
