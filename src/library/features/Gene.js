@@ -42,6 +42,10 @@ export class Gene {
 
   parseSeqs(seqs) {
 
+    if (seqs === null || seqs === '') {
+      return;
+    }
+
     var seqsProcessed = {};
 
     for (var i = 0; i < seqs.length; i++) {

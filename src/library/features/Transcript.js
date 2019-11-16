@@ -19,7 +19,7 @@ export class Transcript {
     //cdna
     this.exons = [];
     this.exonSeqs = [];
-    this.cdnaSeq = null;
+    this.cdnaSeq = '';
     this.cdnaLength = null;
 
     //cds
@@ -30,10 +30,9 @@ export class Transcript {
 
     //protein
     this.proteinLength = null;
-    this.proteinSeq = null;
+    this.proteinSeq = '';
     this.isProteinCoding = data.is_protein_coding.BOOL || false;
-    this.proteinId = data.protein_id.S;
-    this.proteinSeq = null;
+    this.proteinId = data.protein_id.S || null;
     this.proteinDomains = {};
     for (var i = 0; i < PDBS.length; i++) {
       this.proteinDomains[PDBS[i]] = [];

@@ -37,6 +37,8 @@ export class QueryDynamoDb {
 
   getSequences(ids, speciesRelease='homo_sapiens_94') {
 
+    ids = ids.filter(val => val);
+
     var params = {
       RequestItems: {
         'agfusion_sequences': {
@@ -56,9 +58,10 @@ export class QueryDynamoDb {
       self.ddb.batchGetItem(params, function(err, data) {
         if (err) {
           console.log("Error", err);
-          resolve();
+          resolve([]);
         } else {
-          resolve(data.Responses.agfusion_sequences);
+          var sequences = data.Responses.agfusion_sequences || null;
+          resolve(sequences);
         }
       });
     })
