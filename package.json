@@ -17,7 +17,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --mode production ./src/index.js --output ./build/main.js -p --optimize-dedupe",
+    "test": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "aws s3 sync build/ s3://agfusionweb"
