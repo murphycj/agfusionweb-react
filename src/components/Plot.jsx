@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
-import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip } from 'antd';
+import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip, message } from 'antd';
 
 import './Plot.css';
 
@@ -432,12 +432,35 @@ class Plot extends React.Component {
   }
 
   _downloadImage() {
-    const { imageRef } = this.state;
+    const { imageRef, plotTypeProtein, plotTypeExon } = this.state;
+    const { plotDataAll } = this.props;
+
+    // get the filename
+
+    var plotName = 'plot.png';
+
+    if (plotTypeProtein === 'fusionProtein' && plotDataAll.fusionProtein) {
+      plotName = plotDataAll.fusionProtein.transcript.name.replace(' : ', '__') + '.fusion-protein.png';
+    } else if (plotTypeProtein === 'gene1Protein' && plotDataAll.gene1Protein) {
+      plotName = plotDataAll.gene1Protein.transcript.name + '.protein.png';
+    } else if (plotTypeProtein === 'gene2Protein' && plotDataAll.gene2Protein) {
+      plotName = plotDataAll.gene2Protein.transcript.name + '.protein.png';
+    } else if (plotTypeExon === 'fusionExon') {
+      plotName = plotDataAll.fusionProtein.transcript.name.replace(' : ', '__') + '.fusion-exons.png';
+    } else if (plotTypeExon === 'gene1Exon') {
+      plotName = plotDataAll.gene1Protein.transcript.name + '.exons.png';
+    } else if (plotTypeExon === 'gene2Exon') {
+      plotName = plotDataAll.gene2Protein.transcript.name + '.exons.png';
+    } else {
+      message.error("There is nothing to plot.");
+      return;
+    }
+
 
     var dataURL = imageRef.current.toDataURL({ pixelRatio: 3 });
 
     var link = document.createElement('a');
-    link.download = 'stage.png';
+    link.download = plotName;
     link.href = dataURL;
     document.body.appendChild(link);
     link.click();
