@@ -44,7 +44,7 @@ class FusionTableDetail extends React.Component {
 
     selectedFusionTranscript = selectedFusionTranscript || defaultFusionTranscript;
 
-    var fusionIsoforms = fusion ? this._filterFusions(fusion, onlyCanonical) : null;
+    var fusionIsoforms = fusion ? this._filterFusions(fusion, onlyCanonical) : [];
 
     const columns = [
       {
@@ -232,7 +232,7 @@ class FusionTableDetail extends React.Component {
   }
 
   _filterFusions(fusion, onlyCanonical) {
-    var fusionIsoforms = null;
+    var fusionIsoforms = [];
 
     fusionIsoforms = Object.keys(fusion.transcripts).map(val => {
       return fusion.transcripts[val]
