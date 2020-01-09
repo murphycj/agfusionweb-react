@@ -46,8 +46,10 @@ export class BaseUpload {
         var text = e.target.result;
         var lines = null;
 
-        if (text === undefined || text === '') {
+        if (text === undefined || text === '' || text === null) {
           self.errorMsg.push('File is empty!');
+          resolve([]);
+          return;
         } else {
           lines = text.split('\n');
         }

@@ -192,9 +192,9 @@ def process_data(species, release, genome, agfusion):
     db = sqlite3.Connection(agfusion)
     c = db.cursor()
 
-    process_gene_synonym(species, release, pyens_db, c)
+    # process_gene_synonym(species, release, pyens_db, c)
     # process_gene_data(species, release, pyens_db, c)
-    # upload_fasta(species, genome, release)
+    upload_fasta(species, genome, release)
 
 
 def put_to_dynamodb():
@@ -203,4 +203,4 @@ def put_to_dynamodb():
 
 # process_data('homo_sapiens', 94, '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.94.db')
 # process_data('homo_sapiens', 75, 'GRCh37', '/Users/charliemurphy/Downloads/agfusion.homo_sapiens.75.db')
-process_data('mus_musculus', 92, 'GRCm38', '/Users/charliemurphy/Downloads/agfusion.mus_musculus.92.db')
+# process_data('mus_musculus', 92, 'GRCm38', '/Users/charliemurphy/Downloads/agfusion.mus_musculus.92.db')
