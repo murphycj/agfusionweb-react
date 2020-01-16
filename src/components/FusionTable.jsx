@@ -140,9 +140,14 @@ class FusionTableDetail extends React.Component {
     return (
       fusions ?
         <Fragment>
-          <Divider>Table of fusion isoforms</Divider>
+          <Divider>Table of fusions</Divider>
           <Row>
-            <Col span={18} />
+            <Col span={18}>
+              <p>
+                <Icon type="info-circle" />
+                {" Tip: Click a row in the table to be shown more detailed information about a fusion."}
+              </p>
+            </Col>
             <Col span={6} className="Download-button">
               <Button loading={false} onClick={this._downloadFiles}>
                 <Icon type="download" />
@@ -155,7 +160,7 @@ class FusionTableDetail extends React.Component {
               rowKey="name"
               dataSource={fusionIsoforms}
               columns={columns}
-              pagination={{ pageSize: 25 }} 
+              pagination={{ pageSize: 25 }}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => onTableRowClickCallback(record)
