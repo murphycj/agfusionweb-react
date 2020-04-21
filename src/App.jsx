@@ -60,7 +60,7 @@ class App extends React.Component {
       <Layout >
         <Header>
           <div className="App-logo">
-            AGFusion | Annotate Gene Fusions (v1.0-alpha)
+            AGFusion | Annotate Gene Fusions (v1.0)
             <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-logo-feedback"> Feedback / issues? </a>
           </div>
         </Header>
