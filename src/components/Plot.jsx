@@ -456,16 +456,26 @@ class Plot extends React.Component {
       return;
     }
 
+    var canvas = imageRef.current.canvas._canvas;
 
-    var dataURL = imageRef.current.toDataURL({ pixelRatio: 3 });
+    if (canvas.msToBlob && navigator.msSaveBlob) {
+      // for IE
+      var blob = canvas.msToBlob();
+      window.navigator.msSaveBlob(blob, plotName);
+      
+    } else {
+      // other browsers
 
-    var link = document.createElement('a');
-    link.download = plotName;
-    link.href = dataURL;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    link.remove();
+      var dataURL = imageRef.current.toDataURL({ pixelRatio: 3 });
+      var link = document.createElement('a');
+      link.download = plotName;
+      link.href = dataURL;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      link.remove();
+    }
+
   }
 
   _filterDomains(plotData, pdbs) {
