@@ -33,9 +33,27 @@ export class STARFusion extends BaseUpload {
         return null;
       }
 
-      const gene1 = [line[4].split('^')[1].split('.')[0]];
+      var gene1 = line[4].split('^')[1];
+
+      if (gene1 === undefined) {
+        this.addErrorMsg(
+          i+1,
+          `For gene1, expected symbol followed by ensemble ID, separated by ^ (e.g. ACACA^ENSG00000132142.15)`);
+        return null;
+      }
+
+      var gene2 = line[6].split('^')[1];
+
+      if (gene2 === undefined) {
+        this.addErrorMsg(
+          i+1,
+          `For gene2, expected symbol followed by ensemble ID, separated by ^ (e.g. ACACA^ENSG00000132142.15)`);
+        return null;
+      }
+
+      gene1 = [gene1.split('.')[0]];
       const gene1Pos = line[5].split(':')[1];
-      const gene2 = [line[6].split('^')[1].split('.')[0]];
+      gene2 = [gene2.split('.')[0]];
       const gene2Pos = line[7].split(':')[1];
 
       if (this.validateData(i, gene1, gene1Pos, gene2, gene2Pos)) {
