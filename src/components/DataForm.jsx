@@ -204,12 +204,12 @@ class Data extends React.Component {
     this.props.form.validateFields( async (err, values) => {
       if (!err) {
 
-        rollbar.info(
-          'Single gene fusion',
-          `gene1: ${values.gene1}, ` +
-          `gene1Pos: ${values.gene1_breakpoint}, ` +
-          `gene2: ${values.gene2}, ` +
-          `gene2Pos: ${values.gene2_breakpoint}`);
+        // rollbar.info(
+        //   'Single gene fusion',
+        //   `gene1: ${values.gene1}, ` +
+        //   `gene1Pos: ${values.gene1_breakpoint}, ` +
+        //   `gene2: ${values.gene2}, ` +
+        //   `gene2Pos: ${values.gene2_breakpoint}`);
 
         const species = AVAILABLE_ENSEMBL_SPECIES[values.species]['species'];
         const speciesRelease = `${species}_${values.release}`;
