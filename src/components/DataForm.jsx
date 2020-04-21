@@ -5,6 +5,7 @@ import './DataForm.css';
 
 import { ProcessQuery } from '../library/utils/ProcessQuery';
 import { AVAILABLE_ENSEMBL_SPECIES } from '../library/utils/utils';
+import { createNewEvent } from '../library/utils/misc';
 
 class Data extends React.Component {
 
@@ -182,7 +183,7 @@ class Data extends React.Component {
     //   species: {value: 'homo_sapiens_hg19'},
     //   release: {value: 75}
     // });
-    this._onSubmit(new Event('submit'));
+    this._onSubmit(createNewEvent('submit'));
   }
 
   _setLoading(loading) {
