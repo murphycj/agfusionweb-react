@@ -1,7 +1,7 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import './App.css';
-import { Layout, Tabs, message } from 'antd';
+import { Layout, Tabs, message, Row, Col } from 'antd';
 import Rollbar from "rollbar";
 
 import DataForm from './components/DataForm.jsx';
@@ -59,10 +59,18 @@ class App extends React.Component {
     return (
       <Layout >
         <Header>
-          <div className="App-logo">
-            AGFusion | Annotate Gene Fusions (v1.0)
-            <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-logo-feedback"> Feedback / issues? </a>
-          </div>
+          <Row className="App-header">
+            <Col span={5}>
+              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0)</a>
+            </Col>
+            <Col span={13} />
+            <Col span={3}>
+              <a href="https://github.com/murphycj/agfusionweb-react/releases" className="App-header-link"> App changelog </a>
+            </Col>
+            <Col span={3}>
+              <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-header-link"> Feedback / issues? </a>
+            </Col>
+          </Row>
         </Header>
         <Content className="App-content">
           <div style={{ background: '#fff', padding: 24}} ref={this.contentRef}>
