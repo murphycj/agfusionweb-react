@@ -47,6 +47,7 @@ export class Transcript {
     //utr
     this.fivePrimeUtrLen = parseInt(data.five_prime_utr_len.N) || 0;
     this.threePrimeUtrLen = parseInt(data.three_prime_utr_len.N) || 0;
+
     if (this.isProteinCoding) {
       this.getUtrCoordinates();
     }

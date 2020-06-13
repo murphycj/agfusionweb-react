@@ -176,10 +176,10 @@ class Data extends React.Component {
       release: {value: 94}
     });
     // this.props.form.setFields({
-    //   gene1: {value: 'ENSG00000108443'},
-    //   gene1_breakpoint: {value: 57970686},
-    //   gene2: {value: 'ENSG00000159210'},
-    //   gene2_breakpoint: {value: 47021337},
+    //   gene1: {value: 'FGFR2'},
+    //   gene1_breakpoint: {value: 123353224},
+    //   gene2: {value: 'FGFR2'},
+    //   gene2_breakpoint: {value: 123357479},
     //   species: {value: 'homo_sapiens_hg19'},
     //   release: {value: 75}
     // });
