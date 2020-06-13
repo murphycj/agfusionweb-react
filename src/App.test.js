@@ -115,7 +115,8 @@ it('correctly predicts TMEM87B-MERTK +1 fusion', async () => {
 
   var fusion = await createFusion('ENSG00000153214', 'ENSG00000153208', 112843681, 112722769, 'homo_sapiens_75');
 
-  expect(fusion.transcripts['ENST00000283206 : ENST00000295408'].effect).toEqual('in-frame (with mutation)');
+  // expect(fusion.transcripts['ENST00000283206 : ENST00000295408'].effect).toEqual('in-frame (potential non-synonymous mutation)');
+  expect(fusion.transcripts['ENST00000283206 : ENST00000295408'].effect).toEqual('in-frame');
   expect(fusion.transcripts['ENST00000283206 : ENST00000295408'].cdsSeq).toEqual(testCases.case1);
   expect(fusion.transcripts['ENST00000283206 : ENST00000295408'].proteinSeq).toEqual(testCases.case1Protein);
 });
@@ -224,3 +225,55 @@ it('correctly predicts junction location, introns', async () => {
   expect(fusion.transcripts['ENSMUST00000023454 : ENSMUST00000002487'].gene2JunctionLoc).toEqual('intron');
 });
 
+
+it('correctly predicts frame for 5UTR junction in gene2, exon start, exon with CDS start', async () => {
+
+  var fusion = await createFusion('ENSG00000106278', 'ENSG00000105976', 121608184, 116339125, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000393386 : ENST00000397752'].effect).toEqual('in-frame');
+  expect(fusion.transcripts['ENST00000393386 : ENST00000318493'].effect).toEqual('in-frame');
+});
+
+it('correctly predicts frame for 5UTR junction in gene2, within exon, exon with CDS start', async () => {
+
+  var fusion = await createFusion('ENSG00000106278', 'ENSG00000105976', 121608184, 116339126, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000393386 : ENST00000397752'].effect).toEqual('out-of-frame');
+  expect(fusion.transcripts['ENST00000393386 : ENST00000397752'].cdsGene2Seq.slice(0, 3)).toEqual('TAA');
+
+  expect(fusion.transcripts['ENST00000393386 : ENST00000318493'].effect).toEqual('out-of-frame');
+});
+
+it('correctly predicts frame for 5UTR junction in gene2, 1st exon end', async () => {
+
+  var fusion = await createFusion('ENSG00000106278', 'ENSG00000105976', 121608184, 116312631, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000393386 : ENST00000397752'].effect).toEqual('out-of-frame');
+  expect(fusion.transcripts['ENST00000393386 : ENST00000397752'].cdsGene2Seq.slice(0, 18)).toEqual('GATAAACCTCTCATAATG');
+
+  expect(fusion.transcripts['ENST00000393386 : ENST00000318493'].effect).toEqual('out-of-frame');
+});
+
+it('correctly predicts frame for 5UTR junction in gene2, on exon edge (FGFR2)', async () => {
+
+  var fusion = await createFusion('ENSG00000066468', 'ENSG00000066468', 123353224, 123353481, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].effect).toEqual('in-frame');
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].cdsGene2Seq.slice(0, 153)).toEqual('TGACTGCAGCAGCAGCGGCAGCGCCTCGGTTCCTGAGCCCACCGCAGGCTGAAGGCATTGCGCGTAGTCCATGCCCGTAGAGGAAGTGTGCAGATGGGATTAACGTCCACATGGAGATATGGAAGAGGACCGGGGATTGGTACCGTAACCATG');
+});
+
+it('correctly predicts frame for 5UTR junction in gene2, within 1st exon (FGFR2)', async () => {
+
+  var fusion = await createFusion('ENSG00000066468', 'ENSG00000066468', 123353224, 123357478, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].effect).toEqual('in-frame');
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].cdsGene2Seq.slice(0, 3)).toEqual('AAG');
+});
+
+it('correctly predicts frame for 5UTR junction in gene2, within 1st exon (FGFR2)', async () => {
+
+  var fusion = await createFusion('ENSG00000066468', 'ENSG00000066468', 123353224, 123357479, 'homo_sapiens_75');
+
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].effect).toEqual('out-of-frame');
+  expect(fusion.transcripts['ENST00000359354 : ENST00000359354'].cdsGene2Seq.slice(0, 157)).toEqual('CAAGTGACTGCAGCAGCAGCGGCAGCGCCTCGGTTCCTGAGCCCACCGCAGGCTGAAGGCATTGCGCGTAGTCCATGCCCGTAGAGGAAGTGTGCAGATGGGATTAACGTCCACATGGAGATATGGAAGAGGACCGGGGATTGGTACCGTAACCATG');
+});
