@@ -61,7 +61,7 @@ class App extends React.Component {
         <Header>
           <Row className="App-header">
             <Col span={5}>
-              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0)</a>
+              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
             </Col>
             <Col span={13} />
             <Col span={3}>
