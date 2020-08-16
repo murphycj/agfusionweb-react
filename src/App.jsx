@@ -1,7 +1,8 @@
 import React from 'react';
 import 'antd/dist/antd.css';
 import './App.css';
-import { Layout, Tabs, message, Row, Col } from 'antd';
+import { Layout, Tabs, message, Row, Col, Menu } from 'antd';
+import { MenuOutlined } from '@ant-design/icons';
 import Rollbar from "rollbar";
 
 import DataForm from './components/DataForm.jsx';
@@ -11,6 +12,7 @@ import FusionTableDetail from './components/FusionTableDetail.jsx';
 
 const { Header, Footer, Content } = Layout;
 const { TabPane } = Tabs;
+const { SubMenu } = Menu;
 
 class App extends React.Component {
 
@@ -59,13 +61,32 @@ class App extends React.Component {
     return (
       <Layout >
         <Header>
-          <Row className="App-header">
+          <Row className="App-header App-header-desktop">
             <Col span={12} className="App-header-left">
               <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
             </Col>
             <Col span={12} className="App-header-right">
               <a href="https://github.com/murphycj/agfusionweb-react/releases" className="App-header-link"> Version history </a>
               <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-header-link"> Feedback / issues? </a>
+            </Col>
+          </Row>
+          <Row className="App-header App-header-mobile">
+            <Col span={12} className="App-header-left">
+              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion (v1.0.1)</a>
+            </Col>
+            <Col span={12} className="App-header-right">
+              <Menu onClick={this.handleClick} mode="horizontal" theme="dark">
+                <SubMenu
+                  title={<MenuOutlined />}
+                >
+                  <Menu.Item key="version">
+                    <a href="https://github.com/murphycj/agfusionweb-react/releases" className="App-header-link"> Version history </a>
+                  </Menu.Item>
+                  <Menu.Item key="feedback">
+                    <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-header-link"> Feedback / issues? </a>
+                  </Menu.Item>
+                </SubMenu>
+              </Menu>
             </Col>
           </Row>
         </Header>
