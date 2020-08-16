@@ -169,10 +169,8 @@ class FusionTableDetail extends React.Component {
       fusion ?
         <Fragment>
           <Divider>Protein and exon plot</Divider>
-          <Row>
-            <div ref={plotRef}>
-              <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
-            </div>
+          <Row ref={plotRef}>
+            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
           </Row>
           <Divider>Table of fusion isoforms</Divider>
           <Row className="table-controls">
