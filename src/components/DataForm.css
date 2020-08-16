@@ -22,6 +22,10 @@
   box-shadow: 5px 10px 20px rgba(0,0,0,0.01), 2px 6px 6px rgba(0,0,0,0.05);
 }
 
+.dragger {
+  text-align: center;
+}
+
 .form-item {
   display: flex;
   flex-direction: column;

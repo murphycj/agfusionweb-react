@@ -109,8 +109,8 @@ export default class BulkDataForm extends React.Component {
       >
         <Row gutter={14}>
           <Col xs={24} lg={16}>
-            <Card className="Card-input" title="Upload" bordered={true}>
-              <Dragger {...props}>
+            <Card className="dragger" title="Upload" bordered={true}>
+              <Dragger {...props} >
                 <div className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </div>
