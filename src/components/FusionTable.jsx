@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Icon, Tooltip, Popover, Divider, Button } from 'antd';
+import { Table, Row, Col, Tag, Tooltip, Popover, Divider, Button } from 'antd';
+import { WarningTwoTone, InfoCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
@@ -24,13 +25,15 @@ class FusionTableDetail extends React.Component {
         title: '5\' gene',
         dataIndex: 'displayData',
         key: 'transcript1.geneName',
+        fixed: 'left',
+        width: 150,
         render: val => {
 
           if (!val.gene1.id) {
             return (
               <p>
                 <Tooltip title={val.errorMsg.join(' ')}>
-                  <Icon type="warning" theme="twoTone" twoToneColor="red" />
+                  <WarningTwoTone twoToneColor="red" />
                   {val.gene1}
                 </Tooltip>
               </p>
@@ -67,6 +70,8 @@ class FusionTableDetail extends React.Component {
         title: '3\' gene',
         dataIndex: 'displayData',
         key: 'transcript2.geneName',
+        fixed: 'left',
+        width: 150,
         render: val => {
 
           if (!val.gene2.id) {
@@ -103,6 +108,7 @@ class FusionTableDetail extends React.Component {
         dataIndex: 'effect',
         key: 'effect',
         width: '15%',
+        width: 150,
         filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
           return {text: val, value: val};
         }),
@@ -112,13 +118,15 @@ class FusionTableDetail extends React.Component {
         title: '5\' junction',
         dataIndex: 'gene1Junction',
         key: 'gene1Junction',
-        width: '15%'
+        width: '15%',
+        width: 150,
       },
       {
         title: '3\' junction',
         dataIndex: 'gene2Junction',
         key: 'gene2Junction',
-        width: '15%'
+        width: '15%',
+        width: 150,
       },
       {
         title: 'Has protein coding potential',
@@ -142,15 +150,15 @@ class FusionTableDetail extends React.Component {
         <Fragment>
           <Divider>Table of fusions</Divider>
           <Row>
-            <Col span={18}>
+            <Col xs={24} lg={18}>
               <p>
-                <Icon type="info-circle" />
+                <InfoCircleOutlined />
                 {" Tip: Click a row in the table to be shown more detailed information about a fusion."}
               </p>
             </Col>
-            <Col span={6} className="Download-button">
+            <Col xs={24} lg={6} className="Download-button">
               <Button loading={false} onClick={this._downloadFiles}>
-                <Icon type="download" />
+                <DownloadOutlined />
                 Fusion data
               </Button>
             </Col>
@@ -161,6 +169,7 @@ class FusionTableDetail extends React.Component {
               dataSource={fusionIsoforms}
               columns={columns}
               pagination={{ pageSize: 25 }}
+              scroll={{ x: true }}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => onTableRowClickCallback(record)

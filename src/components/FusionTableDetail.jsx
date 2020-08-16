@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import { Table, Row, Col, Tag, Switch, Icon, Tooltip, Popover, Divider, Button } from 'antd';
+import { Table, Row, Col, Tag, Switch, Tooltip, Popover, Divider, Button } from 'antd';
+import { QuestionCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
@@ -48,9 +49,11 @@ class FusionTableDetail extends React.Component {
 
     const columns = [
       {
-        title: '5\' gene isoform',
+        title: (<p className="table-col-text">{'5\' gene isoform'}</p>),
         dataIndex: 'displayData',
         key: 'transcript1.id',
+        fixed: 'left',
+        width: 150,
         render: val => {
           const contentGene = (
             <div>
@@ -71,7 +74,6 @@ class FusionTableDetail extends React.Component {
             </Fragment>
           )
         },
-        width: '20%',
         filters: [...new Set(fusionIsoforms.map(val => {
           return `${val.transcript1.name} / ${val.transcript1.id}`;
         }))].map(val => {
@@ -83,9 +85,11 @@ class FusionTableDetail extends React.Component {
         },
       },
       {
-        title: '3\' gene isoform',
+        title: (<p className="table-col-text">{'3\' gene isoform'}</p>),
         dataIndex: 'displayData',
         key: 'transcript2.id',
+        width: 150,
+        fixed: 'left',
         render: val => {
           const contentGene = (
             <div>
@@ -97,7 +101,6 @@ class FusionTableDetail extends React.Component {
               <p><b>Protein length: </b>{val.gene2.proteinLength ? val.gene2.proteinLength + ' aa' : 'NA'}</p>
             </div>
           );
-
           return (
             <Fragment>
               <Popover content={contentGene} title={val.gene2.name}>
@@ -106,7 +109,6 @@ class FusionTableDetail extends React.Component {
             </Fragment>
           )
         },
-        width: '20%',
         filters: [...new Set(fusionIsoforms.map(val => {
           return `${val.transcript2.name} / ${val.transcript2.id}`;
         }))].map(val => {
@@ -118,41 +120,40 @@ class FusionTableDetail extends React.Component {
         },
       },
       {
-        title: 'Protein effect',
+        title: (<p className="table-col-text">{'Protein effect'}</p>),
         dataIndex: 'effect',
         key: 'effect',
-        width: '15%',
+        width: 150,
         filters: [...new Set(fusionIsoforms.map(val => val.effect))].map(val => {
           return {text: val, value: val};
         }),
         onFilter: (value, record) => record.effect === value,
       },
       {
-        title: '5\' junction location',
+        title: (<p className="table-col-text">{'5\' junction location'}</p>),
         dataIndex: 'gene1JunctionLoc',
         key: 'gene1JunctionLoc',
-        width: '15%',
+        width: 150,
         filters: [...new Set(fusionIsoforms.map(val => val.gene1JunctionLoc))].map(val => {
           return {text: val, value: val};
         }),
         onFilter: (value, record) => record.gene1JunctionLoc === value,
       },
       {
-        title: '3\' junction location',
+        title: (<p className="table-col-text">{'3\' junction location'}</p>),
         dataIndex: 'gene2JunctionLoc',
         key: 'gene2JunctionLoc',
-        width: '15%',
+        width: 150,
         filters: [...new Set(fusionIsoforms.map(val => val.gene2JunctionLoc))].map(val => {
           return {text: val, value: val};
         }),
         onFilter: (value, record) => record.gene2JunctionLoc === value,
       },
       {
-        title: 'Has protein coding potential',
+        title: (<p className="table-col-text">{'Has protein coding potential'}</p>),
         dataIndex: 'hasProteinCodingPotential',
         key: 'hasProteinCodingPotential',
         render: val => (val ? 'Yes' : 'Unknown'),
-        width: '15%',
         filters: [...new Set(fusionIsoforms.map(val => {
           return val.hasProteinCodingPotential ? 'Yes' : 'Unknown';
         }))].map(val => {
@@ -174,20 +175,19 @@ class FusionTableDetail extends React.Component {
             </div>
           </Row>
           <Divider>Table of fusion isoforms</Divider>
-          <Row className="Controls">
-            <Col span={6}>
+          <Row className="table-controls">
+            <Col xs={24} lg={8} className="table-controls-item">
               <span className="HelpText"><b>{"Fusion: "}</b>{fusion.displayName}</span>
             </Col>
-            <Col span={6}>
+            <Col xs={24} lg={8} className="table-controls-item">
               Show only canonical
               <Tooltip className="Tooltip" title={helpText.canonical}>
-                <Icon type="question-circle" />
+                <QuestionCircleOutlined />
               </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
-            <Col span={6} />
-            <Col span={6} className="Download-button">
+            <Col xs={24} lg={8} className="table-controls-item">
               <Button loading={false} onClick={this._downloadFiles}>
-                <Icon type="download" />
+                <DownloadOutlined />
                 Fusion data
               </Button>
             </Col>
@@ -198,6 +198,7 @@ class FusionTableDetail extends React.Component {
               dataSource={fusionIsoforms}
               columns={columns}
               pagination={false}
+              scroll={{ x: true }}
               onRow={(record, rowIndex) => {
                 return {
                   onClick: event => this._onSelectRow(record)
