@@ -138,9 +138,10 @@ export class FusionTranscript {
     // within intron
 
     var exons = this.transcript1.exons;
+    var i;
 
     if (this.transcript1.strand === '+') {
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
 
         // get the exon intervals
 
@@ -165,7 +166,7 @@ export class FusionTranscript {
       }
     } else {
 
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
 
         // get sequence
 
@@ -195,7 +196,7 @@ export class FusionTranscript {
     exons = this.transcript2.exons;
 
     if (this.transcript2.strand === '+') {
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
 
         // get the exons in the fusion
 
@@ -216,7 +217,7 @@ export class FusionTranscript {
         }
       }
 
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
 
         // get sequence
 
@@ -232,7 +233,7 @@ export class FusionTranscript {
 
         // get the exons in the fusion
 
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
 
         if (this.gene2Junction <= exons[i][0]) {
           continue
@@ -251,7 +252,7 @@ export class FusionTranscript {
         }
       }
 
-      for (var i = 0; i < exons.length; i++) {
+      for (i = 0; i < exons.length; i++) {
         // get sequence
 
         if (this.gene2Junction <= exons[i][0]) {
@@ -277,11 +278,12 @@ export class FusionTranscript {
   fetchCds() {
 
     var cds = this.transcript1.cds;
+    var i;
 
     // 5prime transcript
 
     if (this.transcript1.strand === "+") {
-      for (var i = 0; i < cds.length; i++) {
+      for (i = 0; i < cds.length; i++) {
         if (this.gene1Junction >= cds[i][1]) {
           this.cdsJunctionGene1 += (cds[i][1] - cds[i][0] + 1);
         } else if (this.gene1Junction <= cds[i][0]) {
@@ -292,7 +294,7 @@ export class FusionTranscript {
         }
       }
     } else {
-      for (var i = 0; i < cds.length; i++) {
+      for (i = 0; i < cds.length; i++) {
         if (this.gene1Junction <= cds[i][0]) {
           this.cdsJunctionGene1 += (cds[i][1] - cds[i][0] + 1);
         } else if (this.gene1Junction >= cds[i][1]) {
@@ -308,7 +310,7 @@ export class FusionTranscript {
     cds = this.transcript2.cds;
 
     if (this.transcript2.strand === "+") {
-      for (var i = 0; i < cds.length; i++) {
+      for (i = 0; i < cds.length; i++) {
         if (this.gene2Junction >= cds[i][1]) {
           this.cdsJunctionGene2 += (cds[i][1] - cds[i][0] + 1);
         } else if (this.gene2Junction <= cds[i][0]) {
@@ -318,7 +320,7 @@ export class FusionTranscript {
         }
       }
     } else {
-      for (var i = 0; i < cds.length; i++) {
+      for (i = 0; i < cds.length; i++) {
         if (this.gene2Junction <= cds[i][0]) {
           this.cdsJunctionGene2 += (cds[i][1] - cds[i][0] + 1);
         } else if (this.gene2Junction >= cds[i][1]) {
@@ -364,8 +366,9 @@ export class FusionTranscript {
     var runningSum = 0;
     var utrSeq = '';
     const revStrand = this.transcript2.strand === "-";
+    var i;
 
-    for (var i = 0; i < exons.length; i++) {
+    for (i = 0; i < exons.length; i++) {
       var exon = exons[i];
       var exonLength = exon[1] - exon[0] + 1;
 
