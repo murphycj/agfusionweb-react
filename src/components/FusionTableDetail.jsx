@@ -41,7 +41,7 @@ class FusionTableDetail extends React.Component {
   render() {
     const { plotDataAll, onlyCanonical, plotRef } = this.state;
     var { selectedFusionTranscript } = this.state;
-    const { fusion, defaultFusionTranscript, width } = this.props;
+    const { fusion, defaultFusionTranscript } = this.props;
 
     selectedFusionTranscript = selectedFusionTranscript || defaultFusionTranscript;
 
@@ -170,7 +170,7 @@ class FusionTableDetail extends React.Component {
         <Fragment>
           <Divider>Protein and exon plot</Divider>
           <Row ref={plotRef}>
-            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll} width={width}/>
+            <Plot selectedFusion={selectedFusionTranscript} plotDataAll={plotDataAll}/>
           </Row>
           <Divider>Table of fusion isoforms</Divider>
           <Row className="table-controls">

@@ -42,6 +42,7 @@ class Plot extends React.Component {
       rectShowIndex: null,
       showModal: false,
       domainToColor: null,
+      width: 600,
     }
   }
 
@@ -61,9 +62,8 @@ class Plot extends React.Component {
       pdbs,
       showImageDownload,
       hoveringOverImageButton,
+      width,
       rectShowIndex } = this.state;
-    var { width } = this.props;
-    width = (2 / 3) * width;
 
     // get plot and domain data
     const returnData = this._getPlotData(plotTypeProtein, plotTypeExon, pdbs);
@@ -342,7 +342,9 @@ class Plot extends React.Component {
   }
 
   _handleResize = () => {
-    console.log(this.divRef.current.offsetWidth);
+    this.setState({
+      width: this.divRef.current.offsetWidth - 5,
+    });
   }
 
   _closeModal = (domain=null, color=null) => {

@@ -53,11 +53,6 @@ class App extends React.Component {
       rollbar,
       } = this.state;
 
-    var width = null;
-    if (this.contentRef && this.contentRef.current) {
-      width = this.contentRef.current.offsetWidth - 48;
-    }
-
     return (
       <Layout >
         <Header>
@@ -107,7 +102,6 @@ class App extends React.Component {
                     <FusionTable
                       fusions={fusions}
                       defaultFusion={selectedFusion}
-                      width={width}
                       onTableRowClickCallback={this._onTableRowClick}/>
                   </div>
                 </TabPane>
@@ -116,7 +110,6 @@ class App extends React.Component {
                     <FusionTableDetail
                       fusion={fusions[selectedFusion]}
                       defaultFusionTranscript={selectedFusionTranscript}
-                      width={width}
                     />
                   : null
                   }
