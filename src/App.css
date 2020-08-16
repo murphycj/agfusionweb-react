@@ -8,14 +8,6 @@
   font-size: 1.1rem;
 }
 
-/* .App-header-mobile {
-
-}
-
-.App-header-desktop {
-
-} */
-
 @media only screen and (max-width: 767px) {
   .App-header-desktop {
     display: none;
@@ -47,9 +39,8 @@
 }
 
 .App-header-link {
-  float: right;
-  margin-left: 2rem;
   color: white;
+  margin: 0 1rem;
 }
 
 /* .App-logo-feedback:hover {
@@ -68,10 +59,6 @@
   z-index: 1;
 }
 
-.App-link {
-  color: #09d3ac;
-}
-
 .App-content {
   display: flex;
   min-height: 100vh;
@@ -82,7 +69,20 @@
 
 .App-footer {
   display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content: center;
   flex: 0 0 50px;
   margin-top: auto;
+  background-color: #01101F;
+
+}
+
+.app-footer-text {
+  text-align: center;
+  margin: 0.5rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
 }
