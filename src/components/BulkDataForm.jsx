@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import {Form, Row, Col, Card, Select, Button, Upload, Tooltip, message, Progress } from 'antd';
-import { InboxOutlined, QuestionCircleOutlined } from '@ant-design/icons';
+import { InboxOutlined, QuestionCircleOutlined, PaperClipOutlined } from '@ant-design/icons';
 
 import './DataForm.css';
 
@@ -75,6 +75,7 @@ export default class BulkDataForm extends React.Component {
       customRequest: this._uploadRequest,
       onChange: this._onUploadChange,
       fileList: fileList,
+      iconRender: (file, listType) => {}
     };
 
     const onFinishFailed = errorInfo => {
@@ -162,7 +163,7 @@ export default class BulkDataForm extends React.Component {
           <Button type="default" className="button" onClick={this._clearData}>Clear</Button>
         </Row>
         <Row>
-          {progress ? <Progress percent={progress}/> : null}
+          {progress ? <Progress className="progress-bar" percent={progress}/> : null}
         </Row>
         {showModal ? <ErrorModal errorMsg={errorMsg} closeModalCallback={this._closeModal}/> : null}
       </Form>

@@ -43,3 +43,13 @@
 .dataform-button {
   margin: 0.5rem 0;
 }
+
+.dataform-input {
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.progress-bar {
+  margin: 0 1rem;
+}

@@ -118,7 +118,7 @@ export default class DataForm extends React.Component {
               className="form-item"
               rules={[{required: true}]}
             >
-              <Select onChange={this._handleSpeciesChange}>
+              <Select className="dataform-input" onChange={this._handleSpeciesChange}>
                 {speciesOption}
               </Select>
             </Form.Item>
@@ -129,7 +129,7 @@ export default class DataForm extends React.Component {
               className="form-item"
               rules={[{required: true}]}
             >
-              <Select onChange={this._handleReleaseChange}>
+              <Select className="dataform-input" onChange={this._handleReleaseChange}>
                 {ensembleVersionsOptions[species]}
               </Select>
             </Form.Item>
@@ -176,6 +176,16 @@ export default class DataForm extends React.Component {
 
   _clearData = () => {
     this.formRef.current.resetFields();
+    this.formRef.current.setFields([
+      {
+        name: "species",
+        value: 'homo_sapiens_hg38',
+      },
+      {
+        name: 'release',
+        value: 94
+      }
+    ]);
     this.props.onClearCallback();
   }
 
