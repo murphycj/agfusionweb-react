@@ -63,16 +63,16 @@ class App extends React.Component {
         <Header>
           <Row className="App-header App-header-desktop">
             <Col span={12} className="App-header-left">
-              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
+              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
             </Col>
             <Col span={12} className="App-header-right">
-              <a href="https://github.com/murphycj/agfusionweb-react/releases" className="App-header-link"> Version history </a>
-              <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-header-link"> Feedback / issues? </a>
+              <a href="https://github.com/murphycj/agfusionweb-react/releases" target="_blank" className="App-header-link"> Version history </a>
+              <a href="https://github.com/murphycj/agfusionweb-react/issues" target="_blank" className="App-header-link"> Feedback / issues? </a>
             </Col>
           </Row>
           <Row className="App-header App-header-mobile">
             <Col span={12} className="App-header-left">
-              <a href="https://github.com/murphycj/agfusionweb-react/" className="App-header-link">AGFusion (v1.0.1)</a>
+              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link">AGFusion (v1.0.1)</a>
             </Col>
             <Col span={12} className="App-header-right">
               <Menu onClick={this.handleClick} mode="horizontal" theme="dark">
@@ -80,10 +80,10 @@ class App extends React.Component {
                   title={<MenuOutlined />}
                 >
                   <Menu.Item key="version">
-                    <a href="https://github.com/murphycj/agfusionweb-react/releases" className="App-header-link"> Version history </a>
+                    <a href="https://github.com/murphycj/agfusionweb-react/releases" target="_blank" className="App-header-link"> Version history </a>
                   </Menu.Item>
                   <Menu.Item key="feedback">
-                    <a href="https://github.com/murphycj/agfusionweb-react/issues" className="App-header-link"> Feedback / issues? </a>
+                    <a href="https://github.com/murphycj/agfusionweb-react/issues" target="_blank" className="App-header-link"> Feedback / issues? </a>
                   </Menu.Item>
                 </SubMenu>
               </Menu>
@@ -127,16 +127,19 @@ class App extends React.Component {
         </Content>
         <Footer className="App-footer">
           <Row>
-            <Col xs={24} lg={8} className="app-footer-text">
+            <Col xs={24} lg={24} className="app-footer-text">
               For research use only
             </Col>
-            <Col xs={24} lg={8} className="app-footer-text">
-              <a href="https://github.com/murphycj/AGFusion">
-                AGFusion Python package
+            <Col xs={24} lg={24} className="app-footer-text">
+              <a href="https://github.com/murphycj/AGFusion" target="_blank">
+                Check out the AGFusion Python package
               </a>
             </Col>
-            <Col xs={24} lg={8} className="app-footer-text">
-              {'\u00A9'} 2020 Charlie Murphy
+            <Col xs={24} lg={24} className="app-footer-text">
+              {'\u00A9'} 2020
+              <a href="https://www.linkedin.com/in/murphycharlesj/" style={{marginLeft: "0.5rem"}} target="_blank">
+                Charlie Murphy, PhD
+              </a>
             </Col>
           </Row>
         </Footer>
