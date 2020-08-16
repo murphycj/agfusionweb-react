@@ -124,7 +124,7 @@ class Plot extends React.Component {
                     <Select
                       mode="tags"
                       value={Object.keys(domainColors)}
-                      placeholder="Color the protein domains"
+                      placeholder="Click here to assign colors"
                       onChange={this._handleColorChange}
                       className="Plot-Control-Buttons"
                       >
@@ -139,7 +139,15 @@ class Plot extends React.Component {
                 <Row className="Plot-Settings-Row">
                   <Col span={24} className="Plot-Control-Buttons">
                     <b>Protein databases</b>
-                    <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <div key={val}>{val}</div>)}</Fragment>}>
+                    <Tooltip
+                      className="Tooltip"
+                      title={
+                        <Fragment>
+                          <p>Click to include other protein databases.</p>
+                          <p>List of available databases:</p>
+                          {helpText.pdb.map(val => <div key={val}>{val}</div>)}
+                        </Fragment>}
+                    >
                       <QuestionCircleOutlined />
                     </Tooltip>
                   </Col>
