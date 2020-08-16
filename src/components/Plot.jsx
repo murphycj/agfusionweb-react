@@ -48,6 +48,7 @@ class Plot extends React.Component {
 
   componentDidMount() {
     window.addEventListener("resize", () => this._handleResize());
+    this._handleResize();
   }
 
   render() {
