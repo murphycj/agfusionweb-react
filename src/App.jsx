@@ -119,7 +119,7 @@ class App extends React.Component {
           </div>
         </Content>
         <Footer className="App-footer">
-          <Row>
+          <Row className="App-footer-container">
             <Col xs={24} lg={24} className="app-footer-text">
               For research use only.
             </Col>

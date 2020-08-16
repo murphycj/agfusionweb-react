@@ -67,10 +67,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  flex: 0 0 50px;
+  flex: 0 0 auto;
   margin-top: auto;
   background-color: #01101F;
-
 }
 
 .app-footer-text {
