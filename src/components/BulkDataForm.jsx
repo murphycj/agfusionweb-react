@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
-import {Row, Col, Card, Select, Button, Upload, Icon, Tooltip, message, Progress } from 'antd';
+import {Form, Row, Col, Card, Select, Button, Upload, Tooltip, message, Progress } from 'antd';
+import { InboxOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 
 import './DataForm.css';
 
@@ -15,7 +16,8 @@ const helpText = {
   format: "Generic format has one fusion per row (either TSV or CSV) with this format: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,121487991,CCDC6,59807078)",
 };
 
-class BulkDataForm extends React.Component {
+export default class BulkDataForm extends React.Component {
+  formRef = React.createRef();
 
   constructor(props) {
     super(props);
@@ -32,16 +34,23 @@ class BulkDataForm extends React.Component {
       errorMsg: null,
       fileList: [],
     }
+  }
 
-    this._onSubmit = this._onSubmit.bind(this);
-    this._clearData = this._clearData.bind(this);
-    this._setLoading = this._setLoading.bind(this);
-    this._handleSpeciesChange = this._handleSpeciesChange.bind(this);
-    this._handleReleaseChange = this._handleReleaseChange.bind(this);
-    this._handleFormatChange = this._handleFormatChange.bind(this);
-    this._uploadRequest = this._uploadRequest.bind(this);
-    this._closeModal = this._closeModal.bind(this);
-    this._onUploadChange = this._onUploadChange.bind(this);
+  componentDidMount() {
+    this.formRef.current.setFields([
+      {
+        name: "species",
+        value: 'homo_sapiens_hg38',
+      },
+      {
+        name: 'release',
+        value: 94
+      },
+      {
+        name: 'upload_format',
+        value: 'Generic CSV'
+      }
+    ]);
   }
 
   render() {
@@ -81,61 +90,75 @@ class BulkDataForm extends React.Component {
       fileList: fileList,
     };
 
+    const onFinishFailed = errorInfo => {
+      console.log('Failed:', errorInfo);
+    };
+
+    const layout = {
+      labelCol: { span: 24 },
+      wrapperCol: { span: 24 },
+    };
+
     return (
-      <Fragment>
-        <Row gutter={16}>
-          <Col span={16}>
+      <Form
+        {...layout}
+        ref={this.formRef}
+        onFinish={this._onSubmit}
+        onFinishFailed={onFinishFailed}
+        layout={'vertical'}
+      >
+        <Row gutter={14}>
+          <Col xs={24} lg={16}>
             <Card className="Card-input" title="Upload" bordered={true}>
               <Dragger {...props}>
                 <div className="ant-upload-drag-icon">
-                  <Icon type="inbox" />
+                  <InboxOutlined />
                 </div>
                 <div className="ant-upload-text">Click or drag file to this area to upload</div>
               </Dragger>
             </Card>
           </Col>
-          <Col span={8}>
+          <Col xs={24} lg={8}>
             <Card className="Card-input" title="Other information" bordered={true}>
-              <Fragment>
-                <Row>
+              <Form.Item
+                label={
                   <div>
                     Upload format:
                     <Tooltip className="Tooltip" title={helpText.format}>
-                      <Icon type="question-circle" />
+                      <QuestionCircleOutlined />
                     </Tooltip>:
                   </div>
-                  <div>
-                    <Select
-                      style={{ width: 200 }}
-                      onChange={this._handleFormatChange}
-                      defaultValue="Generic CSV">
-                      {uploadFormats}
-                    </Select>
-                  </div>
-                </Row>
-                <Row>
-                  <div>Species:</div>
-                  <div>
-                    <Select
-                      style={{ width: 200 }}
-                      onChange={this._handleSpeciesChange}
-                      value={species}>
-                      {speciesOption}
-                    </Select>
-                  </div>
-                </Row>
-                <Row>
-                  <div>Ensembl release:</div>
-                  <div>
-                    <Select
-                      style={{ width: 200 }}
-                      onChange={this._handleReleaseChange}
-                      value={release}>
-                      {ensembleVersionsOptions[species]}
-                    </Select>
-                  </div>
-                </Row>
-              </Fragment>
+                }
+                name="upload_format"
+                className="form-item"
+                rules={[{required: true}]}
+              >
+                <Select style={{ minWidth: '10rem' }}>
+                  {uploadFormats}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="Species:"
+                name="species"
+                className="form-item"
+                rules={[{required: true}]}
+              >
+                <Select onChange={this._handleSpeciesChange}>
+                  {speciesOption}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="Ensembl release:"
+                name="release"
+                className="form-item"
+                rules={[{required: true}]}
+              >
+                <Select onChange={this._handleReleaseChange}>
+                  {ensembleVersionsOptions[species]}
+                </Select>
+              </Form.Item>
             </Card>
           </Col>
         </Row>
@@ -143,9 +166,9 @@ class BulkDataForm extends React.Component {
         <Row className="row-input">
           <Button
             disabled={disabled}
+            htmlType="submit"
             type="primary"
             className="button"
-            onClick={this._onSubmit}
             loading={loading}>
             Submit
           </Button>
@@ -155,11 +178,33 @@ class BulkDataForm extends React.Component {
           {progress ? <Progress percent={progress}/> : null}
         </Row>
         {showModal ? <ErrorModal errorMsg={errorMsg} closeModalCallback={this._closeModal}/> : null}
-      </Fragment>
+      </Form>
     )
   }
 
-  _onUploadChange({file, fileList, e}) {
+  _handleSpeciesChange = (value) => {
+    this.formRef.current.setFields([
+      {
+        name: "species",
+        value: value,
+      },
+      {
+        name: 'release',
+        value: AVAILABLE_ENSEMBL_SPECIES[value]['default_release']
+      }
+    ]);
+  }
+
+  _handleReleaseChange = (value) => {
+    this.formRef.current.setFields([
+      {
+        name: 'release',
+        value: value
+      }
+    ]);
+  }
+
+  _onUploadChange = ({file, fileList, e}) => {
 
     if (fileList.length > 1) {
       fileList.shift();
@@ -175,7 +220,7 @@ class BulkDataForm extends React.Component {
     }
   }
 
-  _uploadRequest({file, onSuccess, onError}) {
+  _uploadRequest = ({file, onSuccess, onError}) => {
 
     const { format } = this.state;
 
@@ -201,32 +246,19 @@ class BulkDataForm extends React.Component {
     }, 0);
   };
 
-  _closeModal() {
+  _closeModal = () => {
     this.setState({
       showModal: false,
     });
   }
 
-  _handleFormatChange(value) {
+  _handleFormatChange = (value) => {
     this.setState({
       format: value,
     });
   }
 
-  _handleSpeciesChange(value) {
-    this.setState({
-      species: value,
-      release: AVAILABLE_ENSEMBL_SPECIES[value]['default_release'],
-    });
-  }
-
-  _handleReleaseChange(value) {
-    this.setState({
-      release: value,
-    });
-  }
-
-  _clearData() {
+  _clearData = () => {
     this.setState({
       loading: false,
       uploadedFusionData: null,
@@ -239,7 +271,7 @@ class BulkDataForm extends React.Component {
     this.props.onClearCallback();
   }
 
-  _setLoading() {
+  _setLoading = () => {
 
     const { loading } = this.state;
 
@@ -248,15 +280,14 @@ class BulkDataForm extends React.Component {
     })
   }
 
-  async _onSubmit() {
+  _onSubmit = async (values) => {
 
-    this._clearData();
-
-    const { query, species, release, uploadedFusionData, progress } = this.state;
+    const { query, uploadedFusionData, progress } = this.state;
     const { rollbar } = this.props;
 
-    const speciesName = AVAILABLE_ENSEMBL_SPECIES[species]['species'];
-    const speciesRelease = `${speciesName}_${release}`;
+    const species = AVAILABLE_ENSEMBL_SPECIES[values.species]['species'];
+    const speciesRelease = `${species}_${values.release}`;
+
     var fusions = [];
 
     this._setLoading();
@@ -379,5 +410,3 @@ class BulkDataForm extends React.Component {
     this.props.onSubmitCallback(fusions);
   }
 }
-
-export default BulkDataForm;
