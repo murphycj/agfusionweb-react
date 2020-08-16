@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { Stage, Layer, Rect, Text, Line } from 'react-konva';
-import { Button, Icon, Radio, Row, Col, Card, Select, Tooltip, message } from 'antd';
+import { Button, Radio, Row, Col, Card, Select, Tooltip, message } from 'antd';
+import { QuestionCircleOutlined, DownloadOutlined, InfoCircleOutlined } from '@ant-design/icons';
 
 import './Plot.css';
 
@@ -84,10 +85,10 @@ class Plot extends React.Component {
     return (
       <Fragment>
       <Row>
-        <Col span={8}>
+        <Col xs={24} xl={8}>
           <Card title="Plot settings" className="Card-input">
             <Row className="Plot-Settings-Row">
-              <div><b>Plot protein: </b></div>
+              <div><b>Plot protein</b></div>
               <div>
                 <Radio.Group
                     value={plotTypeProtein}
@@ -102,7 +103,7 @@ class Plot extends React.Component {
             </Row>
             <Row className="Plot-Settings-Row">
               <div>
-                <b>Plot exons: </b>
+                <b>Plot exons</b>
               </div>
               <div>
                 <Radio.Group
@@ -119,7 +120,7 @@ class Plot extends React.Component {
               domains ?
               <Row className="Plot-Settings-Row">
                 <div>
-                  <b>Domain colors: </b>
+                  <b>Domain colors</b>
                 </div>
                 <div>
                   <Select
@@ -141,7 +142,7 @@ class Plot extends React.Component {
                 <div>
                   <b>Protein databases</b>
                   <Tooltip className="Tooltip" title={<Fragment>{helpText.pdb.map(val => <div key={val}>{val}</div>)}</Fragment>}>
-                    <Icon type="question-circle" />
+                    <QuestionCircleOutlined />
                   </Tooltip>:
                 </div>
                 <div>
@@ -159,12 +160,14 @@ class Plot extends React.Component {
             : null
             }
             <Row className="Plot-Settings-Row">
-              <b>Download: </b>
-              <Button onClick={this._downloadImage}><Icon type="download" />PNG</Button>
+              <Button onClick={this._downloadImage}>
+                <DownloadOutlined />
+                PNG
+              </Button>
             </Row>
           </Card>
         </Col>
-        <Col span={16}>
+        <Col xs={24} xl={16}>
           <Stage className="Plot" width={width} height={height} id={"test"}>
             {plotData ?
             <Fragment>
@@ -319,10 +322,10 @@ class Plot extends React.Component {
         </Col>
       </Row>
       <Row>
-        <Col span={8}/>
-        <Col span={16}>
+        <Col xs={24} xl={8}/>
+        <Col xs={24} xl={16}>
           <p>
-            <Icon type="info-circle" />
+            <InfoCircleOutlined />
             {" Tips: Hover over domains to view more detailed information. Click to the left of the domain labels to drag them."}
           </p>
         </Col>
@@ -462,7 +465,7 @@ class Plot extends React.Component {
       // for IE
       var blob = canvas.msToBlob();
       window.navigator.msSaveBlob(blob, plotName);
-      
+
     } else {
       // other browsers
 

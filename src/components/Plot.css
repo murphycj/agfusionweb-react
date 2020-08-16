@@ -1,3 +1,9 @@
+.Card-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .Plot {
   background-color: white;
   text-align: center;
@@ -21,10 +27,13 @@
 }
 
 .Plot-Settings-Row {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-top: 0px;
+  margin: 0 0 1rem;
   min-height: 40px;
+  width: 100%;
 }
 
 .Plot-Control-Buttons {
