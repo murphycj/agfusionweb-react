@@ -1,3 +1,9 @@
+.row-table {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .table-col-text {
   font-size: 1rem;
 }

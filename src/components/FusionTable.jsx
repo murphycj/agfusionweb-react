@@ -163,7 +163,7 @@ class FusionTableDetail extends React.Component {
               </Button>
             </Col>
           </Row>
-          <Row>
+          <Row className="row-table">
             <Table
               rowKey="name"
               dataSource={fusionIsoforms}
