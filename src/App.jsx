@@ -55,10 +55,10 @@ class App extends React.Component {
 
     return (
       <Layout >
-        <Header>
+        <Header className="ant-header">
           <Row className="App-header App-header-desktop">
             <Col span={12} className="App-header-left">
-              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
+              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link-name">AGFusion | Annotate Gene Fusions (v1.0.1)</a>
             </Col>
             <Col span={12} className="App-header-right">
               <a href="https://github.com/murphycj/agfusionweb-react/releases" target="_blank" className="App-header-link"> Version history </a>
@@ -67,7 +67,7 @@ class App extends React.Component {
           </Row>
           <Row className="App-header App-header-mobile">
             <Col span={12} className="App-header-left">
-              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link">AGFusion (v1.0.1)</a>
+              <a href="https://github.com/murphycj/agfusionweb-react/" target="_blank" className="App-header-link-name">AGFusion (v1.0.1)</a>
             </Col>
             <Col span={12} className="App-header-right">
               <Menu onClick={this.handleClick} mode="horizontal" theme="dark">

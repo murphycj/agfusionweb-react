@@ -8,22 +8,8 @@
   font-size: 1.1rem;
 }
 
-@media only screen and (max-width: 767px) {
-  .App-header-desktop {
-    display: none;
-  }
-}
-
-@media only screen and (max-width: 992px) {
-  .App-header {
-    font-size: 0.9rem;
-  }
-}
-
-@media only screen and (min-width: 767px) {
-  .App-header-mobile {
-    display: none;
-  }
+.ant-header {
+  padding: 0 1.1rem;
 }
 
 .App-header-left {
@@ -38,25 +24,34 @@
   justify-content: flex-end;
 }
 
+.App-header-link-name {
+  color: white;
+}
+
 .App-header-link {
   color: white;
   margin: 0 1rem;
 }
 
-/* .App-logo-feedback:hover {
-  color: 'white';
-} */
+@media only screen and (max-width: 767px) {
+  .App-header-desktop {
+    display: none;
+  }
 
-.App-Header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: 'white';
-  z-index: 1;
+  .App-header-link {
+    color: white;
+    margin: 0 0;
+  }
+
+  .App-header-mobile {
+    font-size: 0.9rem;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .App-header-mobile {
+    display: none;
+  }
 }
 
 .App-content {
