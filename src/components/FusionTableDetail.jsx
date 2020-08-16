@@ -181,7 +181,8 @@ class FusionTableDetail extends React.Component {
               Show only canonical
               <Tooltip className="Tooltip" title={helpText.canonical}>
                 <QuestionCircleOutlined />
-              </Tooltip>: <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
+              </Tooltip>
+              <Switch checked={onlyCanonical} onChange={this._onChangeCanonical}/>
             </Col>
             <Col xs={24} lg={8} className="table-controls-item">
               <Button loading={false} onClick={this._downloadFiles}>
