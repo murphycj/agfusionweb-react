@@ -138,9 +138,15 @@ export default class DataForm extends React.Component {
       </Row>
 
       <Row className="row-input">
-        <Button type="primary" className="button" htmlType="submit" loading={loading}>Submit</Button>
-        <Button type="default" className="button" onClick={this._clearData}>Clear</Button>
-        <Button type="default" className="button" onClick={this._runExample}>Run example</Button>
+        <Col xs={24} lg={3} className="dataform-button">
+          <Button type="primary" className="button" htmlType="submit" loading={loading}>Submit</Button>
+        </Col>
+        <Col xs={24} lg={3} className="dataform-button">
+          <Button type="default" className="button" onClick={this._clearData}>Clear</Button>
+        </Col>
+        <Col xs={24} lg={3} className="dataform-button">
+          <Button type="default" className="button" onClick={this._runExample}>Run example</Button>
+        </Col>
       </Row>
     </Form>
     )
