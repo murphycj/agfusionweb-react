@@ -71,7 +71,7 @@ export default class DataForm extends React.Component {
         <Col xs={24} lg={8}>
           <Card className="Card-input" title="5' gene" bordered={true}>
             <Form.Item
-              label="Gene name:"
+              label="Gene name"
               name="gene1"
               className="form-item"
               rules={[{required: true, message: 'Provide a gene.' }]}
@@ -79,7 +79,7 @@ export default class DataForm extends React.Component {
               <Input placeholder="FGFR2" />
             </Form.Item>
             <Form.Item
-              label="Breakpoint:"
+              label="Breakpoint"
               name="gene1_breakpoint"
               className="form-item"
               rules={[{required: true, type: 'number', min: 0, message: 'Provide a positive integer.' }]}
@@ -91,7 +91,7 @@ export default class DataForm extends React.Component {
         <Col xs={24} lg={8}>
           <Card className="Card-input" title="3' gene" bordered={true}>
             <Form.Item
-              label="Gene name:"
+              label="Gene name"
               name="gene2"
               className="form-item"
               rules={[{required: true, message: 'Provide a gene.' }]}
@@ -100,7 +100,7 @@ export default class DataForm extends React.Component {
             </Form.Item>
 
             <Form.Item
-              label="Breakpoint:"
+              label="Breakpoint"
               name="gene2_breakpoint"
               className="form-item"
               rules={[{required: true, type: 'number', min: 0, message: 'Provide a positive integer.' }]}
@@ -113,7 +113,7 @@ export default class DataForm extends React.Component {
           <Card className="Card-input" title="Other information" bordered={true}>
 
             <Form.Item
-              label="Species:"
+              label="Species"
               name="species"
               className="form-item"
               rules={[{required: true}]}
@@ -124,7 +124,7 @@ export default class DataForm extends React.Component {
             </Form.Item>
 
             <Form.Item
-              label="Ensembl release:"
+              label="Ensembl release"
               name="release"
               className="form-item"
               rules={[{required: true}]}
@@ -175,7 +175,7 @@ export default class DataForm extends React.Component {
   }
 
   _clearData = () => {
-    this.props.form.resetFields();
+    this.formRef.current.resetFields();
     this.props.onClearCallback();
   }
 

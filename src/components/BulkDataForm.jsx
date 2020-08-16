@@ -37,20 +37,7 @@ export default class BulkDataForm extends React.Component {
   }
 
   componentDidMount() {
-    this.formRef.current.setFields([
-      {
-        name: "species",
-        value: 'homo_sapiens_hg38',
-      },
-      {
-        name: 'release',
-        value: 94
-      },
-      {
-        name: 'upload_format',
-        value: 'Generic CSV'
-      }
-    ]);
+    this._resetForm();
   }
 
   render() {
@@ -123,10 +110,10 @@ export default class BulkDataForm extends React.Component {
               <Form.Item
                 label={
                   <div>
-                    Upload format:
+                    Upload format
                     <Tooltip className="Tooltip" title={helpText.format}>
                       <QuestionCircleOutlined />
-                    </Tooltip>:
+                    </Tooltip>
                   </div>
                 }
                 name="upload_format"
@@ -139,7 +126,7 @@ export default class BulkDataForm extends React.Component {
               </Form.Item>
 
               <Form.Item
-                label="Species:"
+                label="Species"
                 name="species"
                 className="form-item"
                 rules={[{required: true}]}
@@ -150,7 +137,7 @@ export default class BulkDataForm extends React.Component {
               </Form.Item>
 
               <Form.Item
-                label="Ensembl release:"
+                label="Ensembl release"
                 name="release"
                 className="form-item"
                 rules={[{required: true}]}
@@ -258,7 +245,27 @@ export default class BulkDataForm extends React.Component {
     });
   }
 
+  _resetForm = () => {
+    this.formRef.current.setFields([
+      {
+        name: "species",
+        value: 'homo_sapiens_hg38',
+      },
+      {
+        name: 'release',
+        value: 94
+      },
+      {
+        name: 'upload_format',
+        value: 'Generic CSV'
+      }
+    ]);
+  }
+
   _clearData = () => {
+
+    this._resetForm();
+
     this.setState({
       loading: false,
       uploadedFusionData: null,
