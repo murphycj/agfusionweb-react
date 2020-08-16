@@ -128,11 +128,11 @@ class App extends React.Component {
         <Footer className="App-footer">
           <Row>
             <Col xs={24} lg={24} className="app-footer-text">
-              For research use only
+              For research use only.
             </Col>
             <Col xs={24} lg={24} className="app-footer-text">
               <a href="https://github.com/murphycj/AGFusion" target="_blank">
-                Check out the AGFusion Python package
+                Check out the AGFusion Python package.
               </a>
             </Col>
             <Col xs={24} lg={24} className="app-footer-text">
