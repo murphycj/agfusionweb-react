@@ -36,8 +36,6 @@ export class GenericUpload extends BaseUpload {
       }
     });
 
-    console.log('fusions')
-    console.log(this.fusions)
     this.fusions = this.fusions.filter(val => val);
   }
 }
