@@ -27,7 +27,7 @@ export default class DataForm extends React.Component {
       },
       {
         name: 'release',
-        value: 94
+        value: 75
       }
     ]);
   }
@@ -183,7 +183,7 @@ export default class DataForm extends React.Component {
       },
       {
         name: 'release',
-        value: 94
+        value: 75
       }
     ]);
     this.props.onClearCallback();
@@ -197,7 +197,7 @@ export default class DataForm extends React.Component {
       gene2: 'CCDC6',
       gene2_breakpoint: 59807078,
       species: 'homo_sapiens_hg19',
-      release: 94
+      release: 75
     }
 
     this.formRef.current.setFields([
