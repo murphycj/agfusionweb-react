@@ -26,7 +26,7 @@ export default class BulkDataForm extends React.Component {
       loading: false,
       uploadedFusionData: null,
       disabled: true,
-      species: 'homo_sapiens_hg38',
+      species: 'homo_sapiens_hg19',
       release: 94,
       format: 'Generic CSV',
       progress: null,
@@ -250,7 +250,7 @@ export default class BulkDataForm extends React.Component {
     this.formRef.current.setFields([
       {
         name: "species",
-        value: 'homo_sapiens_hg38',
+        value: 'homo_sapiens_hg19',
       },
       {
         name: 'release',
