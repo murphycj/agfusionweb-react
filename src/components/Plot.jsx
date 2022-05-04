@@ -344,7 +344,7 @@ class Plot extends React.Component {
 
   _handleResize = () => {
     this.setState({
-      width: this.divRef.current.offsetWidth - 5,
+      width: this.divRef.current && this.divRef.current.offsetWidth - 5,
     });
   }
 
