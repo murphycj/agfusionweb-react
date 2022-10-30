@@ -2,7 +2,7 @@
   "name": "agfusionweb",
   "version": "1.0.3",
   "repository": {
-    "url": "https://github.com/murphycj/agfusionweb-react"z
+    "url": "https://github.com/murphycj/agfusionweb-react"
   },
   "dependencies": {
     "antd": "^4.23.6",
