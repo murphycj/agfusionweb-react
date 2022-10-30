@@ -1,4 +1,4 @@
-import { PlotProtein } from './PlotProtein';
+import { PlotProtein } from "./PlotProtein";
 
 export class PlotWTProtein extends PlotProtein {
   constructor(transcript, ...args) {
@@ -9,8 +9,9 @@ export class PlotWTProtein extends PlotProtein {
   }
 
   draw() {
-    this.scaleSequence(this.transcript.proteinLength)
-    this.proteinFrameLength = ((this.transcript.proteinLength) / this.normalize) * 0.9;
+    this.scaleSequence(this.transcript.proteinLength);
+    this.proteinFrameLength =
+      (this.transcript.proteinLength / this.normalize) * 0.9;
 
     this.drawDomains(this.transcript.proteinDomains);
     this.drawProteinLengthMarkers(this.transcript.proteinLength);

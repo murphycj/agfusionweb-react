@@ -1,11 +1,10 @@
-import { Plot } from './Plot';
+import { Plot } from "./Plot";
 
-import { PDBS } from '../utils/utils';
+import { PDBS } from "../utils/utils";
 // const HORIZONTAL_LEVELS = [1, 2, 3, 4];
 
 export class PlotProtein extends Plot {
-
-  constructor(transcript, colors, rename=[], exclude = [], ...args) {
+  constructor(transcript, colors, rename = [], exclude = [], ...args) {
     super(...args);
 
     this.transcript = transcript;
@@ -26,11 +25,10 @@ export class PlotProtein extends Plot {
       // sort domains from lowest to highest start
 
       domains.sort((v1, v2) => {
-        return ((v1.start < v2.start ? -1 : ((v1.start > v2.start) ? 1 : 0)))
+        return v1.start < v2.start ? -1 : v1.start > v2.start ? 1 : 0;
       });
 
       for (var i = 0; i < domains.length; i++) {
-
         var domain = domains[i];
 
         var domainStart = (domain.start / this.normalize) * 0.9 + this.offset;
@@ -41,15 +39,15 @@ export class PlotProtein extends Plot {
           y: 0.45,
           width: domainEnd - domainStart,
           height: 0.1,
-          color: '#3385ff',
+          color: "#3385ff",
           pdb: PDBS[k],
           longName: domain.name || domain.desc || domain.id,
           shortName: domain.desc || domain.id,
           start: domain.start,
           end: domain.end,
-          type: 'protein',
+          type: "protein",
           show: false,
-          index: domainIndex
+          index: domainIndex,
         });
 
         domainIndex++;
@@ -60,12 +58,12 @@ export class PlotProtein extends Plot {
   drawProteinLengthMarkers(length) {
     // plot protein length markers
 
-    this.lineEnd = length / this.normalize * 0.9 + this.offset;
+    this.lineEnd = (length / this.normalize) * 0.9 + this.offset;
 
     this.texts.push({
       x: 0.5,
-      y: this.verticalOffset ,
-      text: "Amino acid position"
+      y: this.verticalOffset,
+      text: "Amino acid position",
     });
 
     this.lines.push({
@@ -73,7 +71,7 @@ export class PlotProtein extends Plot {
       x1: this.offset + this.proteinFrameLength,
       y0: 0.2 + this.verticalOffset,
       y1: 0.2 + this.verticalOffset,
-      color: 'black'
+      color: "black",
     });
 
     // left marker
@@ -83,25 +81,25 @@ export class PlotProtein extends Plot {
       x1: this.offset,
       y0: 0.15 + this.verticalOffset,
       y1: 0.2 + this.verticalOffset,
-      color: 'black'
+      color: "black",
     });
 
     this.texts.push({
       x: this.offset,
       y: 0.05 + this.verticalOffset,
-      text: "0"
+      text: "0",
     });
 
     // draw markers for increments of 100 amino acids
 
-    for (var i = 0; i < (length + 1); i++) {
-      if ((i % 100) === 0) {
+    for (var i = 0; i < length + 1; i++) {
+      if (i % 100 === 0) {
         this.lines.push({
-          x0: this.offset + (i / this.normalize * 0.9),
-          x1: this.offset + (i / this.normalize * 0.9),
+          x0: this.offset + (i / this.normalize) * 0.9,
+          x1: this.offset + (i / this.normalize) * 0.9,
           y0: 0.175 + this.verticalOffset,
           y1: 0.2 + this.verticalOffset,
-          color: 'black'
+          color: "black",
         });
       }
     }
@@ -113,13 +111,13 @@ export class PlotProtein extends Plot {
       x1: this.offset + this.proteinFrameLength,
       y0: 0.15 + this.verticalOffset,
       y1: 0.2 + this.verticalOffset,
-      color: 'black'
+      color: "black",
     });
 
     this.texts.push({
-      x: this.offset+this.proteinFrameLength,
+      x: this.offset + this.proteinFrameLength,
       y: 0.05 + this.verticalOffset,
-      text: length
+      text: length,
     });
   }
 
@@ -127,12 +125,12 @@ export class PlotProtein extends Plot {
     // main protein frame
 
     this.body.push({
-      type: 'rect',
+      type: "rect",
       x: this.offset,
       y: 0.45,
       width: this.proteinFrameLength,
       height: 0.1,
-      stroke: 'black'
+      stroke: "black",
     });
   }
 }

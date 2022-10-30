@@ -1,4 +1,4 @@
-import { PlotExons } from './PlotExons';
+import { PlotExons } from "./PlotExons";
 
 export class PlotWTExons extends PlotExons {
   constructor(transcript, ...args) {
@@ -10,15 +10,16 @@ export class PlotWTExons extends PlotExons {
   drawMainBody(nam, uid) {
     // main protein frame
 
-    var length = (this.transcript.end - this.transcript.start) / this.normalize * 0.9;
+    var length =
+      ((this.transcript.end - this.transcript.start) / this.normalize) * 0.9;
 
     this.body.push({
-      type: 'line',
+      type: "line",
       x0: this.offset,
       x1: this.offset + length,
       y0: 0.5,
       y1: 0.5,
-      color: 'black'
+      color: "black",
     });
 
     // this.texts.push({
@@ -35,20 +36,17 @@ export class PlotWTExons extends PlotExons {
   }
 
   drawExons() {
-
     var index = 0;
 
     for (var i = 0; i < this.transcript.exons.length; i++) {
-
       var exon = this.transcript.exons[i];
       var start = null;
       var end = null;
 
-      if (this.transcript.strand === '+') {
+      if (this.transcript.strand === "+") {
         start = exon[0] - this.transcript.start;
         end = exon[1] - this.transcript.start;
       } else {
-
         // this is so the transcription direction is not plotted
         // in reverse for genes on minus strand
 
@@ -56,8 +54,8 @@ export class PlotWTExons extends PlotExons {
         end = -(exon[0] - this.transcript.end);
       }
 
-      var exonStart = (start / this.normalize) * 0.9 + this.offset
-      var exonEnd = (end / this.normalize) * 0.9 + this.offset
+      var exonStart = (start / this.normalize) * 0.9 + this.offset;
+      var exonEnd = (end / this.normalize) * 0.9 + this.offset;
       // var exonCenter = (exonEnd - exonStart) / 2 + exonStart
 
       this.rects.push({
@@ -65,9 +63,9 @@ export class PlotWTExons extends PlotExons {
         y: 0.45,
         width: exonEnd - exonStart,
         height: 0.1,
-        color: 'black',
+        color: "black",
         show: true,
-        index: index
+        index: index,
       });
 
       index++;
@@ -78,9 +76,6 @@ export class PlotWTExons extends PlotExons {
     this.scaleSequence(this.transcript.end - this.transcript.start);
     this.drawExons();
     this.drawLengthMarkers(this.transcript.end - this.transcript.start);
-    this.drawMainBody(
-        this.transcript.name,
-        this.transcript.id
-    )
+    this.drawMainBody(this.transcript.name, this.transcript.id);
   }
 }

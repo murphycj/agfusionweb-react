@@ -1,4 +1,3 @@
-
 .App {
   text-align: center;
 }
@@ -69,7 +68,7 @@
   justify-content: center;
   flex: 0 0 auto;
   margin-top: auto;
-  background-color: #01101F;
+  background-color: #01101f;
 }
 
 .app-footer-text {

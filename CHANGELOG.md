@@ -23,9 +23,10 @@ Many fixes to improve the layout and display of the site. Including making it mo
 ## v1.0.1
 
 Some bug fixes and other minor changes:
+
 - Fixed a bug where 5'UTR sequence of the 3' gene is not included in the fusion CDS when the junction is in the 5'UTR of the 3' gene (#4 ). This can cause the predicted frame of the fusion to be incorrect.
 - Changed `in-frame (with mutation)` to just `in-frame` to reduce confusion.
-- Other minor changes such as adding a link to the 
+- Other minor changes such as adding a link to the
 
 ## v1.0.0
 

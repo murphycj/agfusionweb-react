@@ -1,16 +1,15 @@
-import React from 'react';
-import { Modal, Button } from 'antd';
-import { SketchPicker } from 'react-color';
+import React from "react";
+import { Modal, Button } from "antd";
+import { SketchPicker } from "react-color";
 
-import './ColorModal.css'
+import "./ColorModal.css";
 
 export class ColorModal extends React.Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      color: "#fff"
+      color: "#fff",
     };
 
     this._handleChangeComplete = this._handleChangeComplete.bind(this);
@@ -19,7 +18,6 @@ export class ColorModal extends React.Component {
   }
 
   render() {
-
     const { color } = this.state;
 
     return (
@@ -34,14 +32,14 @@ export class ColorModal extends React.Component {
           <Button key="submit" onClick={this._onOk}>
             Ok
           </Button>,
-          ]}
-        >
+        ]}
+      >
         <SketchPicker
-          onChangeComplete={ this._handleChangeComplete }
-          color={ color }
-          />
+          onChangeComplete={this._handleChangeComplete}
+          color={color}
+        />
       </Modal>
-    )
+    );
   }
 
   _onOk() {
@@ -59,5 +57,5 @@ export class ColorModal extends React.Component {
 
   _handleChangeComplete(color) {
     this.setState({ color: color.hex });
-  };
+  }
 }

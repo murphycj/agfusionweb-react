@@ -1,19 +1,19 @@
 name: Test build
 on:
   push:
-    branches: '*'
+    branches: "*"
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  BUILD_MODE: 'yes'
+  BUILD_MODE: "yes"
   CI: false
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout source code
-      uses: actions/checkout@v1
-    - name: Build app
-      run: |
-        npm install
-        npm run build
+      - name: Checkout source code
+        uses: actions/checkout@v1
+      - name: Build app
+        run: |
+          npm install
+          npm run build

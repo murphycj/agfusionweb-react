@@ -1,5 +1,9 @@
-
-import { CODING_COMBINATIONS, PDBS, molecularWeight, translate  } from '../utils/utils';
+import {
+  CODING_COMBINATIONS,
+  PDBS,
+  molecularWeight,
+  translate,
+} from "../utils/utils";
 
 const MIN_DOMAIN_LENGTH = 5;
 
@@ -20,7 +24,7 @@ export class FusionTranscript {
         complete: this.transcript1.complete,
         cdnaLength: this.transcript1.cdnaLength,
         cdsLength: this.transcript1.cdsLength,
-        proteinLength: this.transcript1.proteinLength
+        proteinLength: this.transcript1.proteinLength,
       },
       gene2: {
         geneName: this.transcript2.geneName,
@@ -30,26 +34,27 @@ export class FusionTranscript {
         complete: this.transcript2.complete,
         cdnaLength: this.transcript2.cdnaLength,
         cdsLength: this.transcript2.cdsLength,
-        proteinLength: this.transcript2.proteinLength
-      }
+        proteinLength: this.transcript2.proteinLength,
+      },
     };
 
-    this.name = this.transcript1.name && this.transcript2.name ?
-      this.transcript1.name + ' : ' + this.transcript2.name :
-      this.transcript1.id + ' : ' + this.transcript2.id;
+    this.name =
+      this.transcript1.name && this.transcript2.name
+        ? this.transcript1.name + " : " + this.transcript2.name
+        : this.transcript1.id + " : " + this.transcript2.id;
 
-    this.id =  this.transcript1.id + ' : ' + this.transcript2.id;
+    this.id = this.transcript1.id + " : " + this.transcript2.id;
 
-    this.effect = '';
+    this.effect = "";
     this.gene1JunctionLoc = null;
     this.gene2JunctionLoc = null;
     this.hasProteinCodingPotential = false;
 
     // cDNA stuff
 
-    this.cdnaSeq = '';
-    this.cdnaGene1Seq = '';
-    this.cdnaGene2Seq = '';
+    this.cdnaSeq = "";
+    this.cdnaGene1Seq = "";
+    this.cdnaGene2Seq = "";
     this.cdnaGene1Len = 0;
     this.cdnaGene2Len = 0;
     this.cdnaJunctionGene1 = 0;
@@ -59,9 +64,9 @@ export class FusionTranscript {
 
     // CDS stuff
 
-    this.cdsSeq = '';
-    this.cdsGene1Seq = '';
-    this.cdsGene2Seq = '';
+    this.cdsSeq = "";
+    this.cdsGene1Seq = "";
+    this.cdsGene2Seq = "";
     this.cdsGene1Len = 0;
     this.cdsGene2Len = 0;
     this.cdsJunctionGene1 = 0;
@@ -71,7 +76,7 @@ export class FusionTranscript {
 
     // protein stuff
 
-    this.proteinSeq = '';
+    this.proteinSeq = "";
     this.proteinSeqLen = null;
     this.molecularWeight = null;
     this.proteinJunctionGene1 = 0;
@@ -82,42 +87,47 @@ export class FusionTranscript {
 
     // predict the fusion
 
-    if (this.effect !== 'out-of-transcript-boundary') {
-      this.effect = 'Unknown';
+    if (this.effect !== "out-of-transcript-boundary") {
+      this.effect = "Unknown";
       this.predict();
     }
   }
 
   predict() {
-
-    this.gene1JunctionLoc = this.transcript1.getFeatureOfPosition(this.gene1Junction);
-    this.gene2JunctionLoc = this.transcript2.getFeatureOfPosition(this.gene2Junction);
+    this.gene1JunctionLoc = this.transcript1.getFeatureOfPosition(
+      this.gene1Junction
+    );
+    this.gene2JunctionLoc = this.transcript2.getFeatureOfPosition(
+      this.gene2Junction
+    );
     this.fetchCdna();
 
     // get if has coding potential
 
-    this.hasProteinCodingPotential = CODING_COMBINATIONS[this.gene1JunctionLoc][this.gene2JunctionLoc]['protein_coding_potential'] || false;
-
+    this.hasProteinCodingPotential =
+      CODING_COMBINATIONS[this.gene1JunctionLoc][this.gene2JunctionLoc][
+        "protein_coding_potential"
+      ] || false;
 
     // check if they don't have stop and/or start codons
 
     var reasons = [];
 
     if (!this.transcript1.hasStartCodon) {
-      this.hasProteinCodingPotential=false;
+      this.hasProteinCodingPotential = false;
       reasons.push("no known 5' transcript start codon");
     }
     if (!this.transcript1.hasStopCodon) {
-      this.hasProteinCodingPotential=false;
+      this.hasProteinCodingPotential = false;
       reasons.push("no known 5' transcript stop codon");
     }
 
     if (!this.transcript2.hasStartCodon) {
-      this.hasProteinCodingPotential=false;
+      this.hasProteinCodingPotential = false;
       reasons.push("no known 3' transcript start codon");
     }
     if (!this.transcript2.hasStopCodon) {
-      this.hasProteinCodingPotential=false;
+      this.hasProteinCodingPotential = false;
       reasons.push("no known 3' transcript stop codon");
     }
 
@@ -132,59 +142,46 @@ export class FusionTranscript {
   }
 
   fetchCdna() {
-
-
     // get the 5prime transcript sequence and determine if junction is
     // within intron
 
     var exons = this.transcript1.exons;
     var i;
 
-    if (this.transcript1.strand === '+') {
+    if (this.transcript1.strand === "+") {
       for (i = 0; i < exons.length; i++) {
-
         // get the exon intervals
 
         if (this.gene1Junction >= exons[i][1]) {
-          this.cdnaJunctionGene1 += (exons[i][1] - exons[i][0] + 1);
-          this.cdnaIntervalsGene1.push([
-            exons[i][0],
-            exons[i][1],
-            i+1
-          ]);
+          this.cdnaJunctionGene1 += exons[i][1] - exons[i][0] + 1;
+          this.cdnaIntervalsGene1.push([exons[i][0], exons[i][1], i + 1]);
         } else if (this.gene1Junction <= exons[i][0]) {
           break;
         } else {
-          this.cdnaJunctionGene1 += (this.gene1Junction - exons[i][0] + 1);
+          this.cdnaJunctionGene1 += this.gene1Junction - exons[i][0] + 1;
           this.cdnaIntervalsGene1.push([
             exons[i][0],
             this.gene1Junction,
-            i+1
+            i + 1,
           ]);
-          break
+          break;
         }
       }
     } else {
-
       for (i = 0; i < exons.length; i++) {
-
         // get sequence
 
         if (this.gene1Junction <= exons[i][0]) {
-          this.cdnaJunctionGene1 += (exons[i][1] - exons[i][0] + 1);
-          this.cdnaIntervalsGene1.push([
-            exons[i][0],
-            exons[i][1],
-            i+1
-          ]);
+          this.cdnaJunctionGene1 += exons[i][1] - exons[i][0] + 1;
+          this.cdnaIntervalsGene1.push([exons[i][0], exons[i][1], i + 1]);
         } else if (this.gene1Junction >= exons[i][1]) {
           break;
         } else {
-          this.cdnaJunctionGene1 += (exons[i][1] - this.gene1Junction + 1);
+          this.cdnaJunctionGene1 += exons[i][1] - this.gene1Junction + 1;
           this.cdnaIntervalsGene1.push([
             this.gene1Junction,
             exons[i][1],
-            i+1
+            i + 1,
           ]);
         }
       }
@@ -195,59 +192,47 @@ export class FusionTranscript {
 
     exons = this.transcript2.exons;
 
-    if (this.transcript2.strand === '+') {
+    if (this.transcript2.strand === "+") {
       for (i = 0; i < exons.length; i++) {
-
         // get the exons in the fusion
 
         if (this.gene2Junction >= exons[i][1]) {
           continue;
         } else if (this.gene2Junction <= exons[i][0]) {
-          this.cdnaIntervalsGene2.push([
-            exons[i][0],
-            exons[i][1],
-            i+1
-          ]);
+          this.cdnaIntervalsGene2.push([exons[i][0], exons[i][1], i + 1]);
         } else {
           this.cdnaIntervalsGene2.push([
             this.gene2Junction,
             exons[i][1],
-            i+1
+            i + 1,
           ]);
         }
       }
 
       for (i = 0; i < exons.length; i++) {
-
         // get sequence
 
         if (this.gene2Junction >= exons[i][1]) {
-          this.cdnaJunctionGene2 += (exons[i][1] - exons[i][0] + 1);
+          this.cdnaJunctionGene2 += exons[i][1] - exons[i][0] + 1;
         } else if (this.gene2Junction <= exons[i][0]) {
           break;
         } else {
-          this.cdnaJunctionGene2 += (this.gene2Junction - exons[i][0]);
+          this.cdnaJunctionGene2 += this.gene2Junction - exons[i][0];
         }
       }
     } else {
-
-        // get the exons in the fusion
+      // get the exons in the fusion
 
       for (i = 0; i < exons.length; i++) {
-
         if (this.gene2Junction <= exons[i][0]) {
-          continue
+          continue;
         } else if (this.gene2Junction >= exons[i][1]) {
-          this.cdnaIntervalsGene2.push([
-              exons[i][0],
-              exons[i][1],
-              i+1
-          ]);
+          this.cdnaIntervalsGene2.push([exons[i][0], exons[i][1], i + 1]);
         } else {
           this.cdnaIntervalsGene2.push([
-              exons[i][0],
-              this.gene2Junction,
-              i+1
+            exons[i][0],
+            this.gene2Junction,
+            i + 1,
           ]);
         }
       }
@@ -256,18 +241,21 @@ export class FusionTranscript {
         // get sequence
 
         if (this.gene2Junction <= exons[i][0]) {
-          this.cdnaJunctionGene2 += (exons[i][1] - exons[i][0] + 1);
+          this.cdnaJunctionGene2 += exons[i][1] - exons[i][0] + 1;
         } else if (this.gene2Junction >= exons[i][1]) {
           break;
         } else {
-          this.cdnaJunctionGene2 += (exons[i][1] - this.gene2Junction);
+          this.cdnaJunctionGene2 += exons[i][1] - this.gene2Junction;
         }
       }
     }
 
     // get the cdna and their lengths
 
-    this.cdnaGene1Seq = this.transcript1.cdnaSeq.slice(0, this.cdnaJunctionGene1);
+    this.cdnaGene1Seq = this.transcript1.cdnaSeq.slice(
+      0,
+      this.cdnaJunctionGene1
+    );
     this.cdnaGene2Seq = this.transcript2.cdnaSeq.slice(this.cdnaJunctionGene2);
     this.cdnaSeq = this.cdnaGene1Seq + this.cdnaGene2Seq;
 
@@ -276,7 +264,6 @@ export class FusionTranscript {
   }
 
   fetchCds() {
-
     var cds = this.transcript1.cds;
     var i;
 
@@ -285,22 +272,22 @@ export class FusionTranscript {
     if (this.transcript1.strand === "+") {
       for (i = 0; i < cds.length; i++) {
         if (this.gene1Junction >= cds[i][1]) {
-          this.cdsJunctionGene1 += (cds[i][1] - cds[i][0] + 1);
+          this.cdsJunctionGene1 += cds[i][1] - cds[i][0] + 1;
         } else if (this.gene1Junction <= cds[i][0]) {
           break;
         } else {
-          this.cdsJunctionGene1 += (this.gene1Junction - cds[i][0] + 1);
+          this.cdsJunctionGene1 += this.gene1Junction - cds[i][0] + 1;
           break;
         }
       }
     } else {
       for (i = 0; i < cds.length; i++) {
         if (this.gene1Junction <= cds[i][0]) {
-          this.cdsJunctionGene1 += (cds[i][1] - cds[i][0] + 1);
+          this.cdsJunctionGene1 += cds[i][1] - cds[i][0] + 1;
         } else if (this.gene1Junction >= cds[i][1]) {
           break;
         } else {
-          this.cdsJunctionGene1 += (cds[i][1] - this.gene1Junction + 1);
+          this.cdsJunctionGene1 += cds[i][1] - this.gene1Junction + 1;
         }
       }
     }
@@ -312,21 +299,21 @@ export class FusionTranscript {
     if (this.transcript2.strand === "+") {
       for (i = 0; i < cds.length; i++) {
         if (this.gene2Junction >= cds[i][1]) {
-          this.cdsJunctionGene2 += (cds[i][1] - cds[i][0] + 1);
+          this.cdsJunctionGene2 += cds[i][1] - cds[i][0] + 1;
         } else if (this.gene2Junction <= cds[i][0]) {
           break;
         } else {
-          this.cdsJunctionGene2 += (this.gene2Junction - cds[i][0]);
+          this.cdsJunctionGene2 += this.gene2Junction - cds[i][0];
         }
       }
     } else {
       for (i = 0; i < cds.length; i++) {
         if (this.gene2Junction <= cds[i][0]) {
-          this.cdsJunctionGene2 += (cds[i][1] - cds[i][0] + 1);
+          this.cdsJunctionGene2 += cds[i][1] - cds[i][0] + 1;
         } else if (this.gene2Junction >= cds[i][1]) {
           break;
         } else {
-          this.cdsJunctionGene2 += (cds[i][1] - this.gene2Junction);
+          this.cdsJunctionGene2 += cds[i][1] - this.gene2Junction;
         }
       }
     }
@@ -334,7 +321,7 @@ export class FusionTranscript {
     // check to see if 3' gene junction is in the 5'UTR. if so then we need
     // to include the 5'UTR sequence in fusion CDS
 
-    var utrSeq = '';
+    var utrSeq = "";
 
     if (this.transcript2.strand === "+") {
       if (this.gene2Junction < cds[0][0]) {
@@ -346,11 +333,11 @@ export class FusionTranscript {
       }
     }
 
-
     // get the cds and their lengthslengths of the cDNA segments
 
     this.cdsGene1Seq = this.transcript1.cdsSeq.slice(0, this.cdsJunctionGene1);
-    this.cdsGene2Seq = utrSeq + this.transcript2.cdsSeq.slice(this.cdsJunctionGene2);
+    this.cdsGene2Seq =
+      utrSeq + this.transcript2.cdsSeq.slice(this.cdsJunctionGene2);
     this.cdsSeq = this.cdsGene1Seq + this.cdsGene2Seq;
     this.cdsGene1Len = this.cdsGene1Seq.length;
     this.cdsGene2Len = this.cdsGene2Seq.length;
@@ -364,7 +351,7 @@ export class FusionTranscript {
     }
 
     var runningSum = 0;
-    var utrSeq = '';
+    var utrSeq = "";
     const revStrand = this.transcript2.strand === "-";
     var i;
 
@@ -372,45 +359,62 @@ export class FusionTranscript {
       var exon = exons[i];
       var exonLength = exon[1] - exon[0] + 1;
 
-      if ((!revStrand && (this.gene2Junction > exons[i][1])) || (revStrand && (this.gene2Junction < exons[i][0]))) {
+      if (
+        (!revStrand && this.gene2Junction > exons[i][1]) ||
+        (revStrand && this.gene2Junction < exons[i][0])
+      ) {
         // if exon is not in the fusion, skip it
 
         runningSum += exonLength;
         continue;
-
       } else {
-        if (this.transcript2.rangeOverlap(firstCds[0], firstCds[1], exon[0], exon[1])) {
+        if (
+          this.transcript2.rangeOverlap(
+            firstCds[0],
+            firstCds[1],
+            exon[0],
+            exon[1]
+          )
+        ) {
           // if exon contains start of cds, get the utr portion and halt loop
 
           if (!revStrand) {
-
-            if (this.gene2Junction >= exon[0] && (this.gene2Junction <= exon[1])) {
+            if (
+              this.gene2Junction >= exon[0] &&
+              this.gene2Junction <= exon[1]
+            ) {
               // if junction is within this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum + (this.gene2Junction - exon[0]),
-                runningSum + (firstCds[0] - exon[0]));
+                runningSum + (firstCds[0] - exon[0])
+              );
             } else {
               // if junction is not in this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum,
-                runningSum + (firstCds[0] - exon[0]));
+                runningSum + (firstCds[0] - exon[0])
+              );
             }
-
           } else {
-            if (this.gene2Junction >= exon[0] && (this.gene2Junction <= exon[1])) {
+            if (
+              this.gene2Junction >= exon[0] &&
+              this.gene2Junction <= exon[1]
+            ) {
               // if junction is within this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum + (exon[1] - this.gene2Junction),
-                runningSum + (exon[1] - firstCds[1]));
+                runningSum + (exon[1] - firstCds[1])
+              );
             } else {
               // if junction is not in this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum,
-                runningSum + (exon[1] - firstCds[1]));
+                runningSum + (exon[1] - firstCds[1])
+              );
             }
           }
 
@@ -420,34 +424,42 @@ export class FusionTranscript {
           // get the UTR portion
 
           if (!revStrand) {
-
-            if (this.gene2Junction >= exon[0] && (this.gene2Junction <= exon[1])) {
+            if (
+              this.gene2Junction >= exon[0] &&
+              this.gene2Junction <= exon[1]
+            ) {
               // if junction is within this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum + (this.gene2Junction - exon[0]),
-                runningSum + exonLength);
+                runningSum + exonLength
+              );
             } else {
               // if junction is not in this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum,
-                runningSum + exonLength);
+                runningSum + exonLength
+              );
             }
-
           } else {
-            if (this.gene2Junction >= exon[0] && (this.gene2Junction <= exon[1])) {
+            if (
+              this.gene2Junction >= exon[0] &&
+              this.gene2Junction <= exon[1]
+            ) {
               // if junction is within this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum + (exon[1] - this.gene2Junction),
-                runningSum + exonLength);
+                runningSum + exonLength
+              );
             } else {
               // if junction is not in this exon
 
               utrSeq += this.transcript2.cdnaSeq.slice(
                 runningSum,
-                runningSum + exonLength);
+                runningSum + exonLength
+              );
             }
           }
 
@@ -460,39 +472,50 @@ export class FusionTranscript {
   }
 
   fetchProtein() {
-
     this.proteinJunctionGene1 = parseInt(this.cdsJunctionGene1 / 3);
 
-    if (Number.isInteger(this.cdsGene1Len/3) && (Number.isInteger(this.cdsGene2Len/3))) {
-      this.effect='in-frame';
-      this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
-    } else if (Number.parseFloat(((this.cdsGene1Len/3 % 1) + (this.cdsGene2Len/3 % 1)).toPrecision(3)) === 1.0) {
+    if (
+      Number.isInteger(this.cdsGene1Len / 3) &&
+      Number.isInteger(this.cdsGene2Len / 3)
+    ) {
+      this.effect = "in-frame";
+      this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2 / 3);
+    } else if (
+      Number.parseFloat(
+        (
+          ((this.cdsGene1Len / 3) % 1) +
+          ((this.cdsGene2Len / 3) % 1)
+        ).toPrecision(3)
+      ) === 1.0
+    ) {
       // this.effect = 'in-frame (potential non-synonymous mutation)';
-      this.effect='in-frame';
-      this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2/3)
+      this.effect = "in-frame";
+      this.proteinJunctionGene2 = parseInt(this.cdsJunctionGene2 / 3);
     } else {
-      this.effect = 'out-of-frame';
+      this.effect = "out-of-frame";
     }
 
     // check if CDS's length is multiple of 3, if not then print warning
 
-    if (this.effect === 'in-frame' && (this.cdsSeq.length % 3) !== 0) {
-      console.log('fusion is in-frame but cds is not a multiple of 3!');
+    if (this.effect === "in-frame" && this.cdsSeq.length % 3 !== 0) {
+      console.log("fusion is in-frame but cds is not a multiple of 3!");
     }
 
     // translate CDS into protein and remove everything after the stop codon
 
-    if (this.effect === 'out-of-frame') {
-
+    if (this.effect === "out-of-frame") {
       // trim the CDS sequence if fusion is out-of-frame
 
-      var cdsTrimmed = this.cdsSeq.slice(0, 3 * parseInt(this.cdsSeq.length/3));
+      var cdsTrimmed = this.cdsSeq.slice(
+        0,
+        3 * parseInt(this.cdsSeq.length / 3)
+      );
 
       this.proteinSeq = translate(cdsTrimmed);
-      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf('*'));
+      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf("*"));
     } else {
-      this.proteinSeq = translate(this.cdsSeq)
-      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf('*'));
+      this.proteinSeq = translate(this.cdsSeq);
+      this.proteinSeq = this.proteinSeq.slice(0, this.proteinSeq.indexOf("*"));
     }
 
     this.proteinSeqLen = this.proteinSeq.length;
@@ -500,8 +523,6 @@ export class FusionTranscript {
     // predict molecular weight
 
     this.molecularWeight = molecularWeight(this.proteinSeq);
-
-
   }
 
   annotate() {
@@ -522,18 +543,17 @@ export class FusionTranscript {
       // gene1 domains
 
       for (var i = 0; i < this.transcript1.proteinDomains[pdb].length; i++) {
-
         // domain = this.transcript1.proteinDomains[pdb][i];
         domain = Object.assign({}, this.transcript1.proteinDomains[pdb][i]);
 
         if (this.proteinJunctionGene1 < domain.start) {
           continue;
         } else if (this.proteinJunctionGene1 >= domain.end) {
-
           this.proteinDomains[pdb].push(domain);
-
-        } else if ((this.proteinJunctionGene1 - domain.start) >= MIN_DOMAIN_LENGTH) {
-
+        } else if (
+          this.proteinJunctionGene1 - domain.start >=
+          MIN_DOMAIN_LENGTH
+        ) {
           domain.end = this.proteinJunctionGene1;
           this.proteinDomains[pdb].push(domain);
         }
@@ -541,26 +561,30 @@ export class FusionTranscript {
 
       // only find the 3' gene partner's domains if the fusion is in-frame
 
-      if (this.effect !== 'out-of-frame') {
-
+      if (this.effect !== "out-of-frame") {
         for (var i = 0; i < this.transcript2.proteinDomains[pdb].length; i++) {
-
           // domain = this.transcript2.proteinDomains[pdb][i];
           domain = Object.assign({}, this.transcript2.proteinDomains[pdb][i]);
 
           if (this.proteinJunctionGene2 > domain.end) {
-              continue
+            continue;
           } else if (this.proteinJunctionGene2 <= domain.start) {
-
-            domain.start = (domain.start - this.proteinJunctionGene2) + this.proteinJunctionGene1;
-            domain.end = (domain.end - this.proteinJunctionGene2) + this.proteinJunctionGene1;
+            domain.start =
+              domain.start -
+              this.proteinJunctionGene2 +
+              this.proteinJunctionGene1;
+            domain.end =
+              domain.end -
+              this.proteinJunctionGene2 +
+              this.proteinJunctionGene1;
 
             this.proteinDomains[pdb].push(domain);
-
           } else {
-
             domain.start = this.proteinJunctionGene1;
-            domain.end = (domain.end - this.proteinJunctionGene2) + this.proteinJunctionGene1;
+            domain.end =
+              domain.end -
+              this.proteinJunctionGene2 +
+              this.proteinJunctionGene1;
             this.proteinDomains[pdb].push(domain);
           }
         }
