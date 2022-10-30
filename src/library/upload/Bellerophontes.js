@@ -1,4 +1,4 @@
-import { BaseUpload } from './BaseUpload';
+import { BaseUpload } from "./BaseUpload";
 
 export class Bellerophontes extends BaseUpload {
   constructor(file) {
@@ -6,12 +6,10 @@ export class Bellerophontes extends BaseUpload {
   }
 
   async parse() {
-
     const lines = await this.preprocess();
 
     this.fusions = lines.map((val, i) => {
-
-      const line = val.split('\t').map(val => val.trim());
+      const line = val.split("\t").map((val) => val.trim());
 
       if (!this.areThereEnoughColumns(i, 12, line)) {
         return;
@@ -27,14 +25,13 @@ export class Bellerophontes extends BaseUpload {
           gene1: gene1,
           gene1Pos: gene1Pos,
           gene2: gene2,
-          gene2Pos: gene2Pos
+          gene2Pos: gene2Pos,
         };
       } else {
         return null;
       }
     });
 
-    this.fusions = this.fusions.filter(val => val);
-
+    this.fusions = this.fusions.filter((val) => val);
   }
 }

@@ -1,4 +1,4 @@
-import { Transcript } from './Transcript';
+import { Transcript } from "./Transcript";
 
 export class Gene {
   constructor(id, data) {
@@ -13,7 +13,15 @@ export class Gene {
     this.transcripts = [];
 
     for (var transcript in data.transcripts.M) {
-      this.transcripts.push(new Transcript(transcript, data.transcripts.M[transcript].M, this.strand, this.name, this.id));
+      this.transcripts.push(
+        new Transcript(
+          transcript,
+          data.transcripts.M[transcript].M,
+          this.strand,
+          this.name,
+          this.id
+        )
+      );
     }
   }
 
@@ -41,8 +49,7 @@ export class Gene {
   }
 
   parseSeqs(seqs) {
-
-    if (seqs === null || seqs === '') {
+    if (seqs === null || seqs === "") {
       return;
     }
 
@@ -50,23 +57,22 @@ export class Gene {
 
     for (var i = 0; i < seqs.length; i++) {
       var seqId = seqs[i].id.S;
-      var seq = seqs[i].sequence.S || '';
+      var seq = seqs[i].sequence.S || "";
       seqsProcessed[seqId] = seq;
     }
 
     // add the sequences to the transcripts
 
     for (var i = 0; i < this.transcripts.length; i++) {
-
       if (this.transcripts[i].id in seqsProcessed) {
         this.transcripts[i].cdnaSeq = seqsProcessed[this.transcripts[i].id];
         this.transcripts[i].parseSeqs();
       }
 
       if (this.transcripts[i].proteinId in seqsProcessed) {
-        this.transcripts[i].proteinSeq = seqsProcessed[this.transcripts[i].proteinId];
+        this.transcripts[i].proteinSeq =
+          seqsProcessed[this.transcripts[i].proteinId];
       }
-
     }
   }
 }

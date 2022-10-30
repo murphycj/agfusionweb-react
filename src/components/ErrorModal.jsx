@@ -1,16 +1,14 @@
-import React from 'react';
-import { Modal, Button, List, Typography } from 'antd';
+import React from "react";
+import { Modal, Button, List, Typography } from "antd";
 
 const { Text } = Typography;
 
 export class ErrorModal extends React.Component {
-
   constructor(props) {
     super(props);
   }
 
   render() {
-
     const { errorMsg, closeModalCallback } = this.props;
 
     return (
@@ -22,26 +20,27 @@ export class ErrorModal extends React.Component {
           <Button key="submit" type="danger" onClick={closeModalCallback}>
             Ok
           </Button>,
-          ]}
-        >
-      <List
-        dataSource={errorMsg}
-        bordered
-        itemLayout="horizontal"
-        split={false}
-        pagination={{pageSize: 5}}
-        renderItem={item => (
-          <List.Item>
-            {
-              item.split(' ').length != 2 ?
-                <p>{item}</p> :
-                <p><b>{item.split(': ')[0] + ': '}</b> {item.split(': ')[1]}</p>
-            }
-          </List.Item>
-        )}
+        ]}
+      >
+        <List
+          dataSource={errorMsg}
+          bordered
+          itemLayout="horizontal"
+          split={false}
+          pagination={{ pageSize: 5 }}
+          renderItem={(item) => (
+            <List.Item>
+              {item.split(" ").length != 2 ? (
+                <p>{item}</p>
+              ) : (
+                <p>
+                  <b>{item.split(": ")[0] + ": "}</b> {item.split(": ")[1]}
+                </p>
+              )}
+            </List.Item>
+          )}
         />
       </Modal>
-    )
-
+    );
   }
 }

@@ -1,4 +1,4 @@
-import { BaseUpload } from './BaseUpload';
+import { BaseUpload } from "./BaseUpload";
 
 export class Defuse extends BaseUpload {
   constructor(file) {
@@ -6,23 +6,20 @@ export class Defuse extends BaseUpload {
   }
 
   async parse() {
-
     const lines = await this.preprocess();
 
     this.fusions = lines.map((val, i) => {
-
-      const line = val.split('\t').map(val => val.trim());
+      const line = val.split("\t").map((val) => val.trim());
 
       if (!this.areThereEnoughColumns(i, 41, line)) {
         return;
       }
 
-      if (val.startsWith('cluster_id')) {
-
-        this.checkColumnHeader(line, i, 22, 'gene1');
-        this.checkColumnHeader(line, i, 23, 'gene2');
-        this.checkColumnHeader(line, i, 39, 'genomic_break_pos1');
-        this.checkColumnHeader(line, i, 40, 'genomic_break_pos2');
+      if (val.startsWith("cluster_id")) {
+        this.checkColumnHeader(line, i, 22, "gene1");
+        this.checkColumnHeader(line, i, 23, "gene2");
+        this.checkColumnHeader(line, i, 39, "genomic_break_pos1");
+        this.checkColumnHeader(line, i, 40, "genomic_break_pos2");
 
         return null;
       }
@@ -37,14 +34,13 @@ export class Defuse extends BaseUpload {
           gene1: gene1,
           gene1Pos: gene1Pos,
           gene2: gene2,
-          gene2Pos: gene2Pos
+          gene2Pos: gene2Pos,
         };
       } else {
         return null;
       }
     });
 
-    this.fusions = this.fusions.filter(val => val);
-
+    this.fusions = this.fusions.filter((val) => val);
   }
 }

@@ -9,14 +9,14 @@
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;
-  border-color: rgba(0,0,0,0.05);
+  border-color: rgba(0, 0, 0, 0.05);
   border-style: solid;
   border-width: 1px;
-  box-shadow: 5px 10px 20px rgba(0,0,0,0.01), 2px 6px 6px rgba(0,0,0,0.05);
+  box-shadow: 5px 10px 20px rgba(0, 0, 0, 0.01), 2px 6px 6px rgba(0, 0, 0, 0.05);
 }
 
 .PlotNone {
-  background-color: #F3F3F3;
+  background-color: #f3f3f3;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 20px;

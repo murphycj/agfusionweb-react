@@ -1,6 +1,6 @@
-import { QueryDynamoDb } from './DynamoDB';
-import { Gene } from '../features/Gene';
-import { Fusion } from '../features/Fusion';
+import { QueryDynamoDb } from "./DynamoDB";
+import { Gene } from "../features/Gene";
+import { Fusion } from "../features/Fusion";
 
 export class ProcessQuery {
   constructor() {
@@ -11,14 +11,13 @@ export class ProcessQuery {
     var fusions = {};
 
     for (var k = 0; k < fusionData.length; k++) {
-
       var fusionData_i = fusionData[k];
 
       if (fusionData_i.errorMsg && fusionData_i.errorMsg.length > 0) {
-
         fusions[k] = {
           ...fusionData_i,
-          errorMsg: fusionData_i.errorMsg};
+          errorMsg: fusionData_i.errorMsg,
+        };
 
         continue;
       }
@@ -51,7 +50,6 @@ export class ProcessQuery {
   }
 
   async _getGeneData(ensemblIds, speciesRelease) {
-
     var geneData = [];
 
     for (var i = 0; i < ensemblIds.length; i++) {
@@ -65,7 +63,6 @@ export class ProcessQuery {
   }
 
   async _validateGene(genes, speciesRelease) {
-
     var ensemblIds = [];
 
     if (genes.length === 0) {
@@ -85,7 +82,7 @@ export class ProcessQuery {
         var result = await this.ddb.getGeneSynonym(gene, speciesRelease);
 
         if (result !== undefined) {
-          ensemblIds = ensemblIds.concat(result.ensembl_gene_id.S.split(';'));
+          ensemblIds = ensemblIds.concat(result.ensembl_gene_id.S.split(";"));
         }
       }
     }

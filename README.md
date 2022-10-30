@@ -1,68 +1,75 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+[![test](https://img.shields.io/github/v/release/murphycj/agfusionweb-react)](https://img.shields.io/github/v/release/murphycj/agfusionweb-react)
+[![test](https://img.shields.io/github/last-commit/murphycj/agfusionweb-react)](https://img.shields.io/github/last-commit/murphycj/agfusionweb-react)
+[![Latest deploy](https://github.com/murphycj/agfusionweb-react/actions/workflows/deploy.yaml/badge.svg)](https://github.com/murphycj/agfusionweb-react/actions/workflows/deploy.yaml)
+[![CI](https://github.com/murphycj/agfusionweb-react/actions/workflows/test.yaml/badge.svg)](https://github.com/murphycj/agfusionweb-react/actions/workflows/test.yaml)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-## Available Scripts
+**Note:** This repository is not frequantly updated.
 
-In the project directory, you can run:
+# Intro
 
-### `npm start`
+AGFusion (pronounced 'A G Fusion') is an interactive web app for annotating gene fusions from the human or mouse genomes. The app is available at [https://www.agfusion.app/](https://www.agfusion.app/). There is also a [companion Python package](https://github.com/murphycj/AGFusion).
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+AGFusion simply needs the reference genome, the two gene partners, and the fusion junction coordinates as input, and outputs the following:
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- FASTA files of cDNA, CDS, and protein sequences.
+- Visualizes the protein domain and exon architectures of the fusion transcripts.
+- Saves tables listing the coordinates of protein features and exons included in the fusion.
+- Optional exon structure and protein domain visualization of the wild-type version of the fusion gene partners.
 
-### `npm test`
+# Usage
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+AGFusion automatically predicts the functional effect of the gene fusion (e.g. in-frame, out-of-frame, etc.). Annotation is by default done only for canonical gene isoforms, but there is the option to annotate all non-canonical isoform combinations. Lastly, all gene and protein annotation is from Ensembl (up to release 95).
 
-### `npm run build`
+## Input
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+There are two ways to provide input.
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+### (1) Single input
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The software only needs the following pieces of data per fusion:
 
-### `npm run eject`
+- 5' gene partner.
+- 5' gene partner junction location.
+- 3' gene partner.
+- 3' gene partner junction location.
+- The reference genome used to call fusions (human and mouse is supported).
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### (2) Bulk input
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Alternatively, you can provide either a generic TSV/CSV-formatted file or the output file from one of the supported fusion finding-algorithms:
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Bellerophontes
+- Chimerascan
+- ChimeRScope
+- DeFuse
+- EricScript
+- FusionCatcher
+- FusionInspector
+- FusionMap
+- JAFFA
+- MapSplice
+- STARFusion
+- TopHatFusion
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+If your fusion-finding algorithm is not supported, you can either ask me to add support or just format it into a simple CSV or TSV file. Each row in the file should contain one fusion like so: gene1,gene1Junction,gene2,gene2Junction (e.g. FGFR2,1231231,DNM3,522312).
 
-## Learn More
+## Output
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Prediction
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Functional effect of the gene fusion (e.g. in-frame, out-of-frame, etc.)
+- Annotates proteins with domains (e.g. PFAM database and others).
 
-### Code Splitting
+### Downloadable data
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+- FASTA files of cDNA, CDS, and protein sequences.
+- Plots of protein domain and exon architectures.
+- Various tables containing many additional details about the fusion(s), including protein domain data, exon structures, etc.
 
-### Analyzing the Bundle Size
+### Interactive figures and tables
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Table 1: All fusions.
+- Table 2: Detail view.
+- Protein/exon figures.
+- Supports output files from fusion-finding tools.

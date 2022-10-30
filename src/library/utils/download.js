@@ -1,11 +1,13 @@
-
 export class Download {
-  constructor(zip, fusions, params={fasta: true, fusionCsv: true, proteinCsv: true, exonCsv: true}) {
+  constructor(
+    zip,
+    fusions,
+    params = { fasta: true, fusionCsv: true, proteinCsv: true, exonCsv: true }
+  ) {
     this.zip = zip;
     this.fusions = fusions;
 
-    Object.keys(this.fusions).map(val => {
-
+    Object.keys(this.fusions).map((val) => {
       if (this.fusions[val].errorMsg) {
         return null;
       }
@@ -31,41 +33,51 @@ export class Download {
   }
 
   prepFasta(fusionFolder, fusionIsoforms) {
-
     var cdnaSeqs = [];
     var cdsSeqs = [];
     var proteinSeqs = [];
 
-    Object.keys(fusionIsoforms).map(val => {
-
+    Object.keys(fusionIsoforms).map((val) => {
       var iso = fusionIsoforms[val];
 
-      cdnaSeqs.push(`>${val} ${iso.name}\n${iso.cdnaGene1Seq}*${iso.cdnaGene2Seq}`);
+      cdnaSeqs.push(
+        `>${val} ${iso.name}\n${iso.cdnaGene1Seq}*${iso.cdnaGene2Seq}`
+      );
 
       if (iso.hasProteinCodingPotential) {
-        cdsSeqs.push(`>${val} ${iso.name}\n${iso.cdsGene1Seq}*${iso.cdsGene2Seq}`);
+        cdsSeqs.push(
+          `>${val} ${iso.name}\n${iso.cdsGene1Seq}*${iso.cdsGene2Seq}`
+        );
         proteinSeqs.push(`>${val} ${iso.name}\n${iso.proteinSeq}`);
       }
     });
 
     if (cdnaSeqs.length > 0) {
-      this.zip.folder('fusions').folder(fusionFolder).file('cDNA-fusion.fa', cdnaSeqs.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("cDNA-fusion.fa", cdnaSeqs.join("\n"));
     }
 
     if (cdsSeqs.length > 0) {
-      this.zip.folder('fusions').folder(fusionFolder).file('CDS-fusion.fa', cdsSeqs.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("CDS-fusion.fa", cdsSeqs.join("\n"));
     }
 
     if (proteinSeqs.length > 0) {
-      this.zip.folder('fusions').folder(fusionFolder).file('protein-fusion.fa', proteinSeqs.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("protein-fusion.fa", proteinSeqs.join("\n"));
     }
   }
 
   prepFusionCsv(fusionFolder, fusionIsoforms) {
-
     var lines = [];
 
-    Object.keys(fusionIsoforms).map(val => {
+    Object.keys(fusionIsoforms).map((val) => {
       var fusion = fusionIsoforms[val];
 
       var values = [
@@ -82,37 +94,60 @@ export class Download {
         fusion.gene2Junction,
         fusion.gene2JunctionLoc,
         fusion.cdnaSeq.length,
-        fusion.cdsSeq.length || '',
-        fusion.proteinSeq.length || '',
+        fusion.cdsSeq.length || "",
+        fusion.proteinSeq.length || "",
         fusion.effect,
-        fusion.hasProteinCodingPotential ? 'Yes' : 'Unknown',
-        fusion.molecularWeight || ''
+        fusion.hasProteinCodingPotential ? "Yes" : "Unknown",
+        fusion.molecularWeight || "",
       ];
 
-      lines.push(values.join(','));
+      lines.push(values.join(","));
     });
 
     if (lines.length > 0) {
-      var header = ['Gene1_name', 'Gene1_ID', 'Gene1_transcript_name', 'Gene1_transcript_id', 'Gene1_junction', 'Gene1_feature_location'];
-      header.push(['Gene2_name', 'Gene2_ID', 'Gene2_transcript_name', 'Gene2_transcript_id', 'Gene2_Junction', 'Gene2_feature_location']);
-      header.push(['cDNA_length', 'CDS_length', 'Protein_length', 'Protein_effect', 'Has_protein_coding_potential', 'Molecular_weight (kD)']);
+      var header = [
+        "Gene1_name",
+        "Gene1_ID",
+        "Gene1_transcript_name",
+        "Gene1_transcript_id",
+        "Gene1_junction",
+        "Gene1_feature_location",
+      ];
+      header.push([
+        "Gene2_name",
+        "Gene2_ID",
+        "Gene2_transcript_name",
+        "Gene2_transcript_id",
+        "Gene2_Junction",
+        "Gene2_feature_location",
+      ]);
+      header.push([
+        "cDNA_length",
+        "CDS_length",
+        "Protein_length",
+        "Protein_effect",
+        "Has_protein_coding_potential",
+        "Molecular_weight (kD)",
+      ]);
 
-      lines.unshift(header.join(','));
+      lines.unshift(header.join(","));
 
-      this.zip.folder('fusions').folder(fusionFolder).file('fusion-isoforms.csv', lines.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("fusion-isoforms.csv", lines.join("\n"));
     }
   }
 
   prepProteinCsv(fusionFolder, fusionIsoforms) {
     var lines = [];
 
-    Object.keys(fusionIsoforms).map(val => {
+    Object.keys(fusionIsoforms).map((val) => {
       var fusion = fusionIsoforms[val];
 
       if (fusion.hasProteinCodingPotential) {
-        Object.keys(fusion.proteinDomains).map(pdb => {
-
-          fusion.proteinDomains[pdb].map(domain => {
+        Object.keys(fusion.proteinDomains).map((pdb) => {
+          fusion.proteinDomains[pdb].map((domain) => {
             var values = [
               fusion.name,
               fusion.id,
@@ -121,82 +156,86 @@ export class Download {
               domain.name,
               domain.desc,
               domain.start,
-              domain.end
+              domain.end,
             ];
-            lines.push(values.join(','));
+            lines.push(values.join(","));
           });
         });
       }
     });
 
     if (lines.length > 0) {
-      var header = ['Fusion_name', 'Fusion_id'];
-      header.push(['Domain_database', 'Domain_id', 'Domain_name', 'Domain_description', 'Domain_start', 'Domain_end']);
+      var header = ["Fusion_name", "Fusion_id"];
+      header.push([
+        "Domain_database",
+        "Domain_id",
+        "Domain_name",
+        "Domain_description",
+        "Domain_start",
+        "Domain_end",
+      ]);
 
-      lines.unshift(header.join(','));
+      lines.unshift(header.join(","));
 
-      this.zip.folder('fusions').folder(fusionFolder).file('fusion-protein-domains.csv', lines.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("fusion-protein-domains.csv", lines.join("\n"));
     }
   }
 
   prepExonCsv(fusionFolder, fusionIsoforms) {
     var lines = [];
 
-    Object.keys(fusionIsoforms).map(val => {
+    Object.keys(fusionIsoforms).map((val) => {
       var fusion = fusionIsoforms[val];
 
-      fusion.cdnaIntervalsGene1.map(exon => {
-        lines.push([
-          fusion.name,
-          fusion.id,
-          'exon',
-          exon[0],
-          exon[1],
-          exon[2]
-        ]);
+      fusion.cdnaIntervalsGene1.map((exon) => {
+        lines.push([fusion.name, fusion.id, "exon", exon[0], exon[1], exon[2]]);
       });
-      fusion.cdnaIntervalsGene2.map(exon => {
-        lines.push([
-          fusion.name,
-          fusion.id,
-          'exon',
-          exon[0],
-          exon[1],
-          exon[2]
-        ]);
+      fusion.cdnaIntervalsGene2.map((exon) => {
+        lines.push([fusion.name, fusion.id, "exon", exon[0], exon[1], exon[2]]);
       });
 
       if (fusion.hasProteinCodingPotential) {
-        fusion.cdnaIntervalsGene1.map(exon => {
+        fusion.cdnaIntervalsGene1.map((exon) => {
           lines.push([
             fusion.name,
             fusion.id,
-            'CDS',
+            "CDS",
             exon[0],
             exon[1],
-            exon[2]
+            exon[2],
           ]);
         });
-        fusion.cdnaIntervalsGene2.map(exon => {
+        fusion.cdnaIntervalsGene2.map((exon) => {
           lines.push([
             fusion.name,
             fusion.id,
-            'CDS',
+            "CDS",
             exon[0],
             exon[1],
-            exon[2]
+            exon[2],
           ]);
         });
       }
     });
 
     if (lines.length > 0) {
-      var header = ['Fusion_name', 'Fusion_id'];
-      header.push(['Feature_type', 'Start', 'End', 'Feature_number_in_wildtype']);
+      var header = ["Fusion_name", "Fusion_id"];
+      header.push([
+        "Feature_type",
+        "Start",
+        "End",
+        "Feature_number_in_wildtype",
+      ]);
 
-      lines.unshift(header.join(','));
+      lines.unshift(header.join(","));
 
-      this.zip.folder('fusions').folder(fusionFolder).file('fusion-exon-cds.csv', lines.join('\n'));
+      this.zip
+        .folder("fusions")
+        .folder(fusionFolder)
+        .file("fusion-exon-cds.csv", lines.join("\n"));
     }
   }
 }
