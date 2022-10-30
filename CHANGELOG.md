@@ -1,5 +1,7 @@
 ## Unreleased
 
+## v1.0.3
+
 - Add github actions for CI/CD.
 - Update NPM package dependencies and versions.
 
