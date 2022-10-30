@@ -44,7 +44,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-import": "^1.13.3",
     "css-loader": "^3.5.3",
-    "html-webpack-plugin": "^5.5.0",
+    "html-webpack-plugin": "^4.5.2",
     "node-sass": "^7.0.0",
     "rollbar-sourcemap-webpack-plugin": "^2.5.1",
     "sass-loader": "^13.1.0",
