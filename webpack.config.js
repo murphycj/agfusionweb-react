@@ -41,10 +41,7 @@ module.exports = () => {
         accessToken: '5038f24f7a3042a9a3a8784cb526e72c',
         version: '1.0',
         publicPath: 'https://www.agfusion.app/'
-      }),
-      new webpack.DefinePlugin({
-        VERSION: JSON.stringify(require("./package.json").version),
-      }),
+      })
     ],
     node: {
       fs: 'empty'
