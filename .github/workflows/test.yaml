@@ -12,15 +12,6 @@ jobs:
     steps:
     - name: Checkout source code
       uses: actions/checkout@v1
-
-    - name: Prebuild steps
-      run: |
-        sudo apt install python3-testresources
-        pip install pipx==0.16.0.0
-        pip install -r requirements.txt
-        aws s3 cp s3://gendervoice/config/config.json ./webapp/
-        rsync -r frontend/src/library/redux marketing/library/
-        rsync -r frontend/src/library/utils marketing/library/
     - name: Build app
       run: |
         react-scripts build
