@@ -129,7 +129,7 @@ class App extends React.Component {
               </a>
             </Col>
             <Col xs={24} lg={24} className="app-footer-text">
-              {'\u00A9'} 2020
+              {'\u00A9'} 2022
               <a href="https://www.linkedin.com/in/murphycharlesj/" style={{marginLeft: "0.5rem"}} target="_blank">
                 Charlie Murphy, PhD
               </a>
