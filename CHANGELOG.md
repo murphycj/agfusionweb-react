@@ -1,5 +1,8 @@
 ## Unreleased
 
+- Added prettier code formatting.
+- Updated README.
+
 ## v1.0.3
 
 - Add github actions for CI/CD.
