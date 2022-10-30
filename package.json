@@ -1,6 +1,6 @@
 {
   "name": "agfusionweb",
-  "version": "0.1.0",
+  "version": "1.0.3",
   "dependencies": {
     "antd": "^4.23.6",
     "aws-sdk": "^2.533.0",
