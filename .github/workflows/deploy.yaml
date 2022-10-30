@@ -1,7 +1,6 @@
 name: Build & deploy to S3
 on:
   push:
-    push:
     branches: '*'
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
